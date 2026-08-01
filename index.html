@@ -1,0 +1,1371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="CoinWatch">
+<meta name="theme-color" content="#07090f">
+<link rel="manifest" href="manifest.json">
+<title>CoinWatch — Spot Trader Assistant</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap');
+
+:root {
+  --bg:      #07090f;
+  --s1:      #0c0f1a;
+  --s2:      #111520;
+  --s3:      #161c2c;
+  --border:  #1a2035;
+  --text:    #e2e8f8;
+  --soft:    #8896b0;
+  --dim:     #2a3550;
+  --safe:    #1adb8a;
+  --danger:  #f04f6b;
+  --warn:    #f5c842;
+  --blue:    #4f8cf5;
+  --purple:  #9b72f5;
+  --orange:  #f5864f;
+  --r:       14px;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bot: env(safe-area-inset-bottom, 0px);
+  --font: 'Plus Jakarta Sans', sans-serif;
+  --mono: 'JetBrains Mono', monospace;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html, body { height:100%; overflow:hidden; background:var(--bg); }
+
+body {
+  color: var(--text);
+  font-family: var(--font);
+  display: flex;
+  flex-direction: column;
+  max-width: 430px;
+  margin: 0 auto;
+}
+
+/* ── INSTALL BANNER ── */
+#installBar {
+  display:none; background:linear-gradient(135deg,rgba(79,140,245,.15),rgba(155,114,245,.15));
+  border-bottom:1px solid rgba(79,140,245,.2);
+  padding:calc(var(--safe-top) + 10px) 16px 10px;
+  align-items:center; gap:10px; flex-shrink:0;
+}
+#installBar.show { display:flex; }
+.ib-text { flex:1; font-size:12px; line-height:1.4; color:var(--soft); }
+.ib-text strong { color:var(--text); font-size:13px; display:block; margin-bottom:2px; }
+.ib-btn { background:var(--blue); color:#fff; border:none; border-radius:8px; padding:7px 14px; font-family:var(--font); font-size:12px; font-weight:700; cursor:pointer; }
+.ib-x   { background:none; border:none; color:var(--soft); font-size:20px; cursor:pointer; }
+
+/* ── HEADER ── */
+.hdr {
+  background:rgba(7,9,15,.96); border-bottom:1px solid var(--border);
+  padding:13px 16px 0; flex-shrink:0; position:relative; z-index:50;
+}
+.hdr-top { display:flex; justify-content:space-between; align-items:center; }
+.brand { display:flex; align-items:center; gap:9px; }
+.brand-ico {
+  width:34px; height:34px; border-radius:10px;
+  background:linear-gradient(135deg,#2a6cf5,#9b5cf5);
+  display:flex; align-items:center; justify-content:center; font-size:17px;
+}
+.brand-name { font-size:18px; font-weight:800; letter-spacing:-.5px; }
+.brand-name span { color:var(--blue); }
+.brand-tag { font-size:9px; color:var(--soft); margin-top:1px; }
+.hdr-right { display:flex; align-items:center; gap:8px; }
+.notif-btn {
+  width:34px; height:34px; border-radius:50%; background:var(--s2);
+  border:1px solid var(--border); display:flex; align-items:center;
+  justify-content:center; font-size:15px; cursor:pointer;
+}
+.status-pill {
+  display:flex; align-items:center; gap:5px;
+  background:var(--s2); border:1px solid var(--border);
+  border-radius:20px; padding:5px 11px; font-size:11px; color:var(--soft);
+}
+.dot { width:6px; height:6px; border-radius:50%; background:var(--soft); }
+.dot.live { background:var(--safe); box-shadow:0 0 7px var(--safe); animation:pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+
+.nav-tabs { display:flex; gap:0; margin-top:12px; overflow-x:auto; scrollbar-width:none; }
+.nav-tabs::-webkit-scrollbar { display:none; }
+.ntab {
+  flex-shrink:0; padding:7px 14px; border:none; background:transparent;
+  color:var(--soft); font-family:var(--font); font-size:12px; font-weight:600;
+  cursor:pointer; border-bottom:2px solid transparent; transition:all .18s;
+}
+.ntab.on { color:var(--text); border-bottom-color:var(--blue); }
+
+/* ── MAIN ── */
+.main { flex:1; overflow-y:auto; overflow-x:hidden; -webkit-overflow-scrolling:touch; overscroll-behavior:contain; }
+
+/* ── PAGE SECTIONS ── */
+.page { display:none; }
+.page.on { display:block; }
+
+/* ── HERO SCAN SECTION ── */
+.scan-hero {
+  margin:14px 15px 0;
+  background:linear-gradient(135deg,rgba(79,140,245,.1),rgba(155,114,245,.08));
+  border:1px solid rgba(79,140,245,.18); border-radius:var(--r);
+  padding:16px;
+}
+.scan-hero-title { font-size:14px; font-weight:700; margin-bottom:4px; }
+.scan-hero-sub { font-size:12px; color:var(--soft); line-height:1.5; margin-bottom:14px; }
+.scan-controls { display:flex; flex-wrap:wrap; gap:7px; margin-bottom:12px; }
+.sctrl {
+  display:flex; align-items:center; gap:5px;
+  background:var(--s1); border:1px solid var(--border);
+  border-radius:8px; padding:6px 11px; font-size:12px; color:var(--soft);
+}
+.sctrl label { font-size:11px; }
+.sctrl select, .sctrl input {
+  background:transparent; border:none; outline:none;
+  color:var(--text); font-family:var(--mono); font-size:12px; cursor:pointer;
+}
+.sctrl select { width:50px; }
+.sctrl input  { width:32px; text-align:center; }
+.big-scan-btn {
+  width:100%; padding:13px; border-radius:10px; border:none;
+  background:linear-gradient(135deg,var(--blue),var(--purple));
+  color:#fff; font-family:var(--font); font-size:15px; font-weight:700;
+  cursor:pointer; transition:opacity .2s; display:flex; align-items:center; justify-content:center; gap:8px;
+}
+.big-scan-btn:disabled { opacity:.35; cursor:not-allowed; }
+
+/* progress */
+.prog { margin:10px 15px 0; display:none; }
+.prog.on { display:block; }
+.prog-info { display:flex; justify-content:space-between; font-size:11px; color:var(--soft); margin-bottom:5px; }
+.prog-bar { height:4px; background:var(--s3); border-radius:2px; overflow:hidden; }
+.prog-fill { height:100%; background:linear-gradient(90deg,var(--blue),var(--purple)); border-radius:2px; transition:width .3s; }
+
+/* ── SUMMARY STRIP ── */
+.summary-strip { display:flex; gap:7px; padding:12px 15px 0; }
+.ss-card {
+  flex:1; background:var(--s1); border:1px solid var(--border);
+  border-radius:11px; padding:9px 10px; text-align:center;
+}
+.ss-num { font-size:22px; font-weight:800; font-family:var(--mono); }
+.ss-lbl { font-size:10px; color:var(--soft); margin-top:2px; }
+
+/* ── FILTER ROW ── */
+.filter-row { display:flex; gap:5px; padding:10px 15px 0; overflow-x:auto; scrollbar-width:none; }
+.filter-row::-webkit-scrollbar { display:none; }
+.ftab {
+  flex-shrink:0; padding:5px 12px; border-radius:20px; border:1px solid var(--border);
+  background:transparent; color:var(--soft); font-family:var(--font);
+  font-size:11px; font-weight:600; cursor:pointer; transition:all .18s;
+}
+.ftab.on { background:var(--blue); border-color:var(--blue); color:#fff; }
+
+/* ── SIGNAL CARDS ── */
+.cards { padding:10px 15px 10px; display:flex; flex-direction:column; gap:10px; }
+
+.scard {
+  background:var(--s1); border:1px solid var(--border);
+  border-radius:var(--r); overflow:hidden;
+}
+.scard-stripe { height:4px; }
+.scard.going-down .scard-stripe { background:linear-gradient(90deg,var(--danger),#c0392b); }
+.scard.going-up   .scard-stripe { background:linear-gradient(90deg,var(--safe),#16a065); }
+.scard.squeezing  .scard-stripe { background:linear-gradient(90deg,var(--warn),#d4a017); }
+.scard.expanding  .scard-stripe { background:linear-gradient(90deg,var(--orange),#c0622b); }
+
+.scard-body { padding:14px 15px; }
+
+/* coin header */
+.coin-header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px; }
+.coin-left { display:flex; align-items:center; gap:10px; }
+.coin-avatar {
+  width:40px; height:40px; border-radius:50%;
+  background:var(--s2); border:1px solid var(--border);
+  display:flex; align-items:center; justify-content:center;
+  font-size:14px; font-weight:800; font-family:var(--mono); color:var(--blue);
+}
+.coin-name { font-size:16px; font-weight:700; }
+.coin-price { font-size:12px; color:var(--soft); margin-top:2px; font-family:var(--mono); }
+.coin-right { display:flex; flex-direction:column; align-items:flex-end; gap:5px; }
+.signal-badge {
+  padding:4px 10px; border-radius:7px; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.3px;
+}
+.badge-dn { background:rgba(240,79,107,.15); color:var(--danger); }
+.badge-up { background:rgba(26,219,138,.15); color:var(--safe); }
+.badge-sq { background:rgba(245,200,66,.15); color:var(--warn); }
+.badge-ex { background:rgba(245,134,79,.15); color:var(--orange); }
+.watch-star {
+  background:none; border:1px solid var(--border); color:var(--soft);
+  border-radius:7px; padding:3px 9px; font-size:12px; cursor:pointer;
+  font-family:var(--font); transition:all .2s;
+}
+.watch-star.on { border-color:var(--warn); color:var(--warn); }
+
+/* ── PLAIN ENGLISH VERDICT ── */
+.verdict-box {
+  border-radius:10px; padding:12px 14px; margin-bottom:12px;
+  border:1px solid;
+}
+.verdict-box.good  { background:rgba(26,219,138,.07); border-color:rgba(26,219,138,.2); }
+.verdict-box.bad   { background:rgba(240,79,107,.07); border-color:rgba(240,79,107,.2); }
+.verdict-box.meh   { background:rgba(245,200,66,.07); border-color:rgba(245,200,66,.2); }
+.verdict-box.info  { background:rgba(79,140,245,.07); border-color:rgba(79,140,245,.2); }
+.verdict-ico  { font-size:20px; margin-bottom:5px; }
+.verdict-head { font-size:13px; font-weight:700; margin-bottom:4px; }
+.verdict-body { font-size:12px; color:var(--soft); line-height:1.6; }
+
+/* ── CONFIDENCE METER ── */
+.conf-section { margin-bottom:12px; }
+.conf-top { display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; }
+.conf-label { font-size:11px; color:var(--soft); }
+.conf-score { font-size:14px; font-weight:800; font-family:var(--mono); }
+.conf-bar-bg { height:8px; background:var(--s3); border-radius:4px; overflow:hidden; }
+.conf-bar-fill { height:100%; border-radius:4px; transition:width .6s; }
+.score-low  .conf-bar-fill { background:var(--soft); }
+.score-med  .conf-bar-fill { background:var(--warn); }
+.score-high .conf-bar-fill { background:linear-gradient(90deg,var(--safe),var(--blue)); }
+.score-top  .conf-bar-fill { background:linear-gradient(90deg,var(--blue),var(--purple)); box-shadow:0 0 10px rgba(79,140,245,.4); }
+.conf-meaning { font-size:11px; color:var(--soft); margin-top:5px; }
+
+/* ── WHAT THIS MEANS PILLS ── */
+.signals-row { display:flex; flex-wrap:wrap; gap:5px; margin-bottom:12px; }
+.sig-pill {
+  display:flex; align-items:center; gap:4px;
+  border-radius:6px; padding:4px 9px; font-size:11px; border:1px solid;
+}
+.sig-pill.good { background:rgba(26,219,138,.08); border-color:rgba(26,219,138,.25); color:var(--safe); }
+.sig-pill.bad  { background:rgba(240,79,107,.08); border-color:rgba(240,79,107,.25); color:var(--danger); }
+.sig-pill.warn { background:rgba(245,200,66,.08); border-color:rgba(245,200,66,.25); color:var(--warn); }
+.sig-pill.neu  { background:var(--s2); border-color:var(--border); color:var(--soft); }
+
+/* ── PRICE RANGE VISUAL ── */
+.range-visual { margin-bottom:12px; }
+.rv-title { font-size:11px; color:var(--soft); margin-bottom:7px; }
+.rv-row { display:flex; align-items:center; gap:9px; margin-bottom:5px; }
+.rv-lbl { font-size:10px; width:36px; flex-shrink:0; color:var(--soft); }
+.rv-track-wrap { flex:1; }
+.rv-track { height:7px; background:var(--s3); border-radius:4px; position:relative; overflow:hidden; }
+.rv-fill { height:100%; border-radius:4px; position:absolute; }
+.rv-old  { background:var(--dim); }
+.rv-new  { background:linear-gradient(90deg,var(--blue),var(--purple)); }
+.rv-pin  { position:absolute; top:-1px; width:3px; height:9px; background:#fff; border-radius:2px; z-index:3; }
+.rv-vals { display:flex; justify-content:space-between; font-size:10px; font-family:var(--mono); color:var(--soft); margin-top:3px; }
+
+/* ── ORDER BOOK BAR ── */
+.ob-section { margin-bottom:12px; }
+.ob-title { font-size:11px; color:var(--soft); margin-bottom:5px; }
+.ob-bar-wrap { height:8px; background:var(--s3); border-radius:4px; overflow:hidden; display:flex; }
+.ob-bids { background:var(--safe); transition:width .5s; }
+.ob-asks { background:var(--danger); flex:1; }
+.ob-labels { display:flex; justify-content:space-between; font-size:10px; margin-top:4px; }
+
+/* ── STATS ── */
+.stats-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px; margin-bottom:10px; }
+.stat-cell { background:var(--s2); border-radius:9px; padding:8px 10px; }
+.stat-lbl  { font-size:9px; color:var(--soft); text-transform:uppercase; letter-spacing:.3px; margin-bottom:3px; }
+.stat-val  { font-size:13px; font-weight:700; font-family:var(--mono); }
+.up   { color:var(--safe); }
+.dn   { color:var(--danger); }
+.wa   { color:var(--warn); }
+.or   { color:var(--orange); }
+.mu   { color:var(--soft); }
+.ac   { color:var(--blue); }
+
+.card-time { font-size:10px; color:var(--dim); }
+
+/* ── EMPTY STATE ── */
+.empty { text-align:center; padding:52px 24px; display:flex; flex-direction:column; align-items:center; gap:10px; }
+.empty-ico { font-size:52px; }
+.empty-h   { font-size:16px; font-weight:700; }
+.empty-p   { font-size:13px; color:var(--soft); line-height:1.6; max-width:280px; }
+
+/* ══════════════════════════════════
+   SPOT TRADER PROTECTION PAGE
+══════════════════════════════════ */
+.protect-page { padding:14px 15px; }
+
+.protect-hero {
+  background:linear-gradient(135deg,rgba(240,79,107,.1),rgba(155,114,245,.08));
+  border:1px solid rgba(240,79,107,.2); border-radius:var(--r);
+  padding:16px; margin-bottom:14px;
+}
+.protect-hero h2 { font-size:16px; font-weight:800; margin-bottom:4px; }
+.protect-hero p  { font-size:12px; color:var(--soft); line-height:1.6; }
+
+/* Am I Trapped checker */
+.checker-card {
+  background:var(--s1); border:1px solid var(--border);
+  border-radius:var(--r); padding:16px; margin-bottom:12px;
+}
+.checker-card h3 { font-size:14px; font-weight:700; margin-bottom:4px; }
+.checker-card p  { font-size:12px; color:var(--soft); margin-bottom:14px; line-height:1.5; }
+.input-row { display:flex; gap:8px; margin-bottom:10px; }
+.coin-input-wrap { flex:1; }
+.coin-input-wrap label { font-size:11px; color:var(--soft); display:block; margin-bottom:4px; }
+.coin-input {
+  width:100%; background:var(--s2); border:1px solid var(--border);
+  border-radius:8px; padding:9px 12px; color:var(--text);
+  font-family:var(--mono); font-size:13px; outline:none;
+}
+.coin-input:focus { border-color:var(--blue); }
+.check-btn {
+  background:linear-gradient(135deg,var(--blue),var(--purple));
+  border:none; color:#fff; font-family:var(--font);
+  font-size:13px; font-weight:700; border-radius:9px;
+  padding:0 18px; cursor:pointer; white-space:nowrap;
+  transition:opacity .2s;
+}
+.check-btn:disabled { opacity:.4; }
+
+/* Result box */
+.check-result {
+  border-radius:10px; padding:14px; display:none;
+  border:1px solid;
+}
+.check-result.on { display:block; }
+.cr-status { font-size:22px; margin-bottom:6px; }
+.cr-headline { font-size:14px; font-weight:700; margin-bottom:8px; }
+.cr-body { font-size:12px; color:var(--soft); line-height:1.65; }
+.cr-stats { display:grid; grid-template-columns:1fr 1fr; gap:7px; margin-top:12px; }
+.cr-stat { background:rgba(255,255,255,.04); border-radius:8px; padding:9px 10px; }
+.cr-stat-lbl { font-size:10px; color:var(--soft); margin-bottom:3px; }
+.cr-stat-val { font-size:14px; font-weight:700; font-family:var(--mono); }
+.recovery-bar-wrap { margin-top:12px; }
+.recovery-bar-lbl { font-size:11px; color:var(--soft); margin-bottom:5px; display:flex; justify-content:space-between; }
+.recovery-bar-bg { height:10px; background:var(--s3); border-radius:5px; overflow:hidden; }
+.recovery-bar-fill { height:100%; border-radius:5px; transition:width .8s; }
+
+/* Safe to buy checker */
+.safe-card {
+  background:var(--s1); border:1px solid var(--border);
+  border-radius:var(--r); padding:16px; margin-bottom:12px;
+}
+.safe-card h3 { font-size:14px; font-weight:700; margin-bottom:4px; }
+.safe-card p  { font-size:12px; color:var(--soft); margin-bottom:14px; line-height:1.5; }
+
+.safe-result {
+  border-radius:10px; padding:14px; display:none; border:1px solid;
+}
+.safe-result.on { display:block; }
+
+/* Watchlist alerts */
+.wl-alert-card {
+  background:var(--s1); border:1px solid var(--border);
+  border-radius:var(--r); padding:14px; margin-bottom:10px;
+}
+.wla-top { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
+.wla-sym { font-size:15px; font-weight:700; }
+.wla-badge { padding:3px 9px; border-radius:6px; font-size:10px; font-weight:700; }
+.wla-body { font-size:12px; color:var(--soft); line-height:1.5; }
+.wla-time { font-size:10px; color:var(--dim); margin-top:6px; }
+
+/* ══════════════════════════════════
+   WATCHLIST PAGE
+══════════════════════════════════ */
+.wl-page { padding:14px 15px; }
+.wl-page h2 { font-size:15px; font-weight:700; margin-bottom:12px; }
+.wl-item {
+  background:var(--s1); border:1px solid var(--border);
+  border-radius:11px; padding:13px 14px; margin-bottom:8px;
+  display:flex; justify-content:space-between; align-items:center;
+}
+.wl-item-left .sym { font-size:14px; font-weight:700; }
+.wl-item-left .sub { font-size:11px; color:var(--soft); margin-top:2px; }
+.wl-remove { background:none; border:none; color:var(--danger); font-size:20px; cursor:pointer; padding:4px; }
+
+/* ══════════════════════════════════
+   HISTORY PAGE
+══════════════════════════════════ */
+.hist-page { padding:14px 15px; }
+.hist-page h2 { font-size:15px; font-weight:700; margin-bottom:12px; }
+.hist-item {
+  background:var(--s1); border:1px solid var(--border);
+  border-radius:11px; padding:11px 14px; margin-bottom:8px;
+  display:flex; justify-content:space-between; align-items:center;
+}
+.hi-left .sym { font-size:13px; font-weight:700; }
+.hi-left .ts  { font-size:10px; color:var(--soft); margin-top:2px; }
+.hi-right { text-align:right; }
+.hi-score { font-size:13px; font-weight:700; font-family:var(--mono); }
+.hi-type  { font-size:10px; color:var(--soft); margin-top:2px; }
+
+/* ══════════════════════════════════
+   SETTINGS PAGE
+══════════════════════════════════ */
+.set-page { padding:14px 15px; }
+.set-page h2 { font-size:15px; font-weight:700; margin-bottom:12px; }
+.set-row {
+  background:var(--s1); border:1px solid var(--border);
+  border-radius:11px; padding:13px 14px; margin-bottom:8px;
+  display:flex; justify-content:space-between; align-items:center;
+}
+.set-row-left .lbl { font-size:13px; font-weight:600; }
+.set-row-left .desc { font-size:11px; color:var(--soft); margin-top:2px; line-height:1.4; }
+.set-ctrl select {
+  background:var(--s2); border:1px solid var(--border);
+  color:var(--text); border-radius:7px; padding:5px 9px;
+  font-family:var(--mono); font-size:12px; outline:none;
+}
+.toggle-wrap { display:flex; align-items:center; }
+.toggle {
+  width:30px; height:17px; border-radius:9px; background:var(--dim);
+  position:relative; cursor:pointer; transition:background .2s;
+}
+.toggle.on { background:var(--blue); }
+.toggle::after {
+  content:''; position:absolute; top:2px; left:2px;
+  width:13px; height:13px; border-radius:50%; background:#fff; transition:transform .2s;
+}
+.toggle.on::after { transform:translateX(13px); }
+.danger-btn {
+  background:none; border:1px solid rgba(240,79,107,.3); color:var(--danger);
+  border-radius:8px; padding:6px 13px; font-family:var(--font);
+  font-size:12px; font-weight:600; cursor:pointer;
+}
+.set-footer { text-align:center; font-size:11px; color:var(--dim); margin-top:20px; line-height:1.6; }
+
+/* ── BOTTOM NAV ── */
+.bottom-nav {
+  background:rgba(7,9,15,.97); border-top:1px solid var(--border);
+  display:flex; padding:7px 8px calc(8px + var(--safe-bot)); gap:2px; flex-shrink:0;
+}
+.bnav {
+  flex:1; display:flex; flex-direction:column; align-items:center; gap:2px;
+  background:none; border:none; cursor:pointer; color:var(--soft);
+  font-family:var(--font); font-size:10px; font-weight:500;
+  padding:5px 4px; border-radius:9px; transition:color .18s; position:relative;
+}
+.bnav.on { color:var(--blue); }
+.bnav svg { width:21px; height:21px; }
+.bnav-dot {
+  position:absolute; top:3px; right:10px; width:7px; height:7px;
+  background:var(--danger); border-radius:50%; display:none; border:2px solid var(--bg);
+}
+.bnav-dot.on { display:block; }
+
+/* ── TOAST ── */
+.toast {
+  position:fixed; top:max(18px,calc(var(--safe-top)+8px)); left:50%;
+  transform:translateX(-50%) translateY(-70px);
+  background:var(--s2); border:1px solid var(--border);
+  border-radius:11px; padding:10px 18px; font-size:12px; font-weight:500;
+  box-shadow:0 8px 32px rgba(0,0,0,.7); z-index:999;
+  transition:transform .28s cubic-bezier(.34,1.56,.64,1); white-space:nowrap;
+}
+.toast.on { transform:translateX(-50%) translateY(0); }
+
+/* ── MODAL ── */
+.modal-bg { position:fixed; inset:0; background:rgba(0,0,0,.75); z-index:100; display:none; align-items:flex-end; justify-content:center; }
+.modal-bg.on { display:flex; }
+.modal-box {
+  background:var(--s1); border:1px solid var(--border); border-radius:18px 18px 0 0;
+  padding:24px 20px calc(28px + var(--safe-bot)); width:100%; max-width:430px;
+}
+.modal-box h3 { font-size:17px; font-weight:800; margin-bottom:8px; }
+.modal-box p  { font-size:13px; color:var(--soft); line-height:1.55; margin-bottom:20px; }
+.modal-btns   { display:flex; gap:8px; }
+.modal-btn    { flex:1; padding:12px; border-radius:10px; border:none; font-family:var(--font); font-size:14px; font-weight:700; cursor:pointer; }
+.modal-btn.pri { background:linear-gradient(135deg,var(--blue),var(--purple)); color:#fff; }
+.modal-btn.sec { background:var(--s2); color:var(--soft); }
+
+/* utils */
+.spin { display:inline-block; width:14px; height:14px; border:2px solid rgba(255,255,255,.2); border-top-color:#fff; border-radius:50%; animation:rot .6s linear infinite; vertical-align:middle; }
+@keyframes rot { to { transform:rotate(360deg); } }
+.section-title { font-size:13px; font-weight:700; color:var(--soft); text-transform:uppercase; letter-spacing:.5px; padding:12px 15px 4px; }
+</style>
+</head>
+<body>
+
+<!-- Install Banner -->
+<div id="installBar">
+  <div style="font-size:24px">📲</div>
+  <div class="ib-text"><strong>Add CoinWatch to your home screen</strong>Get instant alerts even when app is closed</div>
+  <button class="ib-btn" id="installBtn">Install</button>
+  <button class="ib-x" onclick="dismissInstall()">×</button>
+</div>
+
+<!-- Header -->
+<div class="hdr">
+  <div class="hdr-top">
+    <div class="brand">
+      <div class="brand-ico">🔍</div>
+      <div>
+        <div class="brand-name">Coin<span>Watch</span></div>
+        <div class="brand-tag">Spot Trader Assistant</div>
+      </div>
+    </div>
+    <div class="hdr-right">
+      <button class="notif-btn" onclick="askNotifications()">🔔</button>
+      <div class="status-pill">
+        <div class="dot" id="dot"></div>
+        <span id="statusTxt">Ready</span>
+      </div>
+    </div>
+  </div>
+  <div class="nav-tabs">
+    <button class="ntab on" data-page="alerts"  onclick="gotoPage('alerts',this)">📡 Signals</button>
+    <button class="ntab"    data-page="protect" onclick="gotoPage('protect',this)">🛡️ Am I Safe?</button>
+    <button class="ntab"    data-page="watchlist" onclick="gotoPage('watchlist',this)">⭐ Watchlist</button>
+    <button class="ntab"    data-page="history"   onclick="gotoPage('history',this)">📜 History</button>
+    <button class="ntab"    data-page="settings"  onclick="gotoPage('settings',this)">⚙️ Settings</button>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main" id="mainScroll">
+
+  <!-- ══ SIGNALS PAGE ══ -->
+  <div class="page on" id="pg-alerts">
+
+    <div class="scan-hero">
+      <div class="scan-hero-title">🔍 Scan the Market</div>
+      <div class="scan-hero-sub">The app checks hundreds of coins on Binance and finds the ones whose price zones are shifting — so you know which ones to watch and which to avoid.</div>
+      <div class="scan-controls">
+        <div class="sctrl">
+          <label>Look back</label>
+          <select id="itvl">
+            <option value="15m">15 min</option>
+            <option value="1h" selected>1 hour</option>
+            <option value="4h">4 hours</option>
+            <option value="1d">1 day</option>
+          </select>
+        </div>
+        <div class="sctrl">
+          <label>Coins to check</label>
+          <select id="topN">
+            <option value="40">40</option>
+            <option value="80" selected>80</option>
+            <option value="120">120</option>
+          </select>
+        </div>
+        <div class="sctrl">
+          <label>Min shift size</label>
+          <input type="number" id="sens" value="1.5" min="0.5" max="5" step="0.5">%
+        </div>
+      </div>
+      <button class="big-scan-btn" id="scanBtn" onclick="runScan()">
+        🔍 Scan All Coins Now
+      </button>
+    </div>
+
+    <div class="prog" id="prog">
+      <div class="prog-info"><span id="progLbl">Starting…</span><span id="progPct">0%</span></div>
+      <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0"></div></div>
+    </div>
+
+    <!-- Summary -->
+    <div class="summary-strip" id="sumStrip" style="display:none">
+      <div class="ss-card"><div class="ss-num dn" id="sD">0</div><div class="ss-lbl">Price falling</div></div>
+      <div class="ss-card"><div class="ss-num up" id="sU">0</div><div class="ss-lbl">Price rising</div></div>
+      <div class="ss-card"><div class="ss-num wa" id="sS">0</div><div class="ss-lbl">Building up</div></div>
+      <div class="ss-card"><div class="ss-num or" id="sE">0</div><div class="ss-lbl">Breaking out</div></div>
+    </div>
+
+    <!-- Filter tabs -->
+    <div class="filter-row">
+      <button class="ftab on" data-f="all" onclick="setFilter('all',this)">All signals</button>
+      <button class="ftab" data-f="dn"     onclick="setFilter('dn',this)">⬇️ Price falling</button>
+      <button class="ftab" data-f="up"     onclick="setFilter('up',this)">⬆️ Price rising</button>
+      <button class="ftab" data-f="sq"     onclick="setFilter('sq',this)">⏳ Building up</button>
+      <button class="ftab" data-f="ex"     onclick="setFilter('ex',this)">💥 Breaking out</button>
+      <button class="ftab" data-f="hi"     onclick="setFilter('hi',this)">⭐ Strong only</button>
+    </div>
+
+    <div class="cards" id="cards">
+      <div class="empty">
+        <div class="empty-ico">🔍</div>
+        <div class="empty-h">Tap "Scan All Coins Now"</div>
+        <div class="empty-p">The app will check the top coins on Binance and show you which ones are shifting their price zones — in plain English.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ PROTECTION PAGE ══ -->
+  <div class="page" id="pg-protect">
+    <div class="protect-page">
+
+      <div class="protect-hero">
+        <h2>🛡️ Am I Safe? — Spot Trader Protection</h2>
+        <p>This page helps you avoid the #1 spot trader mistake: buying a coin that looks cheap but is actually in a downtrend — and getting stuck waiting weeks for it to recover.</p>
+      </div>
+
+      <!-- Tool 1: Am I Trapped? -->
+      <div class="checker-card">
+        <h3>🪤 Am I Trapped In This Coin?</h3>
+        <p>Enter a coin name and the price you bought it at. The app will tell you honestly whether you're in a good position or stuck — and what your best move is.</p>
+        <div class="input-row">
+          <div class="coin-input-wrap">
+            <label>Coin name (e.g. BTC, ETH, SOL)</label>
+            <input class="coin-input" id="trapCoin" placeholder="e.g. SOL" maxlength="10" style="text-transform:uppercase">
+          </div>
+          <div class="coin-input-wrap">
+            <label>Price I bought at ($)</label>
+            <input class="coin-input" id="trapPrice" placeholder="e.g. 45.00" type="number" min="0" step="any">
+          </div>
+        </div>
+        <button class="check-btn" id="trapBtn" onclick="checkIfTrapped()" style="width:100%;padding:11px;border-radius:9px;margin-bottom:12px;">Check My Position</button>
+        <div class="check-result" id="trapResult"></div>
+      </div>
+
+      <!-- Tool 2: Is It Safe To Buy? -->
+      <div class="safe-card">
+        <h3>✅ Is It Safe To Buy This Coin Right Now?</h3>
+        <p>Before you buy, enter the coin name and the app will check if the price range is stable, rising, or starting to fall — so you don't buy at the wrong time.</p>
+        <div class="input-row">
+          <div class="coin-input-wrap">
+            <label>Coin name</label>
+            <input class="coin-input" id="safeCoin" placeholder="e.g. BTC" maxlength="10" style="text-transform:uppercase">
+          </div>
+          <div class="coin-input-wrap">
+            <label>Amount I want to spend ($)</label>
+            <input class="coin-input" id="safeAmount" placeholder="e.g. 100" type="number" min="0" step="any">
+          </div>
+        </div>
+        <button class="check-btn" id="safeBtn" onclick="checkSafeToBuy()" style="width:100%;padding:11px;border-radius:9px;margin-bottom:12px;">Check Before I Buy</button>
+        <div class="safe-result" id="safeResult"></div>
+      </div>
+
+      <!-- Watchlist alerts -->
+      <div id="wlAlerts"></div>
+
+    </div>
+  </div>
+
+  <!-- ══ WATCHLIST PAGE ══ -->
+  <div class="page" id="pg-watchlist">
+    <div class="wl-page">
+      <h2>⭐ My Watchlist</h2>
+      <div id="wlContent"><div class="empty"><div class="empty-ico">⭐</div><div class="empty-h">Nothing saved yet</div><div class="empty-p">Tap the ☆ star on any signal card to save a coin here and monitor it across scans.</div></div></div>
+    </div>
+  </div>
+
+  <!-- ══ HISTORY PAGE ══ -->
+  <div class="page" id="pg-history">
+    <div class="hist-page">
+      <h2>📜 Past Signals</h2>
+      <div id="histContent"><div class="empty"><div class="empty-ico">📜</div><div class="empty-h">No history yet</div><div class="empty-p">Every signal the app finds is saved here so you can look back and see what it predicted.</div></div></div>
+    </div>
+  </div>
+
+  <!-- ══ SETTINGS PAGE ══ -->
+  <div class="page" id="pg-settings">
+    <div class="set-page">
+      <h2>⚙️ Settings</h2>
+
+      <div class="set-row">
+        <div class="set-row-left">
+          <div class="lbl">Auto-Scan</div>
+          <div class="desc">Automatically re-scan coins every few minutes and alert you</div>
+        </div>
+        <div class="toggle" id="autoToggle" onclick="toggleAuto()"></div>
+      </div>
+
+      <div class="set-row">
+        <div class="set-row-left">
+          <div class="lbl">Auto-scan every</div>
+          <div class="desc">How often to automatically check the market</div>
+        </div>
+        <div class="set-ctrl"><select id="autoMins" onchange="saveSettings()"><option value="2">2 min</option><option value="5" selected>5 min</option><option value="10">10 min</option><option value="30">30 min</option></select></div>
+      </div>
+
+      <div class="set-row">
+        <div class="set-row-left">
+          <div class="lbl">Only alert strong signals</div>
+          <div class="desc">Minimum confidence score to send a notification</div>
+        </div>
+        <div class="set-ctrl"><select id="minConf" onchange="saveSettings()"><option value="50">50+</option><option value="60">60+</option><option value="70" selected>70+</option><option value="80">80+</option></select></div>
+      </div>
+
+      <div class="set-row">
+        <div class="set-row-left">
+          <div class="lbl">Only scan big coins</div>
+          <div class="desc">Filter out small coins with low trading activity</div>
+        </div>
+        <div class="set-ctrl"><select id="minVol" onchange="saveSettings()"><option value="1000000">Any size</option><option value="5000000" selected>Medium+</option><option value="50000000">Large only</option></select></div>
+      </div>
+
+      <div class="set-row" onclick="clearHistory()" style="cursor:pointer">
+        <div class="set-row-left"><div class="lbl" style="color:var(--danger)">Clear signal history</div><div class="desc">Remove all past signal records</div></div>
+        <button class="danger-btn">Clear</button>
+      </div>
+
+      <div class="set-footer">CoinWatch · Spot Trader Assistant<br>Data from Binance public API · Not financial advice</div>
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+<!-- Bottom Nav -->
+<div class="bottom-nav">
+  <button class="bnav on" id="bn-alerts" onclick="gotoPage('alerts',document.querySelector('[data-page=alerts]'))">
+    <div class="bnav-dot" id="alertDot"></div>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+    Signals
+  </button>
+  <button class="bnav" id="bn-protect" onclick="gotoPage('protect',document.querySelector('[data-page=protect]'))">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    Am I Safe?
+  </button>
+  <button class="bnav" id="bn-watchlist" onclick="gotoPage('watchlist',document.querySelector('[data-page=watchlist]'))">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+    Watchlist
+  </button>
+  <button class="bnav" id="bn-history" onclick="gotoPage('history',document.querySelector('[data-page=history]'))">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+    History
+  </button>
+  <button class="bnav" id="bn-settings" onclick="gotoPage('settings',document.querySelector('[data-page=settings]'))">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+    Settings
+  </button>
+</div>
+
+<!-- Modal -->
+<div class="modal-bg" id="modal">
+  <div class="modal-box">
+    <h3>🔔 Turn On Alerts</h3>
+    <p>Get a notification on your phone the moment a strong signal is found — even when this app is closed. Tap "Yes, Alert Me" and then tap "Allow" when your phone asks.</p>
+    <div class="modal-btns">
+      <button class="modal-btn sec" onclick="closeModal()">Not now</button>
+      <button class="modal-btn pri" onclick="enableNotifications()">Yes, Alert Me</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ══════════════════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════════════════
+const API = 'https://api.binance.com/api/v3';
+let signals = [], watchlist = new Set(), history = [];
+let settings = { autoMins:5, minConf:70, minVol:5000000 };
+let activeFilter = 'all', currentPage = 'alerts';
+let autoTimer = null, autoOn = false, deferredInstall = null;
+
+// ══════════════════════════════════════════════════════════
+// PWA
+// ══════════════════════════════════════════════════════════
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault(); deferredInstall = e;
+  if (!localStorage.getItem('ib-dismissed')) document.getElementById('installBar').classList.add('show');
+});
+document.getElementById('installBtn').onclick = async () => {
+  if (!deferredInstall) return;
+  deferredInstall.prompt();
+  await deferredInstall.userChoice;
+  deferredInstall = null;
+  document.getElementById('installBar').classList.remove('show');
+};
+function dismissInstall() { localStorage.setItem('ib-dismissed','1'); document.getElementById('installBar').classList.remove('show'); }
+
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(()=>{});
+
+// ══════════════════════════════════════════════════════════
+// NOTIFICATIONS
+// ══════════════════════════════════════════════════════════
+function askNotifications() {
+  if (!('Notification' in window)) { showToast('⚠️ Notifications not supported on this device'); return; }
+  if (Notification.permission === 'granted') { showToast('✅ Alerts are already turned on'); return; }
+  document.getElementById('modal').classList.add('on');
+}
+function closeModal() { document.getElementById('modal').classList.remove('on'); }
+async function enableNotifications() {
+  closeModal();
+  const p = await Notification.requestPermission();
+  showToast(p === 'granted' ? '✅ Alerts turned on!' : '⚠️ Permission denied — check your phone settings');
+}
+function notify(title, body) {
+  if (Notification.permission !== 'granted') return;
+  try { new Notification(title, { body, icon:'./icon-192.png', vibrate:[200,100,200] }); } catch(e){}
+}
+
+// ══════════════════════════════════════════════════════════
+// PERSISTENCE
+// ══════════════════════════════════════════════════════════
+function load() {
+  try {
+    const wl = localStorage.getItem('wl'); if (wl) watchlist = new Set(JSON.parse(wl));
+    const h  = localStorage.getItem('hist'); if (h) history = JSON.parse(h);
+    const s  = localStorage.getItem('cfg'); if (s) settings = {...settings,...JSON.parse(s)};
+    applySettings();
+  } catch(e){}
+}
+function saveWL()   { localStorage.setItem('wl', JSON.stringify([...watchlist])); }
+function saveHist() { localStorage.setItem('hist', JSON.stringify(history.slice(0,300))); }
+function saveCfg()  { localStorage.setItem('cfg', JSON.stringify(settings)); }
+function saveSettings() {
+  settings.autoMins = parseInt(document.getElementById('autoMins').value);
+  settings.minConf  = parseInt(document.getElementById('minConf').value);
+  settings.minVol   = parseInt(document.getElementById('minVol').value);
+  saveCfg(); showToast('Settings saved ✓');
+}
+function applySettings() {
+  document.getElementById('autoMins').value = settings.autoMins;
+  document.getElementById('minConf').value  = settings.minConf;
+  document.getElementById('minVol').value   = settings.minVol;
+}
+function clearHistory() { history=[]; saveHist(); renderHistory(); showToast('History cleared'); }
+
+// ══════════════════════════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════════════════════════
+function gotoPage(page, tabEl) {
+  currentPage = page;
+  document.querySelectorAll('.ntab').forEach(t=>t.classList.remove('on'));
+  if (tabEl) tabEl.classList.add('on');
+  document.querySelectorAll('.bnav').forEach(b=>b.classList.remove('on'));
+  const bn = document.getElementById('bn-'+page);
+  if (bn) bn.classList.add('on');
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
+  document.getElementById('pg-'+page).classList.add('on');
+  document.getElementById('mainScroll').scrollTop = 0;
+  if (page==='watchlist') renderWatchlist();
+  if (page==='history')   renderHistory();
+  if (page==='protect')   renderProtectAlerts();
+}
+
+// ══════════════════════════════════════════════════════════
+// TOAST
+// ══════════════════════════════════════════════════════════
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('on');
+  clearTimeout(t._t); t._t = setTimeout(()=>t.classList.remove('on'), 2800);
+}
+
+// ══════════════════════════════════════════════════════════
+// UI HELPERS
+// ══════════════════════════════════════════════════════════
+function setStatus(live, txt) {
+  document.getElementById('dot').className = 'dot' + (live?' live':'');
+  document.getElementById('statusTxt').textContent = txt;
+}
+function setProgress(pct, lbl) {
+  document.getElementById('progFill').style.width = pct+'%';
+  document.getElementById('progPct').textContent = Math.round(pct)+'%';
+  if (lbl) document.getElementById('progLbl').textContent = lbl;
+}
+function setFilter(f, el) {
+  activeFilter = f;
+  document.querySelectorAll('[data-f]').forEach(b=>b.classList.remove('on'));
+  el.classList.add('on');
+  renderCards();
+}
+function f(n)   { return n>=10?n.toFixed(2):n>=1?n.toFixed(3):n<0.0001?n.toFixed(6):n.toFixed(4); }
+function pct(n) { return (n>=0?'+':'')+n.toFixed(2)+'%'; }
+function volFmt(v){ return v>=1e9?(v/1e9).toFixed(1)+'B':v>=1e6?(v/1e6).toFixed(1)+'M':(v/1e3).toFixed(0)+'K'; }
+
+// ══════════════════════════════════════════════════════════
+// INDICATORS
+// ══════════════════════════════════════════════════════════
+function rsi(closes, p=14) {
+  if (closes.length<p+1) return null;
+  let g=0,l=0;
+  for (let i=closes.length-p;i<closes.length;i++){const d=closes[i]-closes[i-1];if(d>0)g+=d;else l-=d;}
+  const ag=g/p,al=l/p; return al===0?100:100-100/(1+ag/al);
+}
+function ema(closes, p) {
+  const k=2/(p+1); let e=closes[0];
+  for (let i=1;i<closes.length;i++) e=closes[i]*k+e*(1-k); return e;
+}
+function atr(klines, p=14) {
+  const trs=[];
+  for (let i=1;i<klines.length;i++){const h=+klines[i][2],l=+klines[i][3],pc=+klines[i-1][4];trs.push(Math.max(h-l,Math.abs(h-pc),Math.abs(l-pc)));}
+  return trs.slice(-p).reduce((a,b)=>a+b,0)/Math.min(trs.length,p);
+}
+function conviction(klines,n=5){let b=0,r=0;for(const k of klines.slice(-n)){const o=+k[1],c=+k[4];if(c>o)b++;else if(c<o)r++;}return{bull:b,bear:r,net:b-r};}
+function volAccel(vols){const h=Math.floor(vols.length/2);const oa=vols.slice(0,h).reduce((a,b)=>a+b,0)/h;const na=vols.slice(h).reduce((a,b)=>a+b,0)/h;return((na-oa)/oa)*100;}
+
+// ══════════════════════════════════════════════════════════
+// CONFIDENCE SCORE
+// ══════════════════════════════════════════════════════════
+function confidence(s, type) {
+  let sc=0;
+  sc+=Math.min(20,Math.abs(s.midPct)*3);
+  const r=s.rsi;
+  if(r!==null){if(type==='dn')sc+=r>65?20:r>50?10:r<40?5:0;else if(type==='up')sc+=r<35?20:r<50?10:r>60?5:0;else sc+=Math.abs(r-50)<10?18:8;}
+  if(type==='dn'&&s.ema20<s.ema50)sc+=20;else if(type==='up'&&s.ema20>s.ema50)sc+=20;else sc+=5;
+  const va=s.va;sc+=va>30?20:va>10?13:va>0?7:2;
+  const ob=s.ob;if(type==='up'&&ob>0.6)sc+=10;else if(type==='dn'&&ob<0.4)sc+=10;else sc+=Math.round(5*(1-Math.abs(ob-0.5)*2));
+  const c=s.conv.net;if(type==='dn'&&c<-2)sc+=10;else if(type==='up'&&c>2)sc+=10;else sc+=Math.max(0,5-Math.abs(c));
+  if(s.atrPct>1.5)sc+=5;
+  return Math.min(100,Math.round(sc));
+}
+
+// ══════════════════════════════════════════════════════════
+// ANALYSE ONE COIN
+// ══════════════════════════════════════════════════════════
+function analyse(klines, depth, thresh) {
+  if (klines.length<24) return null;
+  const highs=klines.map(k=>+k[2]),lows=klines.map(k=>+k[3]),closes=klines.map(k=>+k[4]),vols=klines.map(k=>+k[5]);
+  const half=Math.floor(klines.length/2);
+  const oldH=Math.max(...highs.slice(0,half)),oldL=Math.min(...lows.slice(0,half));
+  const newH=Math.max(...highs.slice(half)),newL=Math.min(...lows.slice(half));
+  const oldMid=(oldH+oldL)/2,newMid=(newH+newL)/2;
+  const oldSprd=oldH-oldL,newSprd=newH-newL;
+  const midPct=((newMid-oldMid)/oldMid)*100;
+  const sprdPct=oldSprd>0?((newSprd-oldSprd)/oldSprd)*100:0;
+  const cur=closes[closes.length-1],ch24=((cur-closes[0])/closes[0])*100;
+  const r=rsi(closes),e20=ema(closes,20),e50=ema(closes,50);
+  const at=atr(klines),atrPct=(at/cur)*100;
+  const va=volAccel(vols),conv=conviction(klines,5);
+  let ob=0.5;
+  if(depth?.bids&&depth?.asks){const bv=depth.bids.slice(0,15).reduce((s,b)=>s+parseFloat(b[1]),0);const av=depth.asks.slice(0,15).reduce((s,a)=>s+parseFloat(a[1]),0);ob=bv/(bv+av);}
+  const pToH=newSprd>0?((newH-cur)/newSprd)*100:50;
+  const pToL=newSprd>0?((cur-newL)/newSprd)*100:50;
+  const nearBound=pToH<12||pToL<12;
+  let type=null;
+  if(midPct<-thresh&&Math.abs(sprdPct)<25)type='dn';
+  else if(midPct>thresh&&Math.abs(sprdPct)<25)type='up';
+  else if(sprdPct<-(thresh*3))type='sq';
+  else if(sprdPct>(thresh*3)&&nearBound)type='ex';
+  if(!type)return null;
+  const sig={type,oldH,oldL,newH,newL,midPct,sprdPct,cur,ch24,rsi:r,ema20:e20,ema50:e50,atrPct,va,conv,ob,nearBound,pToH,pToL};
+  sig.score=confidence(sig,type);
+  return sig;
+}
+
+// ══════════════════════════════════════════════════════════
+// RUN SCAN
+// ══════════════════════════════════════════════════════════
+async function runScan() {
+  const btn=document.getElementById('scanBtn');
+  const itvl=document.getElementById('itvl').value;
+  const topN=parseInt(document.getElementById('topN').value);
+  const thresh=parseFloat(document.getElementById('sens').value)||1.5;
+  btn.disabled=true; btn.innerHTML='<span class="spin"></span> Scanning… please wait';
+  setStatus(true,'Scanning'); document.getElementById('prog').classList.add('on');
+  signals=[];
+  try {
+    setProgress(2,'Getting coin list from Binance…');
+    const ticker=await fetch(`${API}/ticker/24hr`).then(r=>r.json());
+    const pairs=ticker.filter(d=>d.symbol.endsWith('USDT')&&+d.quoteVolume>settings.minVol)
+      .sort((a,b)=>+b.quoteVolume-+a.quoteVolume).slice(0,topN);
+    for(let i=0;i<pairs.length;i++){
+      const p=pairs[i];
+      setProgress(5+(i/pairs.length)*90,`Checking ${p.symbol.replace('USDT','/USDT')} (${i+1} of ${pairs.length})…`);
+      try{
+        const [kl,dep]=await Promise.all([
+          fetch(`${API}/klines?symbol=${p.symbol}&interval=${itvl}&limit=50`).then(r=>r.json()),
+          fetch(`${API}/depth?symbol=${p.symbol}&limit=20`).then(r=>r.json())
+        ]);
+        const res=analyse(kl,dep,thresh);
+        if(res){
+          const sym=p.symbol.replace('USDT','');
+          signals.push({sym,full:p.symbol,vol:+p.quoteVolume,...res});
+          history.unshift({sym,type:res.type,score:res.score,ts:Date.now()});
+        }
+      }catch(e){}
+      if(i%8===7)await new Promise(r=>setTimeout(r,100));
+    }
+    setProgress(100,'Done!');
+    setTimeout(()=>document.getElementById('prog').classList.remove('on'),900);
+    signals.sort((a,b)=>b.score-a.score);
+    saveHist();
+    const highConf=signals.filter(s=>s.score>=settings.minConf);
+    if(highConf.length>0){
+      notify('📡 CoinWatch Alert',`${highConf.length} strong signal${highConf.length>1?'s':''} found — open the app to see`);
+      document.getElementById('alertDot').classList.add('on');
+    }
+    setStatus(true,`${signals.length} signals found`);
+    updateSummary(); renderCards();
+    document.getElementById('sumStrip').style.display = signals.length?'flex':'none';
+    showToast(signals.length>0?`✅ Found ${signals.length} signals`:'No shifts found — try lowering Min shift size');
+    if(autoOn) resetAutoTimer();
+  } catch(e){
+    showToast('⚠️ Could not connect — check your internet'); setStatus(false,'Error');
+    document.getElementById('prog').classList.remove('on');
+  }
+  btn.disabled=false; btn.innerHTML='🔍 Scan All Coins Now';
+}
+
+// ══════════════════════════════════════════════════════════
+// AUTO SCAN
+// ══════════════════════════════════════════════════════════
+function toggleAuto(){
+  autoOn=!autoOn;
+  document.getElementById('autoToggle').classList.toggle('on',autoOn);
+  if(autoOn){resetAutoTimer();showToast('🔄 Auto-scan is ON');}
+  else{clearInterval(autoTimer);showToast('Auto-scan is OFF');}
+}
+function resetAutoTimer(){clearInterval(autoTimer);autoTimer=setInterval(()=>runScan(),settings.autoMins*60*1000);}
+
+// ══════════════════════════════════════════════════════════
+// RENDER SIGNALS
+// ══════════════════════════════════════════════════════════
+function updateSummary(){
+  document.getElementById('sD').textContent=signals.filter(s=>s.type==='dn').length;
+  document.getElementById('sU').textContent=signals.filter(s=>s.type==='up').length;
+  document.getElementById('sS').textContent=signals.filter(s=>s.type==='sq').length;
+  document.getElementById('sE').textContent=signals.filter(s=>s.type==='ex').length;
+}
+
+function renderCards(){
+  const c=document.getElementById('cards');
+  let list=activeFilter==='all'?signals:activeFilter==='hi'?signals.filter(s=>s.score>=70):signals.filter(s=>s.type===activeFilter);
+  if(signals.length===0){c.innerHTML=`<div class="empty"><div class="empty-ico">🔍</div><div class="empty-h">Tap "Scan All Coins Now"</div><div class="empty-p">The app will check the top coins on Binance and show you which ones are shifting their price zones.</div></div>`;return;}
+  if(list.length===0){c.innerHTML=`<div class="empty"><div class="empty-ico">🔍</div><div class="empty-h">No signals in this filter</div><div class="empty-p">Tap "All signals" to see everything found.</div></div>`;return;}
+  document.getElementById('alertDot').classList.remove('on');
+  c.innerHTML=list.map(buildCard).join('');
+}
+
+// Plain English verdict for each signal type
+function getVerdict(s){
+  const score=s.score;
+  if(s.type==='dn'){
+    if(score>=70)return{cls:'bad',ico:'⚠️',head:'Price zone is moving DOWN — be careful',body:`This coin has shifted to a lower price zone. If you already own it, the price may continue falling before recovering. ${score>=85?'The evidence for this downward move is very strong.':'Most indicators agree this is a real move down.'} This is NOT a good time to buy.`};
+    return{cls:'meh',ico:'🔸',head:'Price may be drifting lower',body:`There are some signs this coin's price zone is moving down, but the signal is not very strong yet. Watch it closely before making any decision.`};
+  }
+  if(s.type==='up'){
+    if(score>=70)return{cls:'good',ico:'✅',head:'Price zone is moving UP — good momentum',body:`This coin has shifted to a higher price zone. ${score>=85?'The evidence for this upward move is very strong — most indicators agree.':'Multiple indicators suggest this move is real.'} If you were waiting to buy, this may be the beginning of a good run — but always set a loss limit.`};
+    return{cls:'meh',ico:'🔸',head:'Price may be trending upward',body:`There are early signs of upward movement but the signal isn't strong enough to be confident yet. Wait for more confirmation.`};
+  }
+  if(s.type==='sq')return{cls:'info',ico:'⏳',head:'Price is squeezing — a big move is coming',body:`This coin's price has been getting stuck in a very tight range. This usually means it's building up energy for a big move — either up or down. Watch it closely. Don't buy yet — wait to see which direction it breaks.`};
+  if(s.type==='ex')return{cls:'info',ico:'💥',head:'Price is starting to break out',body:`The price range is suddenly widening and the coin is near a boundary. A breakout is starting. The direction it moves in the next few candles will tell you whether this is a buying or selling opportunity.`};
+  return{cls:'meh',ico:'🔸',head:'Signal detected',body:'Check the details below.'};
+}
+
+function scoreClass(s){return s>=80?'score-top':s>=60?'score-high':s>=35?'score-med':'score-low';}
+function scoreMeaning(s){
+  if(s>=80)return'🔥 Very strong signal — most indicators agree strongly';
+  if(s>=60)return'✅ Good signal — most indicators point the same way';
+  if(s>=35)return'⚠️ Weak signal — mixed evidence, treat with caution';
+  return'❌ Unclear — indicators disagree. Best to ignore this one';
+}
+const typeClass={dn:'going-down',up:'going-up',sq:'squeezing',ex:'expanding'};
+const typeLabel={dn:'Price falling',up:'Price rising',sq:'Building up',ex:'Breaking out'};
+const typeBadge={dn:'badge-dn',up:'badge-up',sq:'badge-sq',ex:'badge-ex'};
+
+function buildCard(s){
+  const ts=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+  const abbr=s.sym.slice(0,3);
+  const isWatching=watchlist.has(s.sym);
+  const v=getVerdict(s);
+  const minP=Math.min(s.oldL,s.newL),maxP=Math.max(s.oldH,s.newH),span=maxP-minP||1;
+  const oL=((s.oldL-minP)/span*100).toFixed(1),oW=((s.oldH-s.oldL)/span*100).toFixed(1);
+  const nL=((s.newL-minP)/span*100).toFixed(1),nW=((s.newH-s.newL)/span*100).toFixed(1);
+  const cp=Math.min(99,Math.max(1,((s.cur-minP)/span*100))).toFixed(1);
+  const bidPct=(s.ob*100).toFixed(0),askPct=(100-s.ob*100).toFixed(0);
+  const pVe20=((s.cur-s.ema20)/s.ema20*100).toFixed(2);
+  const pVe50=((s.cur-s.ema50)/s.ema50*100).toFixed(2);
+
+  // Plain English pills
+  const rsiPill=s.rsi===null?`<div class="sig-pill neu">Momentum: unknown</div>`:
+    s.rsi>70?`<div class="sig-pill bad">📈 Momentum too high — may drop soon</div>`:
+    s.rsi<30?`<div class="sig-pill good">📉 Momentum very low — may bounce soon</div>`:
+    s.rsi>55?`<div class="sig-pill warn">Momentum is elevated</div>`:
+    s.rsi<45?`<div class="sig-pill good">Momentum is low — room to grow</div>`:
+    `<div class="sig-pill neu">Momentum is balanced</div>`;
+
+  const emaPill=s.ema20>s.ema50?
+    `<div class="sig-pill good">📊 Short-term trend: Going UP</div>`:
+    `<div class="sig-pill bad">📊 Short-term trend: Going DOWN</div>`;
+
+  const vaPill=s.va>20?`<div class="sig-pill good">🔊 Trading activity is increasing — real move</div>`:
+    s.va>0?`<div class="sig-pill neu">Trading activity slightly up</div>`:
+    `<div class="sig-pill bad">🔇 Trading activity is low — weak move</div>`;
+
+  const obPill=s.ob>0.6?`<div class="sig-pill good">🛒 More people are buying than selling</div>`:
+    s.ob<0.4?`<div class="sig-pill bad">🚪 More people are selling than buying</div>`:
+    `<div class="sig-pill neu">Buyers and sellers are balanced</div>`;
+
+  const convPill=s.conv.net>2?`<div class="sig-pill good">🕯️ Last 5 candles: mostly green (bullish)</div>`:
+    s.conv.net<-2?`<div class="sig-pill bad">🕯️ Last 5 candles: mostly red (bearish)</div>`:
+    `<div class="sig-pill neu">🕯️ Last 5 candles: mixed direction</div>`;
+
+  const boundPill=s.nearBound?`<div class="sig-pill warn">⚡ Very close to price boundary — breakout watch</div>`:'';
+
+  return `<div class="scard ${typeClass[s.type]}">
+  <div class="scard-stripe"></div>
+  <div class="scard-body">
+    <div class="coin-header">
+      <div class="coin-left">
+        <div class="coin-avatar">${abbr}</div>
+        <div>
+          <div class="coin-name">${s.sym}/USDT</div>
+          <div class="coin-price">Current price: $${f(s.cur)} · Vol: $${volFmt(s.vol)}</div>
+        </div>
+      </div>
+      <div class="coin-right">
+        <div class="signal-badge ${typeBadge[s.type]}">${typeLabel[s.type]}</div>
+        <button class="watch-star ${isWatching?'on':''}" onclick="toggleWatch('${s.sym}',this)">${isWatching?'⭐ Saved':'☆ Save'}</button>
+      </div>
+    </div>
+
+    <!-- Plain English Verdict -->
+    <div class="verdict-box ${v.cls}">
+      <div class="verdict-ico">${v.ico}</div>
+      <div class="verdict-head">${v.head}</div>
+      <div class="verdict-body">${v.body}</div>
+    </div>
+
+    <!-- Confidence -->
+    <div class="conf-section ${scoreClass(s.score)}">
+      <div class="conf-top">
+        <span class="conf-label">Signal strength</span>
+        <span class="conf-score" style="color:${s.score>=80?'var(--purple)':s.score>=60?'var(--safe)':s.score>=35?'var(--warn)':'var(--soft)'}">${s.score}/100</span>
+      </div>
+      <div class="conf-bar-bg"><div class="conf-bar-fill" style="width:${s.score}%"></div></div>
+      <div class="conf-meaning">${scoreMeaning(s.score)}</div>
+    </div>
+
+    <!-- What the indicators say -->
+    <div style="font-size:11px;color:var(--soft);margin-bottom:6px;font-weight:600;text-transform:uppercase;letter-spacing:.3px;">What the data says</div>
+    <div class="signals-row">
+      ${rsiPill}${emaPill}${vaPill}${obPill}${convPill}${boundPill}
+    </div>
+
+    <!-- Price range visual -->
+    <div class="range-visual">
+      <div class="rv-title">📊 Price zone — old vs new (white line = current price)</div>
+      <div class="rv-row">
+        <div class="rv-lbl">Before</div>
+        <div class="rv-track-wrap">
+          <div class="rv-track"><div class="rv-fill rv-old" style="left:${oL}%;width:${oW}%"></div></div>
+          <div class="rv-vals"><span>$${f(s.oldL)}</span><span>$${f(s.oldH)}</span></div>
+        </div>
+      </div>
+      <div class="rv-row">
+        <div class="rv-lbl">Now</div>
+        <div class="rv-track-wrap">
+          <div class="rv-track">
+            <div class="rv-fill rv-new" style="left:${nL}%;width:${nW}%"></div>
+            <div class="rv-pin" style="left:${cp}%"></div>
+          </div>
+          <div class="rv-vals"><span>$${f(s.newL)}</span><span>$${f(s.newH)}</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Order book -->
+    <div class="ob-section">
+      <div class="ob-title">🛒 Right now: who's winning — buyers or sellers?</div>
+      <div class="ob-bar-wrap">
+        <div class="ob-bids" style="width:${bidPct}%"></div>
+        <div class="ob-asks"></div>
+      </div>
+      <div class="ob-labels">
+        <span class="up">🟢 Buyers ${bidPct}%</span>
+        <span class="dn">🔴 Sellers ${askPct}%</span>
+      </div>
+    </div>
+
+    <!-- Numbers -->
+    <div class="stats-grid">
+      <div class="stat-cell"><div class="stat-lbl">24h change</div><div class="stat-val ${s.ch24>=0?'up':'dn'}">${pct(s.ch24)}</div></div>
+      <div class="stat-cell"><div class="stat-lbl">Zone shifted</div><div class="stat-val ${s.midPct>=0?'up':'dn'}">${pct(s.midPct)}</div></div>
+      <div class="stat-cell"><div class="stat-lbl">Volatility</div><div class="stat-val ${s.atrPct>2?'wa':'mu'}">${s.atrPct.toFixed(2)}%</div></div>
+      <div class="stat-cell"><div class="stat-lbl">vs 20-avg</div><div class="stat-val ${+pVe20>=0?'up':'dn'}">${pVe20}%</div></div>
+      <div class="stat-cell"><div class="stat-lbl">vs 50-avg</div><div class="stat-val ${+pVe50>=0?'up':'dn'}">${pVe50}%</div></div>
+      <div class="stat-cell"><div class="stat-lbl">Activity Δ</div><div class="stat-val ${s.va>0?'up':'dn'}">${pct(s.va)}</div></div>
+    </div>
+    <div class="card-time">Detected at ${ts}</div>
+  </div>
+</div>`;
+}
+
+// ══════════════════════════════════════════════════════════
+// WATCHLIST
+// ══════════════════════════════════════════════════════════
+function toggleWatch(sym,btn){
+  if(watchlist.has(sym)){watchlist.delete(sym);btn.textContent='☆ Save';btn.classList.remove('on');showToast(`Removed ${sym} from watchlist`);}
+  else{watchlist.add(sym);btn.textContent='⭐ Saved';btn.classList.add('on');showToast(`✅ ${sym} saved to watchlist`);}
+  saveWL();
+}
+function renderWatchlist(){
+  const el=document.getElementById('wlContent');
+  if(watchlist.size===0){el.innerHTML=`<div class="empty"><div class="empty-ico">⭐</div><div class="empty-h">Nothing saved yet</div><div class="empty-p">Tap ☆ Save on any signal card to add a coin here and monitor it.</div></div>`;return;}
+  el.innerHTML=[...watchlist].map(sym=>`<div class="wl-item"><div class="wl-item-left"><div class="sym">${sym}/USDT</div><div class="sub">Saved — will alert you if a signal appears</div></div><button class="wl-remove" onclick="removeWL('${sym}')">×</button></div>`).join('');
+}
+function removeWL(sym){watchlist.delete(sym);saveWL();renderWatchlist();showToast(`Removed ${sym}`);}
+
+// ══════════════════════════════════════════════════════════
+// HISTORY
+// ══════════════════════════════════════════════════════════
+function renderHistory(){
+  const el=document.getElementById('histContent');
+  if(history.length===0){el.innerHTML=`<div class="empty"><div class="empty-ico">📜</div><div class="empty-h">No history yet</div><div class="empty-p">Run your first scan and every signal found will be saved here.</div></div>`;return;}
+  el.innerHTML=history.slice(0,60).map(h=>`<div class="hist-item"><div class="hi-left"><div class="sym">${h.sym}/USDT</div><div class="ts">${new Date(h.ts).toLocaleString([],{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})}</div></div><div class="hi-right"><div class="hi-score" style="color:${h.score>=70?'var(--safe)':h.score>=40?'var(--warn)':'var(--soft)'}">${h.score}/100</div><div class="hi-type">${typeLabel[h.type]||h.type}</div></div></div>`).join('');
+}
+
+// ══════════════════════════════════════════════════════════
+// SPOT TRADER PROTECTION
+// ══════════════════════════════════════════════════════════
+async function checkIfTrapped(){
+  const coin=(document.getElementById('trapCoin').value||'').toUpperCase().trim().replace('USDT','');
+  const buyPrice=parseFloat(document.getElementById('trapPrice').value);
+  if(!coin||!buyPrice||buyPrice<=0){showToast('⚠️ Please enter both a coin name and your buy price');return;}
+  const btn=document.getElementById('trapBtn');
+  btn.disabled=true; btn.innerHTML='<span class="spin"></span> Checking…';
+  const res=document.getElementById('trapResult');
+  res.className='check-result'; res.style.display='none';
+  try {
+    const sym=coin+'USDT';
+    const [ticker,klines,depth]=await Promise.all([
+      fetch(`${API}/ticker/24hr?symbol=${sym}`).then(r=>r.json()),
+      fetch(`${API}/klines?symbol=${sym}&interval=4h&limit=50`).then(r=>r.json()),
+      fetch(`${API}/depth?symbol=${sym}&limit=20`).then(r=>r.json())
+    ]);
+    const cur=parseFloat(ticker.lastPrice);
+    const closes=klines.map(k=>+k[4]);
+    const highs=klines.map(k=>+k[2]),lows=klines.map(k=>+k[3]),vols=klines.map(k=>+k[5]);
+    const half=Math.floor(klines.length/2);
+    const newH=Math.max(...highs.slice(half)),newL=Math.min(...lows.slice(half));
+    const r=rsi(closes),e20=ema(closes,20),e50=ema(closes,50);
+    const va=volAccel(vols);
+    let ob=0.5;
+    if(depth?.bids&&depth?.asks){const bv=depth.bids.slice(0,15).reduce((s,b)=>s+parseFloat(b[1]),0);const av=depth.asks.slice(0,15).reduce((s,a)=>s+parseFloat(a[1]),0);ob=bv/(bv+av);}
+    const pnl=((cur-buyPrice)/buyPrice)*100;
+    const aboveRange=buyPrice>newH;
+    const inRange=buyPrice>=newL&&buyPrice<=newH;
+    const belowRange=buyPrice<newL;
+    const trendDown=e20<e50;
+    const trendUp=e20>e50;
+
+    // Recovery score
+    let recovScore=0;
+    if(ob>0.55)recovScore+=25;
+    if(r!==null&&r<40)recovScore+=25;
+    if(trendUp)recovScore+=20;
+    if(va>10)recovScore+=20;
+    if(cur>newL&&cur<newH)recovScore+=10;
+
+    let cls,ico,headline,body;
+    if(pnl>=0){
+      cls='check-result good'; ico='🎉'; headline=`You are in profit on ${coin}`;
+      body=`You bought at $${buyPrice} and the current price is $${f(cur)} — you are up ${pct(pnl)}. ${trendUp?'The trend is still going up, which is a good sign.':'The short-term trend has softened — consider whether you want to take some profit now.'} Your coin is ${inRange?'still inside its normal price zone':'above its current zone — a pullback is possible'}.`;
+    } else if(aboveRange){
+      cls='check-result bad'; ico='🪤'; headline=`You are stuck above ${coin}'s current price zone`;
+      body=`You bought at $${buyPrice} but the coin's price zone has moved down. The current zone runs from $${f(newL)} to $${f(newH)}, and your buy price is above that zone. This means the price needs to climb back through the entire zone AND past your entry price before you break even. ${trendDown?'The trend is currently pointing downward, which makes recovery slower.':'There are some early signs of recovery, but it is not guaranteed.'} Recovery likelihood: ${recovScore}%.`;
+    } else if(inRange){
+      cls='check-result meh'; ico='😐'; headline=`You are inside ${coin}'s current zone — slightly underwater`;
+      body=`You bought at $${buyPrice} and the current price is $${f(cur)} — you are down ${pct(Math.abs(pnl))}. The good news is your entry price is still within the current trading zone ($${f(newL)}–$${f(newH)}), so the coin just needs to move back up within its zone for you to recover. ${recovScore>=50?'Signs are mixed but recovery is possible.':'Volume and trend are weak right now — recovery may take time.'}`;
+    } else {
+      cls='check-result good'; ico='✅'; headline=`Your buy price is now above current range — but you have a cushion`;
+      body=`You bought at $${buyPrice} and the price has dropped to $${f(cur)}. You are down ${pct(Math.abs(pnl))}. However, your entry is below the top of the zone, so you have a reasonable chance of recovery if the zone holds. ${trendUp?'The short-term trend is pointing up — a good sign.':'Watch for further downside before making a decision.'}`;
+    }
+
+    res.className=cls; res.style.display='block';
+    res.innerHTML=`
+      <div class="cr-status">${ico}</div>
+      <div class="cr-headline">${headline}</div>
+      <div class="cr-body">${body}</div>
+      <div class="cr-stats">
+        <div class="cr-stat"><div class="cr-stat-lbl">Your buy price</div><div class="cr-stat-val">$${f(buyPrice)}</div></div>
+        <div class="cr-stat"><div class="cr-stat-lbl">Current price</div><div class="cr-stat-val">$${f(cur)}</div></div>
+        <div class="cr-stat"><div class="cr-stat-lbl">Your profit/loss</div><div class="cr-stat-val ${pnl>=0?'up':'dn'}">${pct(pnl)}</div></div>
+        <div class="cr-stat"><div class="cr-stat-lbl">Current zone</div><div class="cr-stat-val ac">$${f(newL)} – $${f(newH)}</div></div>
+      </div>
+      ${aboveRange?`<div class="recovery-bar-wrap">
+        <div class="recovery-bar-lbl"><span>Recovery likelihood</span><span style="color:${recovScore>=60?'var(--safe)':recovScore>=40?'var(--warn)':'var(--danger)'}">${recovScore}%</span></div>
+        <div class="recovery-bar-bg"><div class="recovery-bar-fill" style="width:${recovScore}%;background:${recovScore>=60?'var(--safe)':recovScore>=40?'var(--warn)':'var(--danger)'}"></div></div>
+      </div>`:''}
+    `;
+  } catch(e){
+    res.className='check-result bad'; res.style.display='block';
+    res.innerHTML=`<div class="cr-status">❌</div><div class="cr-headline">Could not find that coin</div><div class="cr-body">Make sure you typed the coin name correctly. Examples: BTC, ETH, SOL, BNB, ADA. Do not include USDT — just the coin name.</div>`;
+  }
+  btn.disabled=false; btn.innerHTML='Check My Position';
+}
+
+async function checkSafeToBuy(){
+  const coin=(document.getElementById('safeCoin').value||'').toUpperCase().trim().replace('USDT','');
+  const amount=parseFloat(document.getElementById('safeAmount').value);
+  if(!coin){showToast('⚠️ Please enter a coin name');return;}
+  const btn=document.getElementById('safeBtn');
+  btn.disabled=true; btn.innerHTML='<span class="spin"></span> Checking…';
+  const res=document.getElementById('safeResult');
+  res.className='safe-result'; res.style.display='none';
+  try {
+    const sym=coin+'USDT';
+    const [ticker,klines,depth]=await Promise.all([
+      fetch(`${API}/ticker/24hr?symbol=${sym}`).then(r=>r.json()),
+      fetch(`${API}/klines?symbol=${sym}&interval=4h&limit=50`).then(r=>r.json()),
+      fetch(`${API}/depth?symbol=${sym}&limit=20`).then(r=>r.json())
+    ]);
+    const cur=parseFloat(ticker.lastPrice);
+    const closes=klines.map(k=>+k[4]),highs=klines.map(k=>+k[2]),lows=klines.map(k=>+k[3]),vols=klines.map(k=>+k[5]);
+    const half=Math.floor(klines.length/2);
+    const oldH=Math.max(...highs.slice(0,half)),oldL=Math.min(...lows.slice(0,half));
+    const newH=Math.max(...highs.slice(half)),newL=Math.min(...lows.slice(half));
+    const r=rsi(closes),e20=ema(closes,20),e50=ema(closes,50);
+    const va=volAccel(vols),at=atr(klines),atrPct=(at/cur)*100;
+    let ob=0.5;
+    if(depth?.bids&&depth?.asks){const bv=depth.bids.slice(0,15).reduce((s,b)=>s+parseFloat(b[1]),0);const av=depth.asks.slice(0,15).reduce((s,a)=>s+parseFloat(a[1]),0);ob=bv/(bv+av);}
+    const midShift=((((newH+newL)/2)-((oldH+oldL)/2))/((oldH+oldL)/2))*100;
+    const trendUp=e20>e50;
+    const rangeStable=Math.abs(midShift)<1.5;
+    const nearBottom=((cur-newL)/(newH-newL||1))<0.25;
+    const nearTop   =((cur-newL)/(newH-newL||1))>0.75;
+
+    // Safety score
+    let safeScore=0;
+    if(trendUp)safeScore+=25;
+    if(ob>0.55)safeScore+=20;
+    if(r!==null&&r<50)safeScore+=20;
+    if(nearBottom)safeScore+=20;
+    if(va>5)safeScore+=10;
+    if(rangeStable)safeScore+=5;
+
+    const coinsYouGet=amount?`If you spend $${amount}, you would get approximately ${(amount/cur).toFixed(4)} ${coin}.`:'';
+    const worstCase=`If it drops to the bottom of its current zone ($${f(newL)}), that would be a drop of ${(((newL-cur)/cur)*100).toFixed(2)}%.`;
+
+    let cls,ico,headline,body;
+    if(safeScore>=65&&trendUp&&!nearTop){
+      cls='safe-result good'; ico='✅'; headline=`Looks like a reasonable time to buy ${coin}`;
+      body=`The price is currently at $${f(cur)}, which is in the lower part of its current zone. The trend is going up and more people are buying than selling. ${coinsYouGet} ${worstCase} This is not a guarantee — always only spend what you can afford to lose.`;
+    } else if(nearTop||(!trendUp&&safeScore<50)){
+      cls='safe-result bad'; ico='⛔'; headline=`Not the best time to buy ${coin} right now`;
+      body=`${nearTop?`The price ($${f(cur)}) is near the TOP of its current zone — this is where sellers tend to push it back down.`:`The short-term trend is pointing downward.`} ${coinsYouGet} Waiting for the price to come back down to the lower part of the zone would give you a better entry. ${worstCase}`;
+    } else {
+      cls='safe-result meh'; ico='⚠️'; headline=`Mixed signals on ${coin} — proceed with caution`;
+      body=`There is no clear strong signal either way right now. The price is at $${f(cur)} — in the middle of its zone. ${coinsYouGet} If you do buy, consider buying only a small portion of what you planned, and wait to see which direction it moves before buying more. ${worstCase}`;
+    }
+
+    res.className=cls; res.style.display='block';
+    res.innerHTML=`
+      <div class="cr-status">${ico}</div>
+      <div class="cr-headline">${headline}</div>
+      <div class="cr-body">${body}</div>
+      <div class="cr-stats">
+        <div class="cr-stat"><div class="cr-stat-lbl">Current price</div><div class="cr-stat-val">$${f(cur)}</div></div>
+        <div class="cr-stat"><div class="cr-stat-lbl">Current zone</div><div class="cr-stat-val ac">$${f(newL)} – $${f(newH)}</div></div>
+        <div class="cr-stat"><div class="cr-stat-lbl">Trend direction</div><div class="cr-stat-val ${trendUp?'up':'dn'}">${trendUp?'⬆️ Going up':'⬇️ Going down'}</div></div>
+        <div class="cr-stat"><div class="cr-stat-lbl">Buy safety score</div><div class="cr-stat-val" style="color:${safeScore>=65?'var(--safe)':safeScore>=45?'var(--warn)':'var(--danger)'}">${safeScore}/100</div></div>
+      </div>
+    `;
+  } catch(e){
+    res.className='safe-result bad'; res.style.display='block';
+    res.innerHTML=`<div class="cr-status">❌</div><div class="cr-headline">Could not find that coin</div><div class="cr-body">Check the coin name is correct. Examples: BTC, ETH, SOL, BNB, ADA. Just the coin name — no USDT needed.</div>`;
+  }
+  btn.disabled=false; btn.innerHTML='Check Before I Buy';
+}
+
+function renderProtectAlerts(){
+  const el=document.getElementById('wlAlerts');
+  if(watchlist.size===0||signals.length===0){el.innerHTML='';return;}
+  const alerts=signals.filter(s=>watchlist.has(s.sym));
+  if(alerts.length===0){el.innerHTML='';return;}
+  el.innerHTML=`<div style="font-size:13px;font-weight:700;margin-bottom:8px;">⭐ Alerts for your watchlist</div>`+
+  alerts.map(s=>{
+    const v=getVerdict(s);
+    return `<div class="wl-alert-card">
+      <div class="wla-top"><span class="wla-sym">${s.sym}/USDT</span><span class="wla-badge ${typeBadge[s.type]}">${typeLabel[s.type]}</span></div>
+      <div class="wla-body">${v.head}</div>
+      <div class="wla-time">Signal strength: ${s.score}/100</div>
+    </div>`;
+  }).join('');
+}
+
+// ══════════════════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════════════════
+load();
+</script>
+</body>
+</html>
