@@ -1,0 +1,1220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="RangeShift">
+<meta name="theme-color" content="#080a0f">
+<meta name="description" content="Crypto range shift alerts powered by live Binance data">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>RangeShift Pro</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap');
+
+:root {
+  --bg:      #080a0f;
+  --s1:      #0d1018;
+  --s2:      #131720;
+  --s3:      #191f2c;
+  --border:  #1c2333;
+  --text:    #dde2ef;
+  --muted:   #48556a;
+  --dim:     #2a3347;
+  --accent:  #5b8df0;
+  --green:   #1fd490;
+  --red:     #f0516b;
+  --yellow:  #f0c84f;
+  --orange:  #f09051;
+  --purple:  #a78bfa;
+  --r:       13px;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bot: env(safe-area-inset-bottom, 0px);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; user-select:none; }
+html, body { height:100%; overflow:hidden; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Space Grotesk', sans-serif;
+  display: flex;
+  flex-direction: column;
+  max-width: 430px;
+  margin: 0 auto;
+  position: relative;
+}
+
+/* ── INSTALL BANNER ── */
+#installBanner {
+  display: none;
+  background: linear-gradient(135deg, rgba(91,141,240,.18), rgba(167,139,250,.18));
+  border-bottom: 1px solid rgba(91,141,240,.25);
+  padding: calc(var(--safe-top) + 10px) 16px 10px;
+  align-items: center; gap: 10px; flex-shrink: 0;
+}
+#installBanner.show { display: flex; }
+.install-icon { font-size: 24px; flex-shrink: 0; }
+.install-text { flex: 1; font-size: 12px; line-height: 1.4; }
+.install-text strong { display: block; font-size: 13px; }
+.install-btn {
+  background: var(--accent); color: #fff; border: none;
+  border-radius: 8px; padding: 7px 13px; font-family: 'Space Grotesk', sans-serif;
+  font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap;
+}
+.install-close {
+  background: none; border: none; color: var(--muted);
+  font-size: 18px; cursor: pointer; padding: 4px; flex-shrink: 0;
+}
+
+/* ── STATUS BAR SPACER ── */
+.status-bar { height: var(--safe-top); background: var(--bg); flex-shrink: 0; }
+
+/* ── HEADER ── */
+.hdr {
+  background: rgba(8,10,15,0.97);
+  border-bottom: 1px solid var(--border);
+  padding: 12px 16px 0;
+  flex-shrink: 0;
+  position: relative; z-index: 50;
+}
+.hdr-row { display:flex; justify-content:space-between; align-items:center; }
+.logo { display:flex; align-items:center; gap:9px; }
+.logo-mark {
+  width:32px; height:32px; border-radius:9px;
+  background: linear-gradient(135deg,#3b6cf0,#8b5cf6);
+  display:flex; align-items:center; justify-content:center; font-size:16px;
+}
+.logo-name { font-size:17px; font-weight:700; letter-spacing:-.4px; }
+.logo-name em { color:var(--accent); font-style:normal; }
+.logo-sup {
+  font-size:8px; font-weight:700; letter-spacing:.8px;
+  background:linear-gradient(90deg,var(--accent),var(--purple));
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+  margin-left:2px; vertical-align:super;
+}
+.hdr-right { display:flex; align-items:center; gap:8px; }
+.notif-btn {
+  width:32px; height:32px; border-radius:50%; background:var(--s2);
+  border:1px solid var(--border); display:flex; align-items:center;
+  justify-content:center; font-size:14px; cursor:pointer;
+}
+.live-pill {
+  display:flex; align-items:center; gap:5px;
+  background:var(--s2); border:1px solid var(--border);
+  border-radius:20px; padding:4px 10px; font-size:11px; color:var(--muted);
+}
+.dot { width:6px; height:6px; border-radius:50%; background:var(--muted); }
+.dot.on { background:var(--green); box-shadow:0 0 6px var(--green); animation:blink 2s infinite; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.4} }
+.tabs {
+  display:flex; gap:2px; margin-top:10px; overflow-x:auto; scrollbar-width:none;
+  padding-bottom:0;
+}
+.tabs::-webkit-scrollbar { display:none; }
+.tab {
+  flex-shrink:0; padding:6px 13px; border-radius:8px 8px 0 0; border:none;
+  background:transparent; color:var(--muted); font-family:'Space Grotesk',sans-serif;
+  font-size:12px; font-weight:500; cursor:pointer;
+  border-bottom:2px solid transparent; transition:all .18s;
+}
+.tab.on { color:var(--text); border-bottom-color:var(--accent); }
+
+/* ── MAIN SCROLL ── */
+.main {
+  flex: 1; overflow-y: auto; overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+/* ── CONTROLS ── */
+.ctrl { display:flex; flex-wrap:wrap; gap:6px; padding:11px 15px 0; }
+.chip {
+  display:flex; align-items:center; gap:5px;
+  background:var(--s1); border:1px solid var(--border);
+  border-radius:8px; padding:5px 10px; font-size:11px; color:var(--muted);
+}
+.chip select, .chip input {
+  background:transparent; border:none; outline:none;
+  color:var(--text); font-family:'JetBrains Mono',monospace; font-size:11px; cursor:pointer;
+}
+.chip select { width:46px; }
+.chip input  { width:28px; text-align:center; }
+.auto-chip {
+  display:flex; align-items:center; gap:6px;
+  background:var(--s1); border:1px solid var(--border);
+  border-radius:8px; padding:5px 10px; font-size:11px; color:var(--muted); cursor:pointer;
+}
+.toggle {
+  width:28px; height:16px; border-radius:8px; background:var(--dim);
+  position:relative; transition:background .2s; flex-shrink:0;
+}
+.toggle.on { background:var(--accent); }
+.toggle::after {
+  content:''; position:absolute; top:2px; left:2px;
+  width:12px; height:12px; border-radius:50%; background:#fff;
+  transition:transform .2s;
+}
+.toggle.on::after { transform:translateX(12px); }
+.scan-btn {
+  background:linear-gradient(135deg,var(--accent),var(--purple));
+  border:none; color:#fff; font-family:'Space Grotesk',sans-serif;
+  font-size:12px; font-weight:600; border-radius:9px;
+  padding:6px 15px; cursor:pointer; white-space:nowrap;
+  transition:opacity .2s; margin-left:auto;
+}
+.scan-btn:disabled { opacity:.35; cursor:not-allowed; }
+
+/* ── PROGRESS ── */
+.prog { padding:8px 15px 0; display:none; }
+.prog.on { display:block; }
+.prog-lbl { display:flex; justify-content:space-between; font-size:10px; color:var(--muted); margin-bottom:4px; }
+.prog-track { height:3px; background:var(--s3); border-radius:2px; overflow:hidden; }
+.prog-fill { height:100%; background:linear-gradient(90deg,var(--accent),var(--purple)); transition:width .3s; border-radius:2px; }
+
+/* ── AUTO SCAN BADGE ── */
+.auto-badge {
+  margin:8px 15px 0; padding:8px 12px;
+  background:rgba(91,141,240,.08); border:1px solid rgba(91,141,240,.18);
+  border-radius:9px; font-size:11px; color:var(--accent);
+  display:none; align-items:center; gap:6px;
+}
+.auto-badge.on { display:flex; }
+
+/* ── SUMMARY ── */
+.sum { display:flex; gap:6px; padding:10px 15px 0; }
+.sum-c {
+  flex:1; background:var(--s1); border:1px solid var(--border);
+  border-radius:10px; padding:8px 8px; text-align:center;
+}
+.sum-n { font-size:20px; font-weight:700; font-family:'JetBrains Mono',monospace; }
+.sum-l { font-size:9px; color:var(--muted); margin-top:1px; }
+
+/* ── BANNER ── */
+.banner {
+  margin:9px 15px 0;
+  background:linear-gradient(135deg,rgba(91,141,240,.1),rgba(167,139,250,.1));
+  border:1px solid rgba(91,141,240,.2); border-radius:9px;
+  padding:9px 12px; display:none; align-items:center; gap:8px; font-size:12px;
+}
+.banner.on { display:flex; }
+.badge-count {
+  background:var(--accent); color:#fff; border-radius:6px;
+  padding:1px 8px; font-size:12px; font-weight:700;
+  font-family:'JetBrains Mono',monospace;
+}
+
+/* ── CARDS ── */
+.cards { padding:10px 15px 10px; display:flex; flex-direction:column; gap:9px; }
+.card {
+  background:var(--s1); border:1px solid var(--border);
+  border-radius:var(--r); overflow:hidden;
+}
+.card-accent { height:3px; }
+.card.dn .card-accent { background:var(--red); }
+.card.up .card-accent { background:var(--green); }
+.card.sq .card-accent { background:var(--yellow); }
+.card.ex .card-accent { background:var(--orange); }
+
+.card-body { padding:12px 14px; }
+.card-top { display:flex; justify-content:space-between; align-items:flex-start; }
+.coin { display:flex; align-items:center; gap:9px; }
+.coin-ico {
+  width:36px; height:36px; border-radius:50%;
+  background:var(--s2); border:1px solid var(--border);
+  display:flex; align-items:center; justify-content:center;
+  font-size:13px; font-weight:700; font-family:'JetBrains Mono',monospace; color:var(--accent);
+}
+.coin-sym { font-size:15px; font-weight:700; }
+.coin-sub { font-size:10px; color:var(--muted); margin-top:1px; }
+.card-actions { display:flex; align-items:center; gap:6px; }
+.watch-btn {
+  background:none; border:1px solid var(--border); color:var(--muted);
+  border-radius:6px; padding:4px 8px; font-size:11px; cursor:pointer;
+  font-family:'Space Grotesk',sans-serif; transition:all .2s;
+}
+.watch-btn.watching { border-color:var(--yellow); color:var(--yellow); }
+.sig-tag {
+  padding:3px 8px; border-radius:6px; font-size:10px;
+  font-weight:700; letter-spacing:.3px; text-transform:uppercase;
+}
+.tag-dn  { background:rgba(240,81,107,.14); color:var(--red); }
+.tag-up  { background:rgba(31,212,144,.14); color:var(--green); }
+.tag-sq  { background:rgba(240,200,79,.14); color:var(--yellow); }
+.tag-ex  { background:rgba(240,144,81,.14); color:var(--orange); }
+
+/* Confidence */
+.conf { margin:10px 0 8px; }
+.conf-row { display:flex; justify-content:space-between; align-items:center; margin-bottom:4px; }
+.conf-lbl { font-size:10px; color:var(--muted); }
+.conf-val { font-size:12px; font-weight:700; font-family:'JetBrains Mono',monospace; }
+.conf-track { height:7px; background:var(--s3); border-radius:4px; overflow:hidden; }
+.conf-fill { height:100%; border-radius:4px; transition:width .6s; }
+.lv-low  .conf-fill { background:var(--muted); }
+.lv-med  .conf-fill { background:var(--yellow); }
+.lv-high .conf-fill { background:linear-gradient(90deg,var(--green),var(--accent)); }
+.lv-crit .conf-fill { background:linear-gradient(90deg,var(--accent),var(--purple)); box-shadow:0 0 8px rgba(91,141,240,.5); }
+
+/* Pills */
+.pills { display:flex; flex-wrap:wrap; gap:4px; margin:8px 0; }
+.pill {
+  display:flex; align-items:center; gap:3px;
+  background:var(--s2); border:1px solid var(--border);
+  border-radius:5px; padding:3px 7px; font-size:10px; color:var(--muted);
+}
+.pill.g { border-color:rgba(31,212,144,.3); color:var(--green); background:rgba(31,212,144,.06); }
+.pill.w { border-color:rgba(240,200,79,.3);  color:var(--yellow); background:rgba(240,200,79,.06); }
+.pill.b { border-color:rgba(240,81,107,.3);  color:var(--red);    background:rgba(240,81,107,.06); }
+
+/* Range */
+.range-sec { margin:8px 0; }
+.rng-row { display:flex; align-items:center; gap:8px; margin-bottom:4px; }
+.rng-lbl { font-size:9px; color:var(--muted); width:24px; flex-shrink:0; }
+.rng-wrap { flex:1; }
+.rng-track { height:6px; background:var(--s3); border-radius:3px; position:relative; overflow:hidden; }
+.rng-bar { height:100%; border-radius:3px; position:absolute; }
+.rng-old { background:var(--dim); }
+.rng-new { background:linear-gradient(90deg,var(--accent),var(--purple)); }
+.rng-cur { position:absolute; top:-1px; width:2px; height:8px; background:#fff; border-radius:1px; z-index:2; }
+.rng-vals { display:flex; justify-content:space-between; font-size:9px; font-family:'JetBrains Mono',monospace; color:var(--muted); margin-top:2px; }
+
+/* OB bar */
+.ob-wrap { margin:8px 0 4px; }
+.ob-lbl { display:flex; justify-content:space-between; font-size:9px; margin-bottom:3px; }
+.ob-track { height:5px; background:var(--s3); border-radius:3px; overflow:hidden; display:flex; }
+.ob-bid { background:var(--green); transition:width .5s; }
+.ob-ask { background:var(--red); flex:1; }
+
+/* Grid */
+.grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:5px; margin-top:8px; }
+.gc { background:var(--s2); border-radius:7px; padding:7px 8px; }
+.gl { font-size:8px; color:var(--muted); margin-bottom:2px; text-transform:uppercase; letter-spacing:.3px; }
+.gv { font-size:12px; font-weight:600; font-family:'JetBrains Mono',monospace; }
+
+.card-ts { font-size:9px; color:var(--dim); margin-top:8px; }
+
+/* ── WATCHLIST VIEW ── */
+.watchlist-view { padding:12px 15px; }
+.wl-header { font-size:14px; font-weight:600; margin-bottom:10px; }
+.wl-empty { text-align:center; padding:40px 20px; color:var(--muted); font-size:13px; }
+.wl-item {
+  background:var(--s1); border:1px solid var(--border);
+  border-radius:10px; padding:12px 14px; margin-bottom:8px;
+  display:flex; justify-content:space-between; align-items:center;
+}
+.wl-sym { font-size:14px; font-weight:600; }
+.wl-price { font-size:12px; color:var(--muted); margin-top:2px; font-family:'JetBrains Mono',monospace; }
+.wl-remove { background:none; border:none; color:var(--red); font-size:18px; cursor:pointer; }
+
+/* ── SETTINGS VIEW ── */
+.settings-view { padding:12px 15px; }
+.settings-view h2 { font-size:14px; font-weight:600; margin-bottom:12px; }
+.setting-row {
+  background:var(--s1); border:1px solid var(--border);
+  border-radius:10px; padding:12px 14px; margin-bottom:8px;
+  display:flex; justify-content:space-between; align-items:center;
+}
+.setting-label { font-size:13px; }
+.setting-desc { font-size:11px; color:var(--muted); margin-top:2px; }
+.setting-ctrl select, .setting-ctrl input {
+  background:var(--s2); border:1px solid var(--border);
+  color:var(--text); border-radius:6px; padding:4px 8px;
+  font-family:'JetBrains Mono',monospace; font-size:12px; outline:none;
+}
+
+/* ── HISTORY VIEW ── */
+.history-view { padding:12px 15px; }
+.history-view h2 { font-size:14px; font-weight:600; margin-bottom:12px; }
+.hist-item {
+  background:var(--s1); border:1px solid var(--border);
+  border-radius:10px; padding:10px 14px; margin-bottom:7px;
+  display:flex; justify-content:space-between; align-items:center;
+}
+.hist-left .sym { font-size:13px; font-weight:600; }
+.hist-left .ts  { font-size:10px; color:var(--muted); margin-top:2px; }
+.hist-right { text-align:right; }
+.hist-conf { font-size:12px; font-weight:700; font-family:'JetBrains Mono',monospace; }
+.hist-type { font-size:10px; color:var(--muted); margin-top:2px; }
+
+/* ── EMPTY STATE ── */
+.empty { text-align:center; padding:50px 24px; display:flex; flex-direction:column; align-items:center; gap:9px; }
+.empty-ico { font-size:44px; }
+.empty-h { font-size:15px; font-weight:600; }
+.empty-p { font-size:12px; color:var(--muted); line-height:1.6; }
+
+/* ── BOTTOM NAV ── */
+.nav {
+  background:rgba(8,10,15,.97);
+  border-top:1px solid var(--border);
+  display:flex; padding:8px 8px calc(8px + var(--safe-bot));
+  gap:2px; flex-shrink:0;
+}
+.nb {
+  flex:1; display:flex; flex-direction:column; align-items:center; gap:2px;
+  background:none; border:none; cursor:pointer; color:var(--muted);
+  font-family:'Space Grotesk',sans-serif; font-size:10px; padding:4px;
+  border-radius:8px; transition:color .18s; position:relative;
+}
+.nb.on { color:var(--accent); }
+.nb svg { width:20px; height:20px; }
+.nb-badge {
+  position:absolute; top:2px; right:12px;
+  background:var(--red); color:#fff; border-radius:8px;
+  font-size:9px; font-weight:700; padding:1px 5px; display:none;
+}
+.nb-badge.on { display:block; }
+
+/* ── TOAST ── */
+.toast {
+  position:fixed; top:max(20px, calc(var(--safe-top) + 10px)); left:50%;
+  transform:translateX(-50%) translateY(-80px);
+  background:var(--s2); border:1px solid var(--border);
+  border-radius:10px; padding:9px 16px; font-size:12px;
+  box-shadow:0 8px 30px rgba(0,0,0,.7); z-index:999;
+  transition:transform .28s cubic-bezier(.34,1.56,.64,1); white-space:nowrap;
+}
+.toast.on { transform:translateX(-50%) translateY(0); }
+
+/* ── NOTIFICATION PERMISSION MODAL ── */
+.modal-overlay {
+  position:fixed; inset:0; background:rgba(0,0,0,.7); z-index:100;
+  display:none; align-items:flex-end; justify-content:center;
+}
+.modal-overlay.on { display:flex; }
+.modal {
+  background:var(--s1); border:1px solid var(--border);
+  border-radius:18px 18px 0 0; padding:24px 20px calc(24px + var(--safe-bot));
+  width:100%; max-width:430px;
+}
+.modal h3 { font-size:17px; font-weight:700; margin-bottom:6px; }
+.modal p  { font-size:13px; color:var(--muted); line-height:1.5; margin-bottom:18px; }
+.modal-btns { display:flex; gap:8px; }
+.modal-btn {
+  flex:1; padding:12px; border-radius:10px; border:none; font-family:'Space Grotesk',sans-serif;
+  font-size:14px; font-weight:600; cursor:pointer;
+}
+.modal-btn.prim { background:linear-gradient(135deg,var(--accent),var(--purple)); color:#fff; }
+.modal-btn.sec  { background:var(--s2); color:var(--muted); }
+
+/* helpers */
+.up  { color:var(--green); }
+.dn  { color:var(--red);   }
+.wa  { color:var(--yellow);}
+.or  { color:var(--orange);}
+.ac  { color:var(--accent);}
+.mu  { color:var(--muted); }
+.spin {
+  display:inline-block; width:12px; height:12px;
+  border:2px solid rgba(255,255,255,.2); border-top-color:#fff;
+  border-radius:50%; animation:rot .6s linear infinite;
+  margin-right:5px; vertical-align:middle;
+}
+@keyframes rot { to { transform:rotate(360deg); } }
+</style>
+</head>
+<body>
+
+<!-- Install Banner (shown on mobile browsers) -->
+<div id="installBanner">
+  <div class="install-icon">📲</div>
+  <div class="install-text">
+    <strong>Install RangeShift Pro</strong>
+    Add to home screen for real-time alerts & notifications
+  </div>
+  <button class="install-btn" id="installBtn">Install</button>
+  <button class="install-close" onclick="dismissInstall()">×</button>
+</div>
+
+<!-- Status bar spacer (iOS) -->
+<div class="status-bar"></div>
+
+<!-- Header -->
+<div class="hdr">
+  <div class="hdr-row">
+    <div class="logo">
+      <div class="logo-mark">📡</div>
+      <div class="logo-name">Range<em>Shift</em><span class="logo-sup">PRO</span></div>
+    </div>
+    <div class="hdr-right">
+      <button class="notif-btn" id="notifBtn" onclick="requestNotifications()" title="Enable alerts">🔔</button>
+      <div class="live-pill">
+        <div class="dot" id="dot"></div>
+        <span id="liveTxt">Idle</span>
+      </div>
+    </div>
+  </div>
+  <div class="tabs" id="tabs">
+    <button class="tab on"  data-tab="alerts"    onclick="goTab('alerts',this)">Alerts</button>
+    <button class="tab"     data-tab="watchlist" onclick="goTab('watchlist',this)">⭐ Watchlist</button>
+    <button class="tab"     data-tab="history"   onclick="goTab('history',this)">History</button>
+    <button class="tab"     data-tab="settings"  onclick="goTab('settings',this)">Settings</button>
+  </div>
+</div>
+
+<!-- Main scroll area -->
+<div class="main" id="main">
+
+  <!-- ══ ALERTS PAGE ══ -->
+  <div id="pg-alerts">
+    <!-- Controls -->
+    <div class="ctrl">
+      <div class="chip">⏱
+        <select id="itvl"><option value="15m">15m</option><option value="1h" selected>1h</option><option value="4h">4h</option><option value="1d">1d</option></select>
+      </div>
+      <div class="chip">📊
+        <select id="topN"><option value="40">40</option><option value="80" selected>80</option><option value="120">120</option></select>
+        pairs
+      </div>
+      <div class="chip">🎯
+        <input type="number" id="sens" value="1.5" min="0.5" max="5" step="0.5">%
+      </div>
+      <div class="auto-chip" onclick="toggleAuto()" id="autoChip">
+        <div class="toggle" id="autoToggle"></div>
+        Auto
+      </div>
+      <button class="scan-btn" id="scanBtn" onclick="scan()">🔍 Scan</button>
+    </div>
+
+    <!-- Progress -->
+    <div class="prog" id="prog">
+      <div class="prog-lbl"><span id="progLbl">Fetching…</span><span id="progPct">0%</span></div>
+      <div class="prog-track"><div class="prog-fill" id="progFill" style="width:0"></div></div>
+    </div>
+
+    <!-- Auto badge -->
+    <div class="auto-badge" id="autoBadge">
+      🔄 <span id="autoNext">Next scan in 5:00</span>
+    </div>
+
+    <!-- Filter tabs -->
+    <div class="tabs" style="padding:8px 15px 0; border-bottom:none;">
+      <button class="tab on" data-f="all" onclick="setFilter('all',this)">All</button>
+      <button class="tab" data-f="dn"  onclick="setFilter('dn',this)">Bearish ▾</button>
+      <button class="tab" data-f="up"  onclick="setFilter('up',this)">Bullish ▴</button>
+      <button class="tab" data-f="sq"  onclick="setFilter('sq',this)">Squeeze</button>
+      <button class="tab" data-f="ex"  onclick="setFilter('ex',this)">Expand</button>
+      <button class="tab" data-f="hi"  onclick="setFilter('hi',this)">★ Top</button>
+    </div>
+
+    <!-- Banner -->
+    <div class="banner" id="banner">
+      <span class="badge-count" id="bCount">0</span>
+      <span>signals · sorted by confidence</span>
+    </div>
+
+    <!-- Summary -->
+    <div class="sum" id="sum" style="display:none">
+      <div class="sum-c"><div class="sum-n dn" id="sD">0</div><div class="sum-l">Bearish</div></div>
+      <div class="sum-c"><div class="sum-n up" id="sU">0</div><div class="sum-l">Bullish</div></div>
+      <div class="sum-c"><div class="sum-n wa" id="sS">0</div><div class="sum-l">Squeeze</div></div>
+      <div class="sum-c"><div class="sum-n or" id="sE">0</div><div class="sum-l">Expand</div></div>
+    </div>
+
+    <div class="cards" id="cards">
+      <div class="empty">
+        <div class="empty-ico">📡</div>
+        <div class="empty-h">Ready to Scan</div>
+        <div class="empty-p">Tap <strong>Scan</strong> to detect range shifts.<br>Each alert is scored using RSI · ATR · EMA · Volume · Order Book · Candle Conviction.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ WATCHLIST PAGE ══ -->
+  <div id="pg-watchlist" style="display:none">
+    <div class="watchlist-view">
+      <div class="wl-header">⭐ My Watchlist</div>
+      <div id="wlContent"><div class="wl-empty">No coins added yet.<br>Tap ⭐ on any alert card to add it.</div></div>
+    </div>
+  </div>
+
+  <!-- ══ HISTORY PAGE ══ -->
+  <div id="pg-history" style="display:none">
+    <div class="history-view">
+      <h2>📜 Scan History</h2>
+      <div id="histContent"><div class="wl-empty">No history yet. Run your first scan.</div></div>
+    </div>
+  </div>
+
+  <!-- ══ SETTINGS PAGE ══ -->
+  <div id="pg-settings" style="display:none">
+    <div class="settings-view">
+      <h2>⚙️ Settings</h2>
+
+      <div class="setting-row">
+        <div>
+          <div class="setting-label">Auto-Scan Interval</div>
+          <div class="setting-desc">How often to re-scan automatically</div>
+        </div>
+        <div class="setting-ctrl">
+          <select id="autoInterval" onchange="saveSettings()">
+            <option value="2">2 min</option>
+            <option value="5" selected>5 min</option>
+            <option value="10">10 min</option>
+            <option value="15">15 min</option>
+            <option value="30">30 min</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="setting-row">
+        <div>
+          <div class="setting-label">Min Confidence Alert</div>
+          <div class="setting-desc">Only notify for scores above this</div>
+        </div>
+        <div class="setting-ctrl">
+          <select id="minConf" onchange="saveSettings()">
+            <option value="50">50+</option>
+            <option value="60">60+</option>
+            <option value="70" selected>70+</option>
+            <option value="80">80+</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="setting-row">
+        <div>
+          <div class="setting-label">Sound Alerts</div>
+          <div class="setting-desc">Play sound on high-confidence signal</div>
+        </div>
+        <div class="setting-ctrl">
+          <div class="toggle" id="soundToggle" onclick="this.classList.toggle('on'); saveSettings()"></div>
+        </div>
+      </div>
+
+      <div class="setting-row">
+        <div>
+          <div class="setting-label">Min Volume Filter</div>
+          <div class="setting-desc">Only scan pairs above this 24h volume</div>
+        </div>
+        <div class="setting-ctrl">
+          <select id="minVol" onchange="saveSettings()">
+            <option value="1000000">$1M</option>
+            <option value="5000000" selected>$5M</option>
+            <option value="10000000">$10M</option>
+            <option value="50000000">$50M</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="setting-row" style="cursor:pointer" onclick="clearHistory()">
+        <div>
+          <div class="setting-label" style="color:var(--red)">Clear History</div>
+          <div class="setting-desc">Remove all saved scan history</div>
+        </div>
+        <span style="color:var(--muted)">›</span>
+      </div>
+
+      <div class="setting-row" style="cursor:pointer" onclick="clearWatchlist()">
+        <div>
+          <div class="setting-label" style="color:var(--red)">Clear Watchlist</div>
+          <div class="setting-desc">Remove all watched coins</div>
+        </div>
+        <span style="color:var(--muted)">›</span>
+      </div>
+
+      <div style="margin-top:20px; text-align:center; font-size:11px; color:var(--muted);">
+        RangeShift Pro v2.0 · Binance Public API<br>
+        Not financial advice · DYOR
+      </div>
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+<!-- Bottom Nav -->
+<div class="nav">
+  <button class="nb on" id="nb-alerts" onclick="goTab('alerts', document.querySelector('[data-tab=alerts]'))">
+    <div class="nb-badge" id="alertBadge"></div>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+    Alerts
+  </button>
+  <button class="nb" id="nb-watchlist" onclick="goTab('watchlist', document.querySelector('[data-tab=watchlist]'))">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+    Watchlist
+  </button>
+  <button class="nb" id="nb-history" onclick="goTab('history', document.querySelector('[data-tab=history]'))">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+    History
+  </button>
+  <button class="nb" id="nb-settings" onclick="goTab('settings', document.querySelector('[data-tab=settings]'))">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+    Settings
+  </button>
+</div>
+
+<!-- Notification modal -->
+<div class="modal-overlay" id="notifModal">
+  <div class="modal">
+    <h3>🔔 Enable Alerts</h3>
+    <p>Get notified instantly when a high-confidence range shift is detected, even when the app is in the background.</p>
+    <div class="modal-btns">
+      <button class="modal-btn sec" onclick="closeModal()">Not now</button>
+      <button class="modal-btn prim" onclick="enableNotifications()">Enable Alerts</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+// CONSTANTS & STATE
+// ═══════════════════════════════════════════════════════════
+const BASE = 'https://api.binance.com/api/v3';
+let signals = [], watchlist = new Set(), scanHistory = [];
+let activeFilter = 'all', currentPage = 'alerts';
+let autoScanTimer = null, autoScanEnabled = false, autoCountdown = 0;
+let settings = { autoInterval: 5, minConf: 70, sound: false, minVol: 5000000 };
+let deferredInstall = null;
+
+// ═══════════════════════════════════════════════════════════
+// PWA: INSTALL PROMPT
+// ═══════════════════════════════════════════════════════════
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredInstall = e;
+  const dismissed = localStorage.getItem('installDismissed');
+  if (!dismissed) document.getElementById('installBanner').classList.add('show');
+});
+
+document.getElementById('installBtn').onclick = async () => {
+  if (!deferredInstall) return;
+  deferredInstall.prompt();
+  const { outcome } = await deferredInstall.userChoice;
+  if (outcome === 'accepted') toast_('✅ App installed!');
+  deferredInstall = null;
+  document.getElementById('installBanner').classList.remove('show');
+};
+
+function dismissInstall() {
+  localStorage.setItem('installDismissed', '1');
+  document.getElementById('installBanner').classList.remove('show');
+}
+
+window.addEventListener('appinstalled', () => {
+  document.getElementById('installBanner').classList.remove('show');
+  toast_('🎉 RangeShift Pro installed!');
+});
+
+// ═══════════════════════════════════════════════════════════
+// SERVICE WORKER
+// ═══════════════════════════════════════════════════════════
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./sw.js').then(reg => {
+    console.log('SW registered:', reg.scope);
+  }).catch(console.error);
+
+  navigator.serviceWorker.addEventListener('message', e => {
+    if (e.data?.type === 'BG_SCAN') scan();
+  });
+}
+
+// ═══════════════════════════════════════════════════════════
+// NOTIFICATIONS
+// ═══════════════════════════════════════════════════════════
+function requestNotifications() {
+  if (!('Notification' in window)) { toast_('⚠️ Notifications not supported'); return; }
+  if (Notification.permission === 'granted') { toast_('✅ Notifications already enabled'); return; }
+  document.getElementById('notifModal').classList.add('on');
+}
+function closeModal() { document.getElementById('notifModal').classList.remove('on'); }
+async function enableNotifications() {
+  closeModal();
+  const perm = await Notification.requestPermission();
+  if (perm === 'granted') {
+    document.getElementById('notifBtn').textContent = '🔔';
+    toast_('✅ Alerts enabled!');
+  } else {
+    toast_('⚠️ Permission denied — enable in browser settings');
+  }
+}
+function notify(title, body) {
+  if (Notification.permission !== 'granted') return;
+  try { new Notification(title, { body, icon: './icon-192.png', badge: './icon-192.png', vibrate: [200,100,200] }); }
+  catch(e) { console.warn('Notification failed:', e); }
+}
+
+// ═══════════════════════════════════════════════════════════
+// PERSISTENCE
+// ═══════════════════════════════════════════════════════════
+function loadData() {
+  try {
+    const wl = localStorage.getItem('watchlist');
+    if (wl) watchlist = new Set(JSON.parse(wl));
+    const h = localStorage.getItem('history');
+    if (h) scanHistory = JSON.parse(h);
+    const s = localStorage.getItem('settings');
+    if (s) settings = { ...settings, ...JSON.parse(s) };
+    applySettings();
+  } catch(e) {}
+}
+function saveWatchlist() { localStorage.setItem('watchlist', JSON.stringify([...watchlist])); }
+function saveHistory()   { localStorage.setItem('history', JSON.stringify(scanHistory.slice(0,200))); }
+function saveSettings()  {
+  settings.autoInterval = parseInt(document.getElementById('autoInterval').value);
+  settings.minConf      = parseInt(document.getElementById('minConf').value);
+  settings.minVol       = parseInt(document.getElementById('minVol').value);
+  settings.sound        = document.getElementById('soundToggle').classList.contains('on');
+  localStorage.setItem('settings', JSON.stringify(settings));
+  toast_('Settings saved');
+}
+function applySettings() {
+  document.getElementById('autoInterval').value = settings.autoInterval;
+  document.getElementById('minConf').value      = settings.minConf;
+  document.getElementById('minVol').value       = settings.minVol;
+  if (settings.sound) document.getElementById('soundToggle').classList.add('on');
+}
+function clearHistory()   { scanHistory = []; saveHistory(); renderHistory(); toast_('History cleared'); }
+function clearWatchlist() { watchlist.clear(); saveWatchlist(); renderWatchlist(); toast_('Watchlist cleared'); }
+
+// ═══════════════════════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════════════════════
+function goTab(page, el) {
+  currentPage = page;
+  document.querySelectorAll('#tabs .tab').forEach(b => b.classList.remove('on'));
+  if (el) el.classList.add('on');
+  document.querySelectorAll('.nb').forEach(b => b.classList.remove('on'));
+  const nb = document.getElementById('nb-' + page);
+  if (nb) nb.classList.add('on');
+  ['alerts','watchlist','history','settings'].forEach(p => {
+    document.getElementById('pg-' + p).style.display = p === page ? 'block' : 'none';
+  });
+  if (page === 'watchlist') renderWatchlist();
+  if (page === 'history')   renderHistory();
+  document.getElementById('main').scrollTop = 0;
+}
+
+// ═══════════════════════════════════════════════════════════
+// UI HELPERS
+// ═══════════════════════════════════════════════════════════
+function toast_(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('on');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.remove('on'), 2700);
+}
+function setLive(on, txt) {
+  document.getElementById('dot').className = 'dot' + (on ? ' on' : '');
+  document.getElementById('liveTxt').textContent = txt;
+}
+function setProgress(pct, lbl) {
+  document.getElementById('progFill').style.width = pct + '%';
+  document.getElementById('progPct').textContent = Math.round(pct) + '%';
+  if (lbl) document.getElementById('progLbl').textContent = lbl;
+}
+function setFilter(f, el) {
+  activeFilter = f;
+  document.querySelectorAll('[data-f]').forEach(b => b.classList.remove('on'));
+  el.classList.add('on');
+  renderCards();
+}
+function fmt(n) { return n >= 10 ? n.toFixed(2) : n >= 1 ? n.toFixed(3) : n < 0.0001 ? n.toFixed(6) : n.toFixed(4); }
+function pct(n) { return (n >= 0 ? '+' : '') + n.toFixed(2) + '%'; }
+function volFmt(v) { return v >= 1e9 ? (v/1e9).toFixed(1)+'B' : v >= 1e6 ? (v/1e6).toFixed(1)+'M' : (v/1e3).toFixed(0)+'K'; }
+
+// ═══════════════════════════════════════════════════════════
+// AUTO SCAN
+// ═══════════════════════════════════════════════════════════
+function toggleAuto() {
+  autoScanEnabled = !autoScanEnabled;
+  const tog = document.getElementById('autoToggle');
+  const badge = document.getElementById('autoBadge');
+  if (autoScanEnabled) {
+    tog.classList.add('on');
+    badge.classList.add('on');
+    startAutoTimer();
+    toast_('🔄 Auto-scan ON');
+  } else {
+    tog.classList.remove('on');
+    badge.classList.remove('on');
+    clearInterval(autoScanTimer);
+    toast_('Auto-scan OFF');
+  }
+}
+
+function startAutoTimer() {
+  clearInterval(autoScanTimer);
+  autoCountdown = settings.autoInterval * 60;
+  autoScanTimer = setInterval(() => {
+    autoCountdown--;
+    const m = Math.floor(autoCountdown/60), s = autoCountdown%60;
+    document.getElementById('autoNext').textContent = `Next scan in ${m}:${String(s).padStart(2,'0')}`;
+    if (autoCountdown <= 0) {
+      autoCountdown = settings.autoInterval * 60;
+      scan();
+    }
+  }, 1000);
+}
+
+// ═══════════════════════════════════════════════════════════
+// INDICATORS
+// ═══════════════════════════════════════════════════════════
+function calcRSI(closes, p=14) {
+  if (closes.length < p+1) return null;
+  let g=0, l=0;
+  for (let i=closes.length-p; i<closes.length; i++) {
+    const d = closes[i]-closes[i-1];
+    if (d>0) g+=d; else l-=d;
+  }
+  const ag=g/p, al=l/p;
+  return al===0 ? 100 : 100-100/(1+ag/al);
+}
+function calcEMA(closes, p) {
+  const k=2/(p+1); let e=closes[0];
+  for (let i=1; i<closes.length; i++) e=closes[i]*k+e*(1-k);
+  return e;
+}
+function calcATR(klines, p=14) {
+  const trs=[];
+  for (let i=1; i<klines.length; i++) {
+    const h=parseFloat(klines[i][2]),l=parseFloat(klines[i][3]),pc=parseFloat(klines[i-1][4]);
+    trs.push(Math.max(h-l,Math.abs(h-pc),Math.abs(l-pc)));
+  }
+  return trs.slice(-p).reduce((a,b)=>a+b,0)/Math.min(trs.length,p);
+}
+function calcConviction(klines, n=5) {
+  let bull=0, bear=0;
+  for (const k of klines.slice(-n)) {
+    const o=parseFloat(k[1]),c=parseFloat(k[4]);
+    if(c>o) bull++; else if(c<o) bear++;
+  }
+  return {bull, bear, net:bull-bear};
+}
+function volAccel(vols) {
+  const h=Math.floor(vols.length/2);
+  const oa=vols.slice(0,h).reduce((a,b)=>a+b,0)/h;
+  const na=vols.slice(h).reduce((a,b)=>a+b,0)/h;
+  return ((na-oa)/oa)*100;
+}
+
+// ═══════════════════════════════════════════════════════════
+// CONFIDENCE SCORE
+// ═══════════════════════════════════════════════════════════
+function scoreSignal(s, type) {
+  let sc=0;
+  sc += Math.min(20, Math.abs(s.midShiftPct)*3);
+  const r=s.rsi;
+  if (r!==null) {
+    if (type==='dn') sc += r>65?20:r>50?10:r<40?5:0;
+    else if (type==='up') sc += r<35?20:r<50?10:r>60?5:0;
+    else sc += Math.abs(r-50)<10?18:8;
+  }
+  if (type==='dn'&&s.ema20<s.ema50) sc+=20;
+  else if (type==='up'&&s.ema20>s.ema50) sc+=20;
+  else sc+=5;
+  const va=s.volAccel;
+  sc += va>30?20:va>10?13:va>0?7:2;
+  const ob=s.obRatio;
+  if (type==='up'&&ob>0.6) sc+=10;
+  else if (type==='dn'&&ob<0.4) sc+=10;
+  else sc+=Math.round(5*(1-Math.abs(ob-0.5)*2));
+  const c=s.conviction.net;
+  if (type==='dn'&&c<-2) sc+=10;
+  else if (type==='up'&&c>2) sc+=10;
+  else sc+=Math.max(0,5-Math.abs(c));
+  if (s.atrPct>1.5) sc+=5;
+  return Math.min(100,Math.round(sc));
+}
+
+// ═══════════════════════════════════════════════════════════
+// RANGE ANALYSIS
+// ═══════════════════════════════════════════════════════════
+function analyzeRange(klines, depth, thresh) {
+  if (klines.length<24) return null;
+  const highs  = klines.map(k=>parseFloat(k[2]));
+  const lows   = klines.map(k=>parseFloat(k[3]));
+  const closes = klines.map(k=>parseFloat(k[4]));
+  const vols   = klines.map(k=>parseFloat(k[5]));
+  const half   = Math.floor(klines.length/2);
+  const oldH=Math.max(...highs.slice(0,half)), oldL=Math.min(...lows.slice(0,half));
+  const newH=Math.max(...highs.slice(half)),   newL=Math.min(...lows.slice(half));
+  const oldMid=(oldH+oldL)/2, newMid=(newH+newL)/2;
+  const oldSprd=oldH-oldL, newSprd=newH-newL;
+  const midShiftPct    = ((newMid-oldMid)/oldMid)*100;
+  const spreadChangePct= oldSprd>0?((newSprd-oldSprd)/oldSprd)*100:0;
+  const curPrice=closes[closes.length-1];
+  const ch24h=((curPrice-closes[0])/closes[0])*100;
+  const rsi=calcRSI(closes);
+  const ema20=calcEMA(closes,20), ema50=calcEMA(closes,50);
+  const atr=calcATR(klines), atrPct=(atr/curPrice)*100;
+  const va=volAccel(vols);
+  const conv=calcConviction(klines,5);
+  let obRatio=0.5;
+  if (depth?.bids&&depth?.asks) {
+    const bv=depth.bids.slice(0,15).reduce((s,b)=>s+parseFloat(b[1]),0);
+    const av=depth.asks.slice(0,15).reduce((s,a)=>s+parseFloat(a[1]),0);
+    obRatio=bv/(bv+av);
+  }
+  const pctToH=newSprd>0?((newH-curPrice)/newSprd)*100:50;
+  const pctToL=newSprd>0?((curPrice-newL)/newSprd)*100:50;
+  const nearBoundary=pctToH<12||pctToL<12;
+  let type=null;
+  if      (midShiftPct<-thresh&&Math.abs(spreadChangePct)<25) type='dn';
+  else if (midShiftPct>thresh&&Math.abs(spreadChangePct)<25)  type='up';
+  else if (spreadChangePct<-(thresh*3))                        type='sq';
+  else if (spreadChangePct>(thresh*3)&&nearBoundary)           type='ex';
+  if (!type) return null;
+  const sig={type,oldH,oldL,newH,newL,midShiftPct,spreadChangePct,curPrice,ch24h,rsi,ema20,ema50,atrPct,volAccel:va,conviction:conv,obRatio,nearBoundary,pctToH,pctToL,emaCross:ema20>ema50?'bullish':'bearish'};
+  sig.confidence=scoreSignal(sig,type);
+  return sig;
+}
+
+// ═══════════════════════════════════════════════════════════
+// SCAN
+// ═══════════════════════════════════════════════════════════
+async function scan() {
+  const btn=document.getElementById('scanBtn');
+  const itvl=document.getElementById('itvl').value;
+  const topN=parseInt(document.getElementById('topN').value);
+  const sens=parseFloat(document.getElementById('sens').value)||1.5;
+  const minVol=settings.minVol;
+
+  btn.disabled=true;
+  btn.innerHTML='<span class="spin"></span>Scanning…';
+  setLive(true,'Scanning');
+  document.getElementById('prog').classList.add('on');
+  document.getElementById('banner').classList.remove('on');
+  document.getElementById('sum').style.display='none';
+  signals=[];
+
+  try {
+    setProgress(2,'Fetching top USDT pairs…');
+    const ticker=await fetch(`${BASE}/ticker/24hr`).then(r=>r.json());
+    const pairs=ticker
+      .filter(d=>d.symbol.endsWith('USDT')&&parseFloat(d.quoteVolume)>minVol)
+      .sort((a,b)=>parseFloat(b.quoteVolume)-parseFloat(a.quoteVolume))
+      .slice(0,topN);
+
+    for (let i=0;i<pairs.length;i++) {
+      const p=pairs[i];
+      setProgress(5+(i/pairs.length)*90,`${p.symbol} (${i+1}/${pairs.length})…`);
+      try {
+        const [klines,depth]=await Promise.all([
+          fetch(`${BASE}/klines?symbol=${p.symbol}&interval=${itvl}&limit=50`).then(r=>r.json()),
+          fetch(`${BASE}/depth?symbol=${p.symbol}&limit=20`).then(r=>r.json())
+        ]);
+        const result=analyzeRange(klines,depth,sens);
+        if (result) {
+          const sym=p.symbol.replace('USDT','');
+          signals.push({symbol:sym,fullSym:p.symbol,quoteVol:parseFloat(p.quoteVolume),...result});
+          // Add to history
+          scanHistory.unshift({sym,type:result.type,confidence:result.confidence,ts:Date.now()});
+        }
+      } catch(e) {}
+      if (i%8===7) await new Promise(r=>setTimeout(r,100));
+    }
+
+    setProgress(100,'Done!');
+    setTimeout(()=>document.getElementById('prog').classList.remove('on'),800);
+    signals.sort((a,b)=>b.confidence-a.confidence);
+    saveHistory();
+
+    // Notifications for high-confidence signals
+    const highConf=signals.filter(s=>s.confidence>=settings.minConf);
+    if (highConf.length>0) {
+      notify('📡 RangeShift Pro',`${highConf.length} high-confidence signal${highConf.length>1?'s':''} detected`);
+      document.getElementById('alertBadge').textContent=highConf.length;
+      document.getElementById('alertBadge').classList.add('on');
+    }
+
+    setLive(true,`${signals.length} signals`);
+    updateSummary();
+    renderCards();
+
+    if (signals.length>0) {
+      document.getElementById('banner').classList.add('on');
+      document.getElementById('bCount').textContent=signals.length;
+      document.getElementById('sum').style.display='flex';
+      toast_(`✅ ${signals.length} signals found`);
+      if (autoScanEnabled) startAutoTimer();
+    } else {
+      toast_('No signals. Try lowering sensitivity.');
+    }
+  } catch(err) {
+    toast_('⚠️ Network error');
+    setLive(false,'Error');
+    document.getElementById('prog').classList.remove('on');
+    console.error(err);
+  }
+
+  btn.disabled=false;
+  btn.innerHTML='🔍 Scan';
+}
+
+// ═══════════════════════════════════════════════════════════
+// RENDER ALERTS
+// ═══════════════════════════════════════════════════════════
+function updateSummary() {
+  document.getElementById('sD').textContent=signals.filter(s=>s.type==='dn').length;
+  document.getElementById('sU').textContent=signals.filter(s=>s.type==='up').length;
+  document.getElementById('sS').textContent=signals.filter(s=>s.type==='sq').length;
+  document.getElementById('sE').textContent=signals.filter(s=>s.type==='ex').length;
+}
+
+function renderCards() {
+  const c=document.getElementById('cards');
+  let list=signals;
+  if (activeFilter==='dn') list=signals.filter(s=>s.type==='dn');
+  else if (activeFilter==='up') list=signals.filter(s=>s.type==='up');
+  else if (activeFilter==='sq') list=signals.filter(s=>s.type==='sq');
+  else if (activeFilter==='ex') list=signals.filter(s=>s.type==='ex');
+  else if (activeFilter==='hi') list=signals.filter(s=>s.confidence>=70);
+
+  if (signals.length===0) {
+    c.innerHTML=`<div class="empty"><div class="empty-ico">📡</div><div class="empty-h">Ready to Scan</div><div class="empty-p">Tap <strong>Scan</strong> to detect range shifts.<br>Scored using RSI · ATR · EMA · Volume · Order Book · Conviction.</div></div>`;
+    return;
+  }
+  if (list.length===0) {
+    c.innerHTML=`<div class="empty"><div class="empty-ico">🔍</div><div class="empty-h">No signals in this filter</div><div class="empty-p">Switch to "All" to see everything.</div></div>`;
+    return;
+  }
+  c.innerHTML=list.map(buildCard).join('');
+}
+
+function confClass(s) { return s>=80?'lv-crit':s>=60?'lv-high':s>=35?'lv-med':'lv-low'; }
+function confColor(s) { return s>=80?'var(--purple)':s>=60?'var(--green)':s>=35?'var(--yellow)':'var(--muted)'; }
+const typeLabel={dn:'Range Down',up:'Range Up',sq:'Squeezing',ex:'Expanding'};
+const typeTag  ={dn:'tag-dn',up:'tag-up',sq:'tag-sq',ex:'tag-ex'};
+
+function buildCard(s) {
+  const abbr=s.symbol.slice(0,3);
+  const ts=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+  const isWatching=watchlist.has(s.symbol);
+  const minP=Math.min(s.oldL,s.newL),maxP=Math.max(s.oldH,s.newH),span=maxP-minP||1;
+  const oL=((s.oldL-minP)/span*100).toFixed(1),oW=((s.oldH-s.oldL)/span*100).toFixed(1);
+  const nL=((s.newL-minP)/span*100).toFixed(1),nW=((s.newH-s.newL)/span*100).toFixed(1);
+  const cp=((s.curPrice-minP)/span*100).toFixed(1);
+  const rsiTxt=s.rsi!==null?s.rsi.toFixed(1):'N/A';
+  const rsiCls=s.rsi===null?'':s.rsi>65?'b':s.rsi<35?'g':'';
+  const rsiNote=s.rsi===null?'':s.rsi>70?' OB':s.rsi<30?' OS':s.rsi>55?' high':s.rsi<45?' low':' mid';
+  const emaCls=s.emaCross==='bullish'?'g':'b';
+  const vaCls=s.volAccel>20?'g':s.volAccel>0?'':'b';
+  const convCls=s.conviction.net>1?'g':s.conviction.net<-1?'b':'';
+  const atrCls=s.atrPct>2?'w':'';
+  const bidPct=(s.obRatio*100).toFixed(0),askPct=(100-s.obRatio*100).toFixed(0);
+  const obCls=s.obRatio>0.6?'g':s.obRatio<0.4?'b':'';
+  const bnd=s.nearBoundary?`<div class="pill w">⚡ Near boundary</div>`:'';
+  const pVsE20=((s.curPrice-s.ema20)/s.ema20*100).toFixed(2);
+  const pVsE50=((s.curPrice-s.ema50)/s.ema50*100).toFixed(2);
+
+  return `<div class="card ${s.type}">
+  <div class="card-accent"></div>
+  <div class="card-body">
+    <div class="card-top">
+      <div class="coin">
+        <div class="coin-ico">${abbr}</div>
+        <div><div class="coin-sym">${s.symbol}/USDT</div><div class="coin-sub">$${fmt(s.curPrice)} · $${volFmt(s.quoteVol)}</div></div>
+      </div>
+      <div class="card-actions">
+        <button class="watch-btn ${isWatching?'watching':''}" onclick="toggleWatch('${s.symbol}',this)">${isWatching?'⭐':'☆'}</button>
+        <div class="sig-tag ${typeTag[s.type]}">${typeLabel[s.type]}</div>
+      </div>
+    </div>
+    <div class="conf ${confClass(s.confidence)}">
+      <div class="conf-row"><span class="conf-lbl">Confidence</span><span class="conf-val" style="color:${confColor(s.confidence)}">${s.confidence}/100</span></div>
+      <div class="conf-track"><div class="conf-fill" style="width:${s.confidence}%"></div></div>
+    </div>
+    <div class="pills">
+      <div class="pill ${rsiCls}">RSI ${rsiTxt}${rsiNote}</div>
+      <div class="pill ${emaCls}">EMA ${s.emaCross}</div>
+      <div class="pill ${vaCls}">Vol ${pct(s.volAccel)}</div>
+      <div class="pill ${convCls}">${s.conviction.bull}↑${s.conviction.bear}↓ conv</div>
+      <div class="pill ${atrCls}">ATR ${s.atrPct.toFixed(2)}%</div>
+      <div class="pill ${obCls}">OB ${bidPct}% bid</div>
+      ${bnd}
+    </div>
+    <div class="range-sec">
+      <div class="rng-row">
+        <div class="rng-lbl mu">Old</div>
+        <div class="rng-wrap">
+          <div class="rng-track"><div class="rng-bar rng-old" style="left:${oL}%;width:${oW}%"></div></div>
+          <div class="rng-vals"><span>${fmt(s.oldL)}</span><span>${fmt(s.oldH)}</span></div>
+        </div>
+      </div>
+      <div class="rng-row">
+        <div class="rng-lbl ac">New</div>
+        <div class="rng-wrap">
+          <div class="rng-track">
+            <div class="rng-bar rng-new" style="left:${nL}%;width:${nW}%"></div>
+            <div class="rng-cur" style="left:${cp}%"></div>
+          </div>
+          <div class="rng-vals"><span>${fmt(s.newL)}</span><span>${fmt(s.newH)}</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="ob-wrap">
+      <div class="ob-lbl"><span class="up">Bids ${bidPct}%</span><span class="dn">Asks ${askPct}%</span></div>
+      <div class="ob-track"><div class="ob-bid" style="width:${bidPct}%"></div><div class="ob-ask"></div></div>
+    </div>
+    <div class="grid">
+      <div class="gc"><div class="gl">24h Chg</div><div class="gv ${s.ch24h>=0?'up':'dn'}">${pct(s.ch24h)}</div></div>
+      <div class="gc"><div class="gl">Range Δ</div><div class="gv ${s.midShiftPct>=0?'up':'dn'}">${pct(s.midShiftPct)}</div></div>
+      <div class="gc"><div class="gl">Spread Δ</div><div class="gv ${s.spreadChangePct<0?'wa':'or'}">${pct(s.spreadChangePct)}</div></div>
+      <div class="gc"><div class="gl">vs EMA20</div><div class="gv ${parseFloat(pVsE20)>=0?'up':'dn'}">${pVsE20}%</div></div>
+      <div class="gc"><div class="gl">vs EMA50</div><div class="gv ${parseFloat(pVsE50)>=0?'up':'dn'}">${pVsE50}%</div></div>
+      <div class="gc"><div class="gl">ATR%</div><div class="gv ${s.atrPct>2?'wa':'mu'}">${s.atrPct.toFixed(2)}%</div></div>
+    </div>
+    <div class="card-ts">📍 Detected at ${ts}</div>
+  </div>
+</div>`;
+}
+
+// ═══════════════════════════════════════════════════════════
+// WATCHLIST
+// ═══════════════════════════════════════════════════════════
+function toggleWatch(sym, btn) {
+  if (watchlist.has(sym)) {
+    watchlist.delete(sym);
+    btn.textContent='☆'; btn.classList.remove('watching');
+    toast_(`Removed ${sym} from watchlist`);
+  } else {
+    watchlist.add(sym);
+    btn.textContent='⭐'; btn.classList.add('watching');
+    toast_(`Added ${sym} to watchlist ⭐`);
+  }
+  saveWatchlist();
+}
+
+function renderWatchlist() {
+  const el=document.getElementById('wlContent');
+  if (watchlist.size===0) { el.innerHTML='<div class="wl-empty">No coins added yet.<br>Tap ☆ on any alert card to add it.</div>'; return; }
+  el.innerHTML=[...watchlist].map(sym=>`
+    <div class="wl-item">
+      <div><div class="wl-sym">${sym}/USDT</div><div class="wl-price">Watching for range shifts</div></div>
+      <button class="wl-remove" onclick="removeWatch('${sym}')">×</button>
+    </div>`).join('');
+}
+function removeWatch(sym) { watchlist.delete(sym); saveWatchlist(); renderWatchlist(); toast_(`Removed ${sym}`); }
+
+// ═══════════════════════════════════════════════════════════
+// HISTORY
+// ═══════════════════════════════════════════════════════════
+function renderHistory() {
+  const el=document.getElementById('histContent');
+  if (scanHistory.length===0) { el.innerHTML='<div class="wl-empty">No history yet. Run your first scan.</div>'; return; }
+  el.innerHTML=scanHistory.slice(0,50).map(h=>`
+    <div class="hist-item">
+      <div class="hist-left">
+        <div class="sym">${h.sym}/USDT</div>
+        <div class="ts">${new Date(h.ts).toLocaleString([],{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})}</div>
+      </div>
+      <div class="hist-right">
+        <div class="hist-conf" style="color:${h.confidence>=70?'var(--green)':h.confidence>=40?'var(--yellow)':'var(--muted)'}">${h.confidence}/100</div>
+        <div class="hist-type">${typeLabel[h.type]||h.type}</div>
+      </div>
+    </div>`).join('');
+}
+
+// ═══════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════
+loadData();
+</script>
+</body>
+</html>
