@@ -591,7 +591,7 @@ body {
       <div class="scan-controls">
         <div class="sctrl">
           <label>Look back</label>
-          <select id="itvl">
+          <select id="itvl" onchange="saveSettings()">
             <option value="15m">15 min</option>
             <option value="1h" selected>1 hour</option>
             <option value="4h">4 hours</option>
@@ -600,7 +600,7 @@ body {
         </div>
         <div class="sctrl">
           <label>Coins to check</label>
-          <select id="topN">
+          <select id="topN" onchange="saveSettings()">
             <option value="40">40</option>
             <option value="80" selected>80</option>
             <option value="120">120</option>
@@ -608,7 +608,7 @@ body {
         </div>
         <div class="sctrl">
           <label>Min shift size</label>
-          <input type="number" id="sens" value="1.5" min="0.5" max="5" step="0.5">%
+          <input type="number" id="sens" value="1.5" min="0.5" max="5" step="0.5" onchange="saveSettings()">%
         </div>
       </div>
       <button class="big-scan-btn" id="scanBtn" onclick="runScan()">
@@ -896,32 +896,58 @@ function load() {
   try {
     const wl = localStorage.getItem('wl2');
     if (wl) watchlist = new Map(JSON.parse(wl));
-    // migrate old watchlist (Set of strings)
     else {
       const oldWl = localStorage.getItem('wl');
       if (oldWl) {
         const arr = JSON.parse(oldWl);
-        arr.forEach(sym => watchlist.set(sym, { alertPrice: null, triggered: false, lastPrice: null }));
+        arr.forEach(sym => watchlist.set(sym, { rangeBottom:null, rangeTop:null, lastPrice:null, triggered:false, lastChecked:null, trend:'up', triggerCount:0 }));
       }
     }
     const h = localStorage.getItem('hist'); if (h) history = JSON.parse(h);
-    const s = localStorage.getItem('cfg');  if (s) settings = {...settings,...JSON.parse(s)};
+    const s = localStorage.getItem('cfg');
+    if (s) {
+      const saved = JSON.parse(s);
+      settings = {...settings, ...saved};
+    }
     applySettings();
-  } catch(e){}
+
+    // Restore auto-scan state
+    if (settings.autoOn) {
+      autoOn = false; // so toggleAuto flips it on
+      setTimeout(() => toggleAuto(), 1000);
+    }
+
+    // Restore monitor state
+    if (settings.monitorOn) {
+      monitorOn = false;
+      setTimeout(() => toggleMonitor(), 1500);
+    }
+  } catch(e){ console.error('Load error:', e); }
 }
 function saveWL()   { localStorage.setItem('wl2', JSON.stringify([...watchlist])); }
 function saveHist() { localStorage.setItem('hist', JSON.stringify(history.slice(0,300))); }
 function saveCfg()  { localStorage.setItem('cfg', JSON.stringify(settings)); }
 function saveSettings() {
+  // Scan controls
+  settings.itvl    = document.getElementById('itvl').value;
+  settings.topN    = document.getElementById('topN').value;
+  settings.sens    = document.getElementById('sens').value;
+  // Settings page
   settings.autoMins = parseInt(document.getElementById('autoMins').value);
   settings.minConf  = parseInt(document.getElementById('minConf').value);
   settings.minVol   = parseInt(document.getElementById('minVol').value);
-  saveCfg(); showToast('Settings saved ✓');
+  saveCfg();
+  showToast('✅ Settings saved');
 }
 function applySettings() {
-  document.getElementById('autoMins').value = settings.autoMins;
-  document.getElementById('minConf').value  = settings.minConf;
-  document.getElementById('minVol').value   = settings.minVol;
+  // Restore scan controls
+  if (settings.itvl) document.getElementById('itvl').value = settings.itvl;
+  if (settings.topN) document.getElementById('topN').value = settings.topN;
+  if (settings.sens) document.getElementById('sens').value = settings.sens;
+  // Restore settings page dropdowns
+  if (settings.autoMins) document.getElementById('autoMins').value = settings.autoMins;
+  if (settings.minConf)  document.getElementById('minConf').value  = settings.minConf;
+  if (settings.minVol)   document.getElementById('minVol').value   = settings.minVol;
 }
 function clearHistory() { history=[]; saveHist(); renderHistory(); showToast('History cleared'); }
 
@@ -1103,6 +1129,8 @@ async function runScan() {
 // ══════════════════════════════════════════════════════════
 function toggleAuto(){
   autoOn=!autoOn;
+  settings.autoOn = autoOn;
+  saveCfg();
   document.getElementById('autoToggle').classList.toggle('on',autoOn);
   if(autoOn){resetAutoTimer();showToast('🔄 Auto-scan is ON');}
   else{clearInterval(autoTimer);showToast('Auto-scan is OFF');}
@@ -1426,6 +1454,8 @@ function renderWatchlist() {
 // ── AUTOMATIC MONITOR ENGINE ──────────────────────────────
 function toggleMonitor() {
   monitorOn = !monitorOn;
+  settings.monitorOn = monitorOn;
+  saveCfg();
   const tog=document.getElementById('monitorToggle'), lbl=document.getElementById('monitorLabel'), st=document.getElementById('monitorStatus');
   if (monitorOn) {
     tog.classList.add('on'); lbl.textContent='On';
@@ -1673,20 +1703,6 @@ load();
 
 // Enter key on watchlist add form
 document.getElementById('wlCoinInput')?.addEventListener('keydown', e => { if(e.key==='Enter') addToWatchlist(); });
-
-// Auto-restart monitor if it was on before (using sessionStorage flag)
-if (sessionStorage.getItem('monitorWasOn') === '1') {
-  setTimeout(() => {
-    monitorOn = false; // ensure toggle works
-    toggleMonitor();
-  }, 1500);
-}
-
-// Remember monitor state across page navigations (not full reloads)
-window.addEventListener('beforeunload', () => {
-  if (monitorOn) sessionStorage.setItem('monitorWasOn','1');
-  else sessionStorage.removeItem('monitorWasOn');
-});
 </script>
 </body>
 </html>
