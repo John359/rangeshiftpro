@@ -254,12 +254,29 @@ body {
 .rv-vals { display:flex; justify-content:space-between; font-size:10px; font-family:var(--mono); color:var(--soft); margin-top:3px; }
 
 /* ── ORDER BOOK BAR ── */
+/* ── ORDER BOOK DETAILED PANEL ── */
 .ob-section { margin-bottom:12px; }
 .ob-title { font-size:11px; color:var(--soft); margin-bottom:5px; }
 .ob-bar-wrap { height:8px; background:var(--s3); border-radius:4px; overflow:hidden; display:flex; }
 .ob-bids { background:var(--safe); transition:width .5s; }
 .ob-asks { background:var(--danger); flex:1; }
 .ob-labels { display:flex; justify-content:space-between; font-size:10px; margin-top:4px; }
+
+.ob-panel { background:var(--s2); border-radius:11px; padding:12px 13px; margin-bottom:12px; border:1px solid var(--border); }
+.ob-panel-title { font-size:12px; font-weight:700; margin-bottom:10px; display:flex; align-items:center; gap:6px; }
+.ob-two-col { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:10px; }
+.ob-col-head { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.3px; margin-bottom:6px; }
+.ob-price-row { display:flex; justify-content:space-between; align-items:center; font-size:11px; padding:3px 0; border-bottom:1px solid var(--border); }
+.ob-price-row:last-child { border-bottom:none; }
+.ob-qty { font-size:10px; color:var(--soft); font-family:var(--mono); }
+.ob-price-val { font-family:var(--mono); font-weight:600; }
+
+.ob-spread-row { display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px; margin-top:8px; }
+.ob-spread-cell { background:var(--s3); border-radius:8px; padding:7px 9px; text-align:center; }
+.ob-spread-lbl { font-size:9px; color:var(--soft); text-transform:uppercase; margin-bottom:3px; }
+.ob-spread-val { font-size:12px; font-weight:700; font-family:var(--mono); }
+
+.ob-verdict { margin-top:10px; padding:9px 11px; border-radius:8px; font-size:12px; line-height:1.5; border:1px solid; }
 
 /* ── STATS ── */
 .stats-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px; margin-bottom:10px; }
@@ -1054,8 +1071,25 @@ function analyse(klines, depth, thresh) {
   const r=rsi(closes),e20=ema(closes,20),e50=ema(closes,50);
   const at=atr(klines),atrPct=(at/cur)*100;
   const va=volAccel(vols),conv=conviction(klines,5);
-  let ob=0.5;
-  if(depth?.bids&&depth?.asks){const bv=depth.bids.slice(0,15).reduce((s,b)=>s+parseFloat(b[1]),0);const av=depth.asks.slice(0,15).reduce((s,a)=>s+parseFloat(a[1]),0);ob=bv/(bv+av);}
+  // ── BID / ASK full extraction ──────────────────────────
+  let ob=0.5, bidPrice=0, askPrice=0, spread=0, spreadPct=0;
+  let bidVolume=0, askVolume=0, bidWall=0, askWall=0;
+  let topBids=[], topAsks=[];
+  if(depth?.bids&&depth?.asks){
+    topBids = depth.bids.slice(0,5).map(b=>({price:parseFloat(b[0]),qty:parseFloat(b[1])}));
+    topAsks = depth.asks.slice(0,5).map(a=>({price:parseFloat(a[0]),qty:parseFloat(a[1])}));
+    bidPrice = topBids[0]?.price||0;
+    askPrice = topAsks[0]?.price||0;
+    spread   = askPrice - bidPrice;
+    spreadPct= bidPrice>0?(spread/bidPrice)*100:0;
+    const bv=depth.bids.slice(0,15).reduce((s,b)=>s+parseFloat(b[1]),0);
+    const av=depth.asks.slice(0,15).reduce((s,a)=>s+parseFloat(a[1]),0);
+    bidVolume=bv; askVolume=av;
+    ob=bv/(bv+av);
+    // Largest single order level (wall)
+    bidWall = Math.max(...depth.bids.slice(0,15).map(b=>parseFloat(b[1])));
+    askWall = Math.max(...depth.asks.slice(0,15).map(a=>parseFloat(a[1])));
+  }
   const pToH=newSprd>0?((newH-cur)/newSprd)*100:50;
   const pToL=newSprd>0?((cur-newL)/newSprd)*100:50;
   const nearBound=pToH<12||pToL<12;
@@ -1065,7 +1099,7 @@ function analyse(klines, depth, thresh) {
   else if(sprdPct<-(thresh*3))type='sq';
   else if(sprdPct>(thresh*3)&&nearBound)type='ex';
   if(!type)return null;
-  const sig={type,oldH,oldL,newH,newL,midPct,sprdPct,cur,ch24,rsi:r,ema20:e20,ema50:e50,atrPct,va,conv,ob,nearBound,pToH,pToL};
+  const sig={type,oldH,oldL,newH,newL,midPct,sprdPct,cur,ch24,rsi:r,ema20:e20,ema50:e50,atrPct,va,conv,ob,nearBound,pToH,pToL,bidPrice,askPrice,spread,spreadPct,bidVolume,askVolume,bidWall,askWall,topBids,topAsks};
   sig.score=confidence(sig,type);
   return sig;
 }
@@ -1183,6 +1217,101 @@ const typeClass={dn:'going-down',up:'going-up',sq:'squeezing',ex:'expanding'};
 const typeLabel={dn:'Price falling',up:'Price rising',sq:'Building up',ex:'Breaking out'};
 const typeBadge={dn:'badge-dn',up:'badge-up',sq:'badge-sq',ex:'badge-ex'};
 
+function buildObPanel(s) {
+  const bidPct = (s.ob*100).toFixed(0);
+  const askPct = (100-s.ob*100).toFixed(0);
+
+  // Spread quality
+  const spreadQuality = s.spreadPct < 0.05 ? {cls:'good', txt:'✅ Very tight spread — cheap to buy and sell'}
+    : s.spreadPct < 0.15 ? {cls:'neu',  txt:'👌 Normal spread — healthy market'}
+    : s.spreadPct < 0.4  ? {cls:'warn', txt:'⚠️ Wide spread — costs more to trade this coin'}
+    : {cls:'bad', txt:'❌ Very wide spread — be careful, this coin is hard to trade'};
+
+  // Pressure verdict
+  const pressure = s.ob > 0.65 ? {cls:'good', txt:`🟢 Strong buying pressure — ${bidPct}% of orders are bids. More people want to buy than sell right now.`}
+    : s.ob > 0.55 ? {cls:'good', txt:`🟢 Slight buying pressure — buyers have the edge right now (${bidPct}% bids).`}
+    : s.ob < 0.35 ? {cls:'bad',  txt:`🔴 Strong selling pressure — ${askPct}% of orders are asks. More people want to sell than buy right now.`}
+    : s.ob < 0.45 ? {cls:'bad',  txt:`🔴 Slight selling pressure — sellers have the edge right now (${askPct}% asks).`}
+    : {cls:'neu', txt:'⚖️ Balanced — buyers and sellers are roughly equal right now. No strong push in either direction.'};
+
+  // Wall warning
+  const wallNote = s.bidWall > s.askWall * 2
+    ? `<div style="font-size:11px;color:var(--safe);margin-top:6px">🏦 Large buy wall detected — big buyers are defending the price below</div>`
+    : s.askWall > s.bidWall * 2
+    ? `<div style="font-size:11px;color:var(--danger);margin-top:6px">🧱 Large sell wall detected — big sellers are blocking price from going up</div>`
+    : '';
+
+  // Top 5 bids and asks rows
+  const bidRows = (s.topBids||[]).map((b,i) =>
+    `<div class="ob-price-row">
+       <span class="ob-price-val up">$${f(b.price)}</span>
+       <span class="ob-qty">${b.qty.toFixed(2)} coins</span>
+     </div>`).join('');
+
+  const askRows = (s.topAsks||[]).map((a,i) =>
+    `<div class="ob-price-row">
+       <span class="ob-price-val dn">$${f(a.price)}</span>
+       <span class="ob-qty">${a.qty.toFixed(2)} coins</span>
+     </div>`).join('');
+
+  return `
+  <div class="ob-panel">
+    <div class="ob-panel-title">📖 Live Order Book — Bid &amp; Ask</div>
+
+    <!-- Buyer vs Seller bar -->
+    <div style="font-size:11px;color:var(--soft);margin-bottom:5px">Who is winning right now?</div>
+    <div class="ob-bar-wrap" style="height:10px;margin-bottom:4px">
+      <div class="ob-bids" style="width:${bidPct}%"></div>
+      <div class="ob-asks"></div>
+    </div>
+    <div class="ob-labels" style="margin-bottom:10px">
+      <span class="up">🟢 Buyers ${bidPct}%</span>
+      <span class="dn">🔴 Sellers ${askPct}%</span>
+    </div>
+
+    <!-- Top 5 Bids and Asks side by side -->
+    <div class="ob-two-col">
+      <div>
+        <div class="ob-col-head up">🟢 Top 5 Buyers (Bids)</div>
+        <div style="font-size:10px;color:var(--soft);margin-bottom:5px">Highest prices people are offering to buy at</div>
+        ${bidRows||'<div style="font-size:11px;color:var(--soft)">No data</div>'}
+      </div>
+      <div>
+        <div class="ob-col-head dn">🔴 Top 5 Sellers (Asks)</div>
+        <div style="font-size:10px;color:var(--soft);margin-bottom:5px">Lowest prices people are willing to sell at</div>
+        ${askRows||'<div style="font-size:11px;color:var(--soft)">No data</div>'}
+      </div>
+    </div>
+
+    <!-- Spread + volumes -->
+    <div class="ob-spread-row">
+      <div class="ob-spread-cell">
+        <div class="ob-spread-lbl">Best Bid</div>
+        <div class="ob-spread-val up">$${s.bidPrice?f(s.bidPrice):'—'}</div>
+      </div>
+      <div class="ob-spread-cell">
+        <div class="ob-spread-lbl">Spread</div>
+        <div class="ob-spread-val ${s.spreadPct<0.15?'up':s.spreadPct<0.4?'wa':'dn'}">$${s.spread?s.spread.toFixed(4):'—'}</div>
+      </div>
+      <div class="ob-spread-cell">
+        <div class="ob-spread-lbl">Best Ask</div>
+        <div class="ob-spread-val dn">$${s.askPrice?f(s.askPrice):'—'}</div>
+      </div>
+    </div>
+
+    <!-- Spread quality -->
+    <div class="ob-verdict ${spreadQuality.cls}" style="background:${spreadQuality.cls==='good'?'rgba(26,219,138,.07)':spreadQuality.cls==='bad'?'rgba(240,79,107,.07)':spreadQuality.cls==='warn'?'rgba(245,200,66,.07)':'var(--s3)'};border-color:${spreadQuality.cls==='good'?'rgba(26,219,138,.2)':spreadQuality.cls==='bad'?'rgba(240,79,107,.2)':spreadQuality.cls==='warn'?'rgba(245,200,66,.2)':'var(--border)'}">
+      <strong>Spread quality:</strong> ${spreadQuality.txt}
+    </div>
+
+    <!-- Pressure verdict -->
+    <div class="ob-verdict" style="margin-top:6px;background:${pressure.cls==='good'?'rgba(26,219,138,.07)':pressure.cls==='bad'?'rgba(240,79,107,.07)':'var(--s3)'};border-color:${pressure.cls==='good'?'rgba(26,219,138,.2)':pressure.cls==='bad'?'rgba(240,79,107,.2)':'var(--border)'}">
+      ${pressure.txt}
+    </div>
+    ${wallNote}
+  </div>`;
+}
+
 function buildCard(s){
   const ts=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
   const abbr=s.sym.slice(0,3);
@@ -1284,18 +1413,8 @@ function buildCard(s){
       </div>
     </div>
 
-    <!-- Order book -->
-    <div class="ob-section">
-      <div class="ob-title">🛒 Right now: who's winning — buyers or sellers?</div>
-      <div class="ob-bar-wrap">
-        <div class="ob-bids" style="width:${bidPct}%"></div>
-        <div class="ob-asks"></div>
-      </div>
-      <div class="ob-labels">
-        <span class="up">🟢 Buyers ${bidPct}%</span>
-        <span class="dn">🔴 Sellers ${askPct}%</span>
-      </div>
-    </div>
+    <!-- Bid / Ask detailed panel -->
+    ${buildObPanel(s)}
 
     <!-- Numbers -->
     <div class="stats-grid">
