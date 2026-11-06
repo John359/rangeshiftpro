@@ -946,15 +946,30 @@ body { color:var(--text); font-family:var(--font); display:flex; flex-direction:
       <!-- SCAN SETTINGS -->
       <div style="font-size:11px;font-weight:700;color:var(--soft);text-transform:uppercase;letter-spacing:.5px;padding-bottom:8px">📡 Signal Scanner</div>
       <div class="set-row"><div class="set-row-left"><div class="lbl">Auto-Scan</div><div class="desc">Automatically re-scan coins every few minutes and alert you</div></div><div class="toggle" id="autoToggle" onclick="toggleAuto()"></div></div>
-      <div class="set-row"><div class="set-row-left"><div class="lbl">Auto-scan every</div><div class="desc">How often to automatically check the market</div></div><div class="set-ctrl"><select id="autoMins" onchange="saveSettings()"><option value="2">2 min</option><option value="5" selected>5 min</option><option value="10">10 min</option><option value="30">30 min</option></select></div></div>
-      <div class="set-row"><div class="set-row-left"><div class="lbl">Only alert strong signals</div><div class="desc">Minimum confidence score to send a notification</div></div><div class="set-ctrl"><select id="minConf" onchange="saveSettings()"><option value="50">50+</option><option value="60">60+</option><option value="70" selected>70+</option><option value="80">80+</option></select></div></div>
-      <div class="set-row"><div class="set-row-left"><div class="lbl">Only scan big coins</div><div class="desc">Filter out small coins with low trading activity</div></div><div class="set-ctrl"><select id="minVol" onchange="saveSettings()"><option value="1000000">Any size</option><option value="5000000" selected>Medium+</option><option value="50000000">Large only</option></select></div></div>
+      <div class="set-row"><div class="set-row-left"><div class="lbl">Auto-scan every</div><div class="desc">How often to automatically check the market</div></div><div class="set-ctrl"><select id="autoMins"><option value="2">2 min</option><option value="5" selected>5 min</option><option value="10">10 min</option><option value="30">30 min</option></select></div></div>
+      <div class="set-row"><div class="set-row-left"><div class="lbl">Only alert strong signals</div><div class="desc">Minimum confidence score to send a notification</div></div><div class="set-ctrl"><select id="minConf"><option value="50">50+</option><option value="60">60+</option><option value="70" selected>70+</option><option value="80">80+</option></select></div></div>
+      <div class="set-row"><div class="set-row-left"><div class="lbl">Only scan big coins</div><div class="desc">Filter out small coins with low trading activity</div></div><div class="set-ctrl"><select id="minVol"><option value="1000000">Any size</option><option value="5000000" selected>Medium+</option><option value="50000000">Large only</option></select></div></div>
 
       <div style="height:1px;background:var(--border);margin:16px 0"></div>
 
       <!-- DATA -->
       <div style="font-size:11px;font-weight:700;color:var(--soft);text-transform:uppercase;letter-spacing:.5px;padding-bottom:8px">🗂️ Data</div>
       <div class="set-row" onclick="clearHistory()" style="cursor:pointer"><div class="set-row-left"><div class="lbl" style="color:var(--danger)">Clear signal history</div><div class="desc">Remove all past signal records</div></div><button class="danger-btn">Clear</button></div>
+
+      <div style="height:1px;background:var(--border);margin:16px 0"></div>
+
+      <!-- SAVE BUTTON -->
+      <button id="saveSettingsBtn" onclick="saveSettingsManual()" style="
+        width:100%; padding:14px; border-radius:12px; border:none;
+        background:linear-gradient(135deg,var(--blue),var(--purple));
+        color:#fff; font-family:var(--font); font-size:15px; font-weight:700;
+        cursor:pointer; display:flex; align-items:center; justify-content:center;
+        gap:8px; transition:opacity .2s; margin-bottom:10px;">
+        💾 Save Settings
+      </button>
+      <div id="saveSettingsFeedback" style="display:none;text-align:center;font-size:12px;color:var(--safe);font-weight:600;padding-bottom:4px;">
+        ✅ All settings saved successfully
+      </div>
 
       <div class="set-footer">CoinWatch · Spot Trader Assistant<br>Data from Binance public API · Not financial advice</div>
     </div>
@@ -1095,13 +1110,31 @@ function saveWL()   { lsSet('wl2', JSON.stringify([...watchlist])); }
 function saveHist() { lsSet('hist', JSON.stringify(signalHistory.slice(0,300))); }
 function saveCfg()  { lsSet('cfg', JSON.stringify(settings)); }
 function saveSettings() {
+  // Called internally (e.g. from scan controls) — silent save
   settings.itvl     = document.getElementById('itvl').value;
   settings.topN     = document.getElementById('topN').value;
   settings.sens     = document.getElementById('sens').value;
   settings.autoMins = parseInt(document.getElementById('autoMins').value);
   settings.minConf  = parseInt(document.getElementById('minConf').value);
   settings.minVol   = parseInt(document.getElementById('minVol').value);
-  saveCfg(); showToast('✅ Settings saved');
+  saveCfg();
+}
+function saveSettingsManual() {
+  // Called by the Save button — saves and shows clear feedback
+  saveSettings();
+  const btn = document.getElementById('saveSettingsBtn');
+  const fb  = document.getElementById('saveSettingsFeedback');
+  btn.textContent = '✅ Saved!';
+  btn.style.background = 'linear-gradient(135deg,#1adb8a,#16a065)';
+  btn.disabled = true;
+  fb.style.display = 'block';
+  clearTimeout(btn._t);
+  btn._t = setTimeout(() => {
+    btn.innerHTML = '💾 Save Settings';
+    btn.style.background = 'linear-gradient(135deg,var(--blue),var(--purple))';
+    btn.disabled = false;
+    fb.style.display = 'none';
+  }, 2500);
 }
 function applySettings() {
   if (settings.itvl)    document.getElementById('itvl').value    = settings.itvl;
