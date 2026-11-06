@@ -1325,8 +1325,9 @@ function homeSetLoadingTxt(txt) {
 
 async function homeInit() {
   // Load saved keys
-  // Keys are hardcoded — no need to load from storage
-  // homeApiKey and homeApiSecret are set at declaration
+  // Keys are hardcoded — sync to localStorage so Settings shows connected
+  lsSet('home_apikey', homeApiKey);
+  lsSet('home_apisecret', homeApiSecret);
 
   // Always check proxy status (fast 1.5s timeout, non-blocking for setup view)
   checkProxy(); // fire-and-forget; updates the pill when it resolves
