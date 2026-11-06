@@ -1,5 +1,5 @@
 /**
- * coinwatch-proxy-deno.ts — CoinWatch proxy for Deno Deploy
+ * main.ts — CoinWatch proxy for Deno Deploy
  *
  * Deploy steps (free, no credit card):
  *   1. Push this file to a GitHub repo (any name, e.g. coinwatch-proxy).
