@@ -742,7 +742,30 @@ body { color:var(--text); font-family:var(--font); display:flex; flex-direction:
 // ══════════════════════════════════════════════════════════
 // STATE
 // ══════════════════════════════════════════════════════════
-const API = 'https://api.binance.com/api/v3';
+// Binance mirror hosts — tried in order until one responds
+const API_HOSTS = [
+  'https://api.binance.com/api/v3',
+  'https://api1.binance.com/api/v3',
+  'https://api2.binance.com/api/v3',
+  'https://api3.binance.com/api/v3'
+];
+const API = API_HOSTS[0]; // kept for any legacy references
+
+// Fetch with automatic fallback across all mirror hosts + 8-second timeout
+async function apiFetch(path) {
+  let lastErr;
+  for (const host of API_HOSTS) {
+    try {
+      const ctrl = new AbortController();
+      const tid  = setTimeout(() => ctrl.abort(), 8000);
+      const r    = await fetch(host + path, { signal: ctrl.signal });
+      clearTimeout(tid);
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return await r.json();
+    } catch(e) { lastErr = e; }
+  }
+  throw new Error('All Binance servers unreachable. Check your internet connection. (' + (lastErr?.message||'unknown') + ')');
+}
 let signals = [], history = [];
 let watchlist = new Map();
 let settings = { autoMins:5, minConf:70, minVol:5000000 };
@@ -1174,9 +1197,9 @@ async function runSMCAnalysis() {
   try {
     setSMCProg(10, 'Fetching kline data…');
     const [klines, ticker, depth] = await Promise.all([
-      fetch(`${API}/klines?symbol=${sym}&interval=${tf}&limit=100`).then(r=>r.json()),
-      fetch(`${API}/ticker/24hr?symbol=${sym}`).then(r=>r.json()),
-      fetch(`${API}/depth?symbol=${sym}&limit=20`).then(r=>r.json())
+      apiFetch(`/klines?symbol=${sym}&interval=${tf}&limit=100`),
+      apiFetch(`/ticker/24hr?symbol=${sym}`),
+      apiFetch(`/depth?symbol=${sym}&limit=20`)
     ]);
 
     if (!Array.isArray(klines) || klines.length < 20) {
@@ -1220,7 +1243,7 @@ async function runSMCAnalysis() {
     // ── BUILD HTML ──
     const biasColor  = bias.bias==='bullish'?'var(--safe)':bias.bias==='bearish'?'var(--danger)':'var(--blue)';
     const biasIco    = bias.bias==='bullish'?'📈':bias.bias==='bearish'?'📉':'⚖️';
-    const biasLabel  = bias.bias==='bullish'?'BULLISH BIAS':'BEARISH BIAS':'NEUTRAL — WAIT';
+    const biasLabel  = bias.bias==='bullish'?'BULLISH BIAS':bias.bias==='bearish'?'BEARISH BIAS':'NEUTRAL — WAIT';
     const biasDesc   = bias.bias==='bullish'
       ? `Smart money signals favour the upside. ${bos.some(b=>b.type==='BOS_BULL')?'Structure is bullish. ':''}${sweeps.some(s=>s.type==='SWEEP_BULL')?'Liquidity sweep suggests institutional buying. ':''}`
       : bias.bias==='bearish'
@@ -1646,7 +1669,7 @@ async function runScan() {
   signals=[];
   try {
     setProgress(2,'Getting coin list from Binance…');
-    const ticker=await fetch(`${API}/ticker/24hr`).then(r=>r.json());
+    const ticker=await apiFetch(`/ticker/24hr`);
     const pairs=ticker.filter(d=>d.symbol.endsWith('USDT')&&+d.quoteVolume>settings.minVol)
       .sort((a,b)=>+b.quoteVolume-+a.quoteVolume).slice(0,topN);
     for(let i=0;i<pairs.length;i++){
@@ -1654,8 +1677,8 @@ async function runScan() {
       setProgress(5+(i/pairs.length)*90,`Checking ${p.symbol.replace('USDT','/USDT')} (${i+1} of ${pairs.length})…`);
       try{
         const [kl,dep]=await Promise.all([
-          fetch(`${API}/klines?symbol=${p.symbol}&interval=${itvl}&limit=50`).then(r=>r.json()),
-          fetch(`${API}/depth?symbol=${p.symbol}&limit=20`).then(r=>r.json())
+          apiFetch(`/klines?symbol=${p.symbol}&interval=${itvl}&limit=50`),
+          apiFetch(`/depth?symbol=${p.symbol}&limit=20`)
         ]);
         const res=analyse(kl,dep,thresh);
         if(res){
@@ -1820,8 +1843,8 @@ async function toggleWatch(sym,btn){
 }
 async function fetchCoinRange(sym){
   const [ticker,klines]=await Promise.all([
-    fetch(`${API}/ticker/price?symbol=${sym}USDT`).then(r=>r.json()),
-    fetch(`${API}/klines?symbol=${sym}USDT&interval=4h&limit=50`).then(r=>r.json())
+    apiFetch(`/ticker/price?symbol=${sym}USDT`),
+    apiFetch(`/klines?symbol=${sym}USDT&interval=4h&limit=50`)
   ]);
   const cur=parseFloat(ticker.price);
   const highs=klines.map(k=>+k[2]),lows=klines.map(k=>+k[3]),closes=klines.map(k=>+k[4]);
@@ -1902,10 +1925,10 @@ async function runTrapAnalysis(sym){
   try{
     const pair=sym+'USDT';
     const [k4h,k1h,ticker,depth]=await Promise.all([
-      fetch(`${API}/klines?symbol=${pair}&interval=4h&limit=26`).then(r=>r.json()),
-      fetch(`${API}/klines?symbol=${pair}&interval=1h&limit=16`).then(r=>r.json()),
-      fetch(`${API}/ticker/24hr?symbol=${pair}`).then(r=>r.json()),
-      fetch(`${API}/depth?symbol=${pair}&limit=20`).then(r=>r.json())
+      apiFetch(`/klines?symbol=${pair}&interval=4h&limit=26`),
+      apiFetch(`/klines?symbol=${pair}&interval=1h&limit=16`),
+      apiFetch(`/ticker/24hr?symbol=${pair}`),
+      apiFetch(`/depth?symbol=${pair}&limit=20`)
     ]);
     const price=parseFloat(ticker.lastPrice);
     const change24h=parseFloat(ticker.priceChangePercent);
@@ -2000,8 +2023,8 @@ async function runPriceMonitor(){
   for(const [sym,entry] of watchlist.entries()){
     try{
       const [ticker,klines]=await Promise.all([
-        fetch(`${API}/ticker/price?symbol=${sym}USDT`).then(r=>r.json()),
-        fetch(`${API}/klines?symbol=${sym}USDT&interval=4h&limit=50`).then(r=>r.json())
+        apiFetch(`/ticker/price?symbol=${sym}USDT`),
+        apiFetch(`/klines?symbol=${sym}USDT&interval=4h&limit=50`)
       ]);
       const cur=parseFloat(ticker.price);
       const lows=klines.map(k=>+k[3]),highs=klines.map(k=>+k[2]),closes=klines.map(k=>+k[4]);
@@ -2037,9 +2060,9 @@ async function checkIfTrapped(){
   try{
     const sym=coin+'USDT';
     const [ticker,klines,depth]=await Promise.all([
-      fetch(`${API}/ticker/24hr?symbol=${sym}`).then(r=>r.json()),
-      fetch(`${API}/klines?symbol=${sym}&interval=4h&limit=50`).then(r=>r.json()),
-      fetch(`${API}/depth?symbol=${sym}&limit=20`).then(r=>r.json())
+      apiFetch(`/ticker/24hr?symbol=${sym}`),
+      apiFetch(`/klines?symbol=${sym}&interval=4h&limit=50`),
+      apiFetch(`/depth?symbol=${sym}&limit=20`)
     ]);
     const cur=parseFloat(ticker.lastPrice);
     const closes=klines.map(k=>+k[4]),highs=klines.map(k=>+k[2]),lows=klines.map(k=>+k[3]),vols=klines.map(k=>+k[5]);
@@ -2082,9 +2105,9 @@ async function checkSafeToBuy(){
   try{
     const sym=coin+'USDT';
     const [ticker,klines,depth]=await Promise.all([
-      fetch(`${API}/ticker/24hr?symbol=${sym}`).then(r=>r.json()),
-      fetch(`${API}/klines?symbol=${sym}&interval=4h&limit=50`).then(r=>r.json()),
-      fetch(`${API}/depth?symbol=${sym}&limit=20`).then(r=>r.json())
+      apiFetch(`/ticker/24hr?symbol=${sym}`),
+      apiFetch(`/klines?symbol=${sym}&interval=4h&limit=50`),
+      apiFetch(`/depth?symbol=${sym}&limit=20`)
     ]);
     const cur=parseFloat(ticker.lastPrice);
     const closes=klines.map(k=>+k[4]),highs=klines.map(k=>+k[2]),lows=klines.map(k=>+k[3]),vols=klines.map(k=>+k[5]);
