@@ -67,6 +67,96 @@ body { color:var(--text); font-family:var(--font); display:flex; flex-direction:
 .page { display:none; }
 .page.on { display:block; }
 
+/* ══ HOME PAGE STYLES ══ */
+.home-page { padding:14px 15px 90px; }
+.home-api-banner { background:linear-gradient(135deg,rgba(79,140,245,.12),rgba(155,114,245,.1)); border:1px solid rgba(79,140,245,.22); border-radius:var(--r); padding:14px 16px; margin-bottom:14px; }
+.home-api-title { font-size:12px; font-weight:700; color:var(--blue); margin-bottom:4px; display:flex; align-items:center; gap:6px; }
+.home-api-desc { font-size:11px; color:var(--soft); line-height:1.5; margin-bottom:12px; }
+.home-api-row { display:flex; gap:8px; margin-bottom:8px; }
+.home-api-inp { flex:1; background:var(--s1); border:1px solid var(--border); border-radius:9px; padding:9px 12px; color:var(--text); font-family:var(--mono); font-size:11px; outline:none; min-width:0; }
+.home-api-inp::placeholder { color:var(--dim); }
+.home-api-inp:focus { border-color:var(--blue); }
+.home-api-btn { background:linear-gradient(135deg,var(--blue),var(--purple)); color:#fff; border:none; border-radius:9px; padding:9px 16px; font-family:var(--font); font-size:12px; font-weight:700; cursor:pointer; white-space:nowrap; }
+.home-api-btn:disabled { opacity:.4; cursor:not-allowed; }
+.home-api-note { font-size:10px; color:var(--dim); line-height:1.5; }
+.home-api-note a { color:var(--blue); text-decoration:none; }
+
+/* Portfolio header */
+.home-portfolio-hdr { background:var(--s1); border:1px solid var(--border); border-radius:var(--r); padding:18px 16px 14px; margin-bottom:12px; position:relative; overflow:hidden; }
+.home-portfolio-hdr::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg,var(--blue),var(--purple)); }
+.home-port-label { font-size:11px; color:var(--soft); margin-bottom:4px; display:flex; align-items:center; gap:5px; }
+.home-port-eye { background:none; border:none; color:var(--soft); cursor:pointer; font-size:14px; padding:0; }
+.home-port-val { font-size:30px; font-weight:800; font-family:var(--mono); letter-spacing:-1px; margin-bottom:6px; }
+.home-port-currency { font-size:14px; color:var(--soft); font-weight:600; }
+.home-port-pnl { display:inline-flex; align-items:center; gap:5px; background:rgba(26,219,138,.1); border:1px solid rgba(26,219,138,.2); border-radius:7px; padding:4px 10px; font-size:12px; font-weight:700; color:var(--safe); margin-bottom:12px; }
+.home-port-pnl.neg { background:rgba(240,79,107,.1); border-color:rgba(240,79,107,.2); color:var(--danger); }
+
+/* Mini chart */
+.home-chart-wrap { position:relative; height:70px; margin-bottom:4px; }
+.home-chart-wrap svg { width:100%; height:100%; }
+.home-chart-range { display:flex; justify-content:space-between; font-size:9px; color:var(--dim); font-family:var(--mono); }
+
+/* Time selector */
+.home-time-row { display:flex; gap:0; background:var(--s2); border-radius:9px; padding:3px; margin-bottom:14px; }
+.home-time-btn { flex:1; padding:5px 0; border:none; background:transparent; color:var(--soft); font-family:var(--font); font-size:11px; font-weight:600; cursor:pointer; border-radius:7px; transition:all .2s; }
+.home-time-btn.on { background:var(--s3); color:var(--text); }
+
+/* Action buttons row */
+.home-actions { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-bottom:14px; }
+.home-action-btn { background:var(--s1); border:1px solid var(--border); border-radius:12px; padding:12px 6px 10px; display:flex; flex-direction:column; align-items:center; gap:5px; cursor:pointer; transition:all .18s; }
+.home-action-btn:active { opacity:.7; }
+.home-action-ico { width:38px; height:38px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:16px; }
+.home-action-lbl { font-size:10px; font-weight:600; color:var(--soft); }
+
+/* Allocation bar */
+.home-alloc-card { background:var(--s1); border:1px solid var(--border); border-radius:var(--r); padding:14px 15px; margin-bottom:12px; }
+.home-alloc-title { font-size:12px; font-weight:700; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center; }
+.home-alloc-bar-wrap { height:10px; background:var(--s3); border-radius:5px; overflow:hidden; display:flex; margin-bottom:8px; }
+.home-alloc-seg { height:100%; transition:width .6s; }
+.home-alloc-legend { display:flex; flex-wrap:wrap; gap:8px; }
+.home-alloc-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+.home-alloc-item { display:flex; align-items:center; gap:5px; font-size:10px; color:var(--soft); }
+.home-alloc-item span { color:var(--text); font-weight:600; }
+
+/* Balance list */
+.home-balance-card { background:var(--s1); border:1px solid var(--border); border-radius:var(--r); padding:14px 15px; margin-bottom:12px; }
+.home-balance-title { font-size:12px; font-weight:700; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center; }
+.home-balance-item { display:flex; align-items:center; gap:12px; padding:10px 0; border-bottom:1px solid var(--border); }
+.home-balance-item:last-child { border-bottom:none; padding-bottom:0; }
+.home-bal-avatar { width:38px; height:38px; border-radius:50%; background:var(--s2); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:800; color:var(--blue); font-family:var(--mono); flex-shrink:0; }
+.home-bal-info { flex:1; min-width:0; }
+.home-bal-name { font-size:14px; font-weight:700; }
+.home-bal-sub { font-size:11px; color:var(--soft); }
+.home-bal-right { text-align:right; }
+.home-bal-qty { font-size:13px; font-weight:700; font-family:var(--mono); }
+.home-bal-kes { font-size:11px; color:var(--soft); font-family:var(--mono); }
+.home-bal-pnl { font-size:11px; font-weight:600; margin-top:1px; }
+.home-bal-actions { display:flex; gap:5px; margin-top:6px; }
+.home-bal-act-btn { flex:1; padding:5px 0; border-radius:7px; border:1px solid var(--border); background:transparent; color:var(--soft); font-family:var(--font); font-size:11px; font-weight:600; cursor:pointer; transition:all .18s; }
+.home-bal-act-btn:hover { background:var(--s3); color:var(--text); }
+
+/* Stats strip */
+.home-stats-strip { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:14px; }
+.home-stat-card { background:var(--s1); border:1px solid var(--border); border-radius:12px; padding:12px 13px; }
+.home-stat-lbl { font-size:10px; color:var(--soft); margin-bottom:4px; }
+.home-stat-val { font-size:17px; font-weight:800; font-family:var(--mono); }
+.home-stat-sub { font-size:10px; color:var(--soft); margin-top:2px; }
+
+/* Loading state */
+.home-loading { text-align:center; padding:40px 20px; }
+.home-loading .spin { display:inline-block; width:28px; height:28px; border:3px solid var(--border); border-top-color:var(--blue); border-radius:50%; animation:spin .7s linear infinite; }
+@keyframes spin { to { transform:rotate(360deg); } }
+.home-loading-txt { margin-top:12px; font-size:12px; color:var(--soft); }
+
+/* Disconnect btn */
+.home-disconnect { display:flex; align-items:center; gap:8px; background:rgba(240,79,107,.07); border:1px solid rgba(240,79,107,.18); border-radius:9px; padding:9px 13px; margin-bottom:14px; cursor:pointer; }
+.home-disconnect-txt { font-size:12px; color:var(--danger); font-weight:600; flex:1; }
+.home-connected-badge { display:flex; align-items:center; gap:6px; font-size:11px; color:var(--safe); font-weight:600; margin-bottom:10px; }
+.home-connected-badge .dot { width:7px; height:7px; background:var(--safe); border-radius:50%; box-shadow:0 0 6px var(--safe); }
+
+/* Hide balance toggle */
+.home-hidden-val { letter-spacing:3px; color:var(--dim); }
+
 .scan-hero { margin:14px 15px 0; background:linear-gradient(135deg,rgba(79,140,245,.1),rgba(155,114,245,.08)); border:1px solid rgba(79,140,245,.18); border-radius:var(--r); padding:16px; }
 .scan-hero-title { font-size:14px; font-weight:700; margin-bottom:4px; }
 .scan-hero-sub { font-size:12px; color:var(--soft); line-height:1.5; margin-bottom:14px; }
@@ -514,7 +604,8 @@ body { color:var(--text); font-family:var(--font); display:flex; flex-direction:
     </div>
   </div>
   <div class="nav-tabs">
-    <button class="ntab on" data-page="alerts"    onclick="gotoPage('alerts')">📡 Signals</button>
+    <button class="ntab on" data-page="home"      onclick="gotoPage('home')">🏠 Home</button>
+    <button class="ntab"    data-page="alerts"    onclick="gotoPage('alerts')">📡 Signals</button>
     <button class="ntab"    data-page="smc"       onclick="gotoPage('smc')">🧠 SMC</button>
     <button class="ntab"    data-page="protect"   onclick="gotoPage('protect')">🛡️ Am I Safe?</button>
     <button class="ntab"    data-page="watchlist" onclick="gotoPage('watchlist')">⭐ Watchlist</button>
@@ -525,8 +616,128 @@ body { color:var(--text); font-family:var(--font); display:flex; flex-direction:
 
 <div class="main" id="mainScroll">
 
+  <!-- ══ HOME PAGE ══ -->
+  <div class="page on" id="pg-home">
+    <div class="home-page">
+
+      <!-- Not connected — redirect to Settings -->
+      <div id="homeApiSetup">
+        <div class="home-api-banner" style="text-align:center;padding:28px 20px">
+          <div style="font-size:40px;margin-bottom:10px">🏦</div>
+          <div style="font-size:15px;font-weight:700;margin-bottom:6px">Your Portfolio Dashboard</div>
+          <div style="font-size:12px;color:var(--soft);line-height:1.6;margin-bottom:18px">
+            Connect your Binance account to see your live balance, PnL, and asset allocation here.<br>Your API keys are entered securely in <strong style="color:var(--text)">Settings</strong>.
+          </div>
+          <button class="home-api-btn" onclick="gotoPage('settings')" style="padding:11px 28px;font-size:13px">
+            ⚙️ Go to Settings to Connect
+          </button>
+        </div>
+        <!-- Demo preview -->
+        <div style="font-size:11px;color:var(--soft);text-align:center;margin-bottom:10px;padding:8px 0;border-top:1px solid var(--border)">👇 Preview of what your dashboard will look like</div>
+        <div id="homeDemoContent"></div>
+      </div>
+
+      <!-- Portfolio Dashboard (shown when connected) -->
+      <div id="homePortfolio" style="display:none">
+        <div class="home-connected-badge">
+          <div class="dot"></div>Connected to Binance
+          <span style="margin-left:auto;font-size:10px;color:var(--dim)" id="homeLastRefresh"></span>
+        </div>
+
+        <!-- Total Value Header -->
+        <div class="home-portfolio-hdr">
+          <div class="home-port-label">
+            Est. Total Value
+            <button class="home-port-eye" onclick="homeToggleHide()" id="homeEyeBtn">👁️</button>
+          </div>
+          <div class="home-port-val" id="homePortVal">—</div>
+          <div id="homePnlBadge" class="home-port-pnl">+KSh0.00 (0.00%)</div>
+
+          <!-- Mini sparkline chart -->
+          <div class="home-chart-wrap">
+            <svg id="homeChartSvg" viewBox="0 0 320 70" preserveAspectRatio="none"></svg>
+          </div>
+          <div class="home-chart-range">
+            <span id="homeChartLow">—</span>
+            <span id="homeChartHigh">—</span>
+          </div>
+        </div>
+
+        <!-- Time range selector -->
+        <div class="home-time-row" id="homeTimeRow">
+          <button class="home-time-btn on" onclick="homeSetPeriod('1D',this)">1D</button>
+          <button class="home-time-btn" onclick="homeSetPeriod('7D',this)">7D</button>
+          <button class="home-time-btn" onclick="homeSetPeriod('1M',this)">1M</button>
+          <button class="home-time-btn" onclick="homeSetPeriod('3M',this)">3M</button>
+          <button class="home-time-btn" onclick="homeSetPeriod('1Y',this)">1Y</button>
+        </div>
+
+        <!-- Quick action buttons -->
+        <div class="home-actions">
+          <div class="home-action-btn" onclick="showToast('Open Binance app to add funds')">
+            <div class="home-action-ico" style="background:rgba(26,219,138,.12)">⬇️</div>
+            <div class="home-action-lbl">Add Funds</div>
+          </div>
+          <div class="home-action-btn" onclick="showToast('Open Binance app to send')">
+            <div class="home-action-ico" style="background:rgba(79,140,245,.12)">⬆️</div>
+            <div class="home-action-lbl">Send</div>
+          </div>
+          <div class="home-action-btn" onclick="showToast('Open Binance app to transfer')">
+            <div class="home-action-ico" style="background:rgba(155,114,245,.12)">↔️</div>
+            <div class="home-action-lbl">Transfer</div>
+          </div>
+          <div class="home-action-btn" onclick="gotoPage('watchlist')">
+            <div class="home-action-ico" style="background:rgba(245,200,66,.12)">⭐</div>
+            <div class="home-action-lbl">Watchlist</div>
+          </div>
+        </div>
+
+        <!-- Stats strip -->
+        <div class="home-stats-strip" id="homeStatsStrip"></div>
+
+        <!-- Allocation bar -->
+        <div class="home-alloc-card">
+          <div class="home-alloc-title">Allocation <span style="font-size:10px;color:var(--soft);font-weight:400">by value</span></div>
+          <div class="home-alloc-bar-wrap" id="homeAllocBar"></div>
+          <div class="home-alloc-legend" id="homeAllocLegend"></div>
+        </div>
+
+        <!-- Balance list -->
+        <div class="home-balance-card">
+          <div class="home-balance-title">Balance <span style="font-size:10px;color:var(--soft);font-weight:400" id="homeBalCount"></span></div>
+          <div id="homeBalList"></div>
+        </div>
+
+        <!-- Disconnect -->
+        <div class="home-disconnect" onclick="homeDisconnect()">
+          <span style="font-size:16px">🔌</span>
+          <span class="home-disconnect-txt">Disconnect Binance account</span>
+          <span style="color:var(--soft);font-size:12px">›</span>
+        </div>
+
+        <!-- Refresh -->
+        <button onclick="homeRefresh()" style="width:100%;padding:10px;border-radius:9px;border:1px solid var(--border);background:var(--s1);color:var(--soft);font-family:var(--font);font-size:12px;font-weight:600;cursor:pointer;margin-bottom:14px;">
+          🔄 Refresh Portfolio
+        </button>
+
+        <div style="font-size:10px;color:var(--dim);text-align:center;line-height:1.6;padding-bottom:8px">
+          Read-only connection · Data from Binance · Values in KES<br>Unrealized PnL is estimated based on current prices
+        </div>
+      </div>
+
+      <!-- Loading state -->
+      <div id="homeLoadingState" style="display:none">
+        <div class="home-loading">
+          <div class="spin"></div>
+          <div class="home-loading-txt" id="homeLoadingTxt">Connecting to Binance…</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
   <!-- ══ SIGNALS PAGE ══ -->
-  <div class="page on" id="pg-alerts">
+  <div class="page" id="pg-alerts">
     <div class="scan-hero">
       <div class="scan-hero-title">🔍 Scan the Market</div>
       <div class="scan-hero-sub">The app checks hundreds of coins on Binance and finds the ones whose price zones are shifting — so you know which ones to watch and which to avoid.</div>
@@ -689,11 +900,62 @@ body { color:var(--text); font-family:var(--font); display:flex; flex-direction:
   <div class="page" id="pg-settings">
     <div class="set-page">
       <h2>⚙️ Settings</h2>
+
+      <!-- BINANCE API SECTION -->
+      <div style="font-size:11px;font-weight:700;color:var(--soft);text-transform:uppercase;letter-spacing:.5px;padding:14px 0 8px">🔑 Binance Account</div>
+
+      <div id="settingsApiConnected" style="display:none">
+        <div class="set-row" style="border-color:rgba(26,219,138,.2);background:rgba(26,219,138,.04)">
+          <div class="set-row-left">
+            <div class="lbl" style="color:var(--safe)">✅ Binance Connected</div>
+            <div class="desc" id="settingsApiKeyHint">API key ending in ••••</div>
+          </div>
+          <button class="danger-btn" onclick="settingsDisconnectApi()">Remove</button>
+        </div>
+        <div class="set-row" style="cursor:pointer" onclick="gotoPage('home')">
+          <div class="set-row-left">
+            <div class="lbl">View Portfolio</div>
+            <div class="desc">Go to Home tab to see your live balance &amp; PnL</div>
+          </div>
+          <span style="color:var(--soft);font-size:16px">›</span>
+        </div>
+      </div>
+
+      <div id="settingsApiForm">
+        <div style="font-size:11px;color:var(--soft);line-height:1.6;padding:8px 0 10px">
+          Enter your Binance <strong style="color:var(--text)">Read-Only</strong> API key and secret to enable the Home portfolio dashboard. Keys never leave your device.
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:10px">
+          <input class="home-api-inp" id="settingsApiKey" placeholder="API Key (read-only)" autocomplete="off" spellcheck="false" style="width:100%">
+          <div style="position:relative">
+            <input class="home-api-inp" id="settingsApiSecret" placeholder="API Secret" type="password" autocomplete="off" style="width:100%;padding-right:40px">
+            <button onclick="settingsToggleSecretVis()" id="settingsSecretToggle" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--soft);cursor:pointer;font-size:14px">👁️</button>
+          </div>
+        </div>
+        <button class="home-api-btn" id="settingsConnectBtn" onclick="settingsConnect()" style="width:100%;padding:10px">🔗 Connect Binance Account</button>
+        <div style="font-size:10px;color:var(--dim);line-height:1.6;margin-top:8px;padding:8px;background:var(--s2);border-radius:8px;border:1px solid var(--border)">
+          ⚠️ <strong style="color:var(--soft)">Security tips:</strong><br>
+          • Use Read-Only keys — disable trading, withdrawal &amp; transfer permissions<br>
+          • Create keys at Binance → Profile → API Management<br>
+          • Restrict IP if possible for extra security
+        </div>
+      </div>
+
+      <div style="height:1px;background:var(--border);margin:16px 0"></div>
+
+      <!-- SCAN SETTINGS -->
+      <div style="font-size:11px;font-weight:700;color:var(--soft);text-transform:uppercase;letter-spacing:.5px;padding-bottom:8px">📡 Signal Scanner</div>
       <div class="set-row"><div class="set-row-left"><div class="lbl">Auto-Scan</div><div class="desc">Automatically re-scan coins every few minutes and alert you</div></div><div class="toggle" id="autoToggle" onclick="toggleAuto()"></div></div>
       <div class="set-row"><div class="set-row-left"><div class="lbl">Auto-scan every</div><div class="desc">How often to automatically check the market</div></div><div class="set-ctrl"><select id="autoMins" onchange="saveSettings()"><option value="2">2 min</option><option value="5" selected>5 min</option><option value="10">10 min</option><option value="30">30 min</option></select></div></div>
       <div class="set-row"><div class="set-row-left"><div class="lbl">Only alert strong signals</div><div class="desc">Minimum confidence score to send a notification</div></div><div class="set-ctrl"><select id="minConf" onchange="saveSettings()"><option value="50">50+</option><option value="60">60+</option><option value="70" selected>70+</option><option value="80">80+</option></select></div></div>
       <div class="set-row"><div class="set-row-left"><div class="lbl">Only scan big coins</div><div class="desc">Filter out small coins with low trading activity</div></div><div class="set-ctrl"><select id="minVol" onchange="saveSettings()"><option value="1000000">Any size</option><option value="5000000" selected>Medium+</option><option value="50000000">Large only</option></select></div></div>
+
+      <div style="height:1px;background:var(--border);margin:16px 0"></div>
+
+      <!-- DATA -->
+      <div style="font-size:11px;font-weight:700;color:var(--soft);text-transform:uppercase;letter-spacing:.5px;padding-bottom:8px">🗂️ Data</div>
       <div class="set-row" onclick="clearHistory()" style="cursor:pointer"><div class="set-row-left"><div class="lbl" style="color:var(--danger)">Clear signal history</div><div class="desc">Remove all past signal records</div></div><button class="danger-btn">Clear</button></div>
+
       <div class="set-footer">CoinWatch · Spot Trader Assistant<br>Data from Binance public API · Not financial advice</div>
     </div>
   </div>
@@ -702,7 +964,10 @@ body { color:var(--text); font-family:var(--font); display:flex; flex-direction:
 
 <!-- Bottom Nav -->
 <div class="bottom-nav">
-  <button class="bnav on" id="bn-alerts" onclick="gotoPage('alerts')">
+  <button class="bnav on" id="bn-home" onclick="gotoPage('home')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Home
+  </button>
+  <button class="bnav" id="bn-alerts" onclick="gotoPage('alerts')">
     <div class="bnav-dot" id="alertDot"></div>
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>Signals
   </button>
@@ -769,7 +1034,7 @@ async function apiFetch(path) {
 let signals = [], signalHistory = [];
 let watchlist = new Map();
 let settings = { autoMins:5, minConf:70, minVol:5000000 };
-let activeFilter = 'all', currentPage = 'alerts';
+let activeFilter = 'all', currentPage = 'home';
 let autoTimer = null, autoOn = false, deferredInstall = null;
 let monitorOn = false, monitorTimer = null;
 
@@ -870,6 +1135,410 @@ function gotoPage(page) {
   if (page === 'watchlist') renderWatchlist();
   if (page === 'history')   renderHistory();
   if (page === 'protect')   renderProtectAlerts();
+  if (page === 'home')      homeInit();
+  if (page === 'settings')  settingsRefreshApiStatus();
+}
+
+// ══════════════════════════════════════════════════════════
+// HOME PAGE — BINANCE ACCOUNT DASHBOARD
+// ══════════════════════════════════════════════════════════
+// KES conversion rate (approximate — fetched live if possible)
+let KES_RATE = 129.5; // 1 USD ≈ 129.5 KES (updated on load)
+let homeHidden = false;
+let homeApiKey = '', homeApiSecret = '';
+let homePortfolioData = null;
+let homeCurrentPeriod = '1D';
+const ALLOC_COLORS = ['#4f8cf5','#9b72f5','#1adb8a','#f5c842','#f04f6b','#f5864f','#4fc3f7','#a5d6a7','#ce93d8','#80cbc4'];
+
+// HMAC-SHA256 for Binance signed requests (pure JS, no external libs)
+async function hmacSHA256(key, data) {
+  const enc = new TextEncoder();
+  const cryptoKey = await crypto.subtle.importKey('raw', enc.encode(key), { name:'HMAC', hash:'SHA-256' }, false, ['sign']);
+  const sig = await crypto.subtle.sign('HMAC', cryptoKey, enc.encode(data));
+  return Array.from(new Uint8Array(sig)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+
+async function binanceSignedFetch(endpoint, params={}) {
+  const ts = Date.now();
+  const qParts = Object.entries({...params, timestamp:ts}).map(([k,v])=>`${k}=${v}`).join('&');
+  const signature = await hmacSHA256(homeApiSecret, qParts);
+  const url = `https://api.binance.com${endpoint}?${qParts}&signature=${signature}`;
+  const r = await fetch(url, {
+    headers: { 'X-MBX-APIKEY': homeApiKey },
+    signal: AbortSignal.timeout(10000)
+  });
+  if (!r.ok) {
+    const err = await r.json().catch(()=>({}));
+    throw new Error(err.msg || `HTTP ${r.status}`);
+  }
+  return r.json();
+}
+
+async function fetchKesRate() {
+  try {
+    const d = await apiFetch('/ticker/price?symbol=USDTKES');
+    if (d?.price) KES_RATE = parseFloat(d.price);
+  } catch(e) {
+    // keep default rate
+  }
+}
+
+function homeShowSection(section) {
+  document.getElementById('homeApiSetup').style.display    = section==='setup'    ? '' : 'none';
+  document.getElementById('homePortfolio').style.display   = section==='portfolio'? '' : 'none';
+  document.getElementById('homeLoadingState').style.display= section==='loading'  ? '' : 'none';
+}
+
+function homeSetLoadingTxt(txt) {
+  document.getElementById('homeLoadingTxt').textContent = txt;
+}
+
+async function homeInit() {
+  // Load saved keys
+  homeApiKey    = lsGet('home_apikey') || '';
+  homeApiSecret = lsGet('home_apisecret') || '';
+  if (homeApiKey && homeApiSecret) {
+    homeShowSection('loading');
+    homeSetLoadingTxt('Loading your portfolio…');
+    await homeLoadPortfolio();
+  } else {
+    homeShowSection('setup');
+    homeRenderDemo();
+  }
+}
+
+// Called from Settings page
+async function settingsConnect() {
+  const key = document.getElementById('settingsApiKey').value.trim();
+  const sec = document.getElementById('settingsApiSecret').value.trim();
+  if (!key || !sec) { showToast('⚠️ Enter both API key and secret'); return; }
+  homeApiKey = key;
+  homeApiSecret = sec;
+  const btn = document.getElementById('settingsConnectBtn');
+  btn.disabled = true; btn.textContent = '🔄 Connecting…';
+  try {
+    await fetchKesRate();
+    // Quick test: fetch account info
+    const account = await binanceSignedFetch('/api/v3/account');
+    if (!account?.balances) throw new Error('Invalid response — check key permissions');
+    lsSet('home_apikey', key);
+    lsSet('home_apisecret', sec);
+    document.getElementById('settingsApiForm').style.display = 'none';
+    document.getElementById('settingsApiConnected').style.display = '';
+    document.getElementById('settingsApiKeyHint').textContent = 'Key ending in …' + key.slice(-6);
+    document.getElementById('settingsApiKey').value = '';
+    document.getElementById('settingsApiSecret').value = '';
+    showToast('✅ Binance connected! Go to Home to view portfolio');
+  } catch(e) {
+    homeApiKey = ''; homeApiSecret = '';
+    btn.disabled = false; btn.textContent = '🔗 Connect Binance Account';
+    showToast('❌ ' + (e.message || 'Failed — check keys and permissions'));
+  }
+}
+
+function settingsDisconnectApi() {
+  lsSet('home_apikey',''); lsSet('home_apisecret','');
+  homeApiKey = ''; homeApiSecret = '';
+  homePortfolioData = null;
+  document.getElementById('settingsApiConnected').style.display = 'none';
+  document.getElementById('settingsApiForm').style.display = '';
+  showToast('🔌 Binance account disconnected');
+}
+
+function settingsToggleSecretVis() {
+  const inp = document.getElementById('settingsApiSecret');
+  const btn = document.getElementById('settingsSecretToggle');
+  if (inp.type === 'password') { inp.type='text'; btn.textContent='🙈'; }
+  else { inp.type='password'; btn.textContent='👁️'; }
+}
+
+function settingsRefreshApiStatus() {
+  const key = lsGet('home_apikey') || '';
+  if (key) {
+    document.getElementById('settingsApiConnected').style.display = '';
+    document.getElementById('settingsApiForm').style.display = 'none';
+    document.getElementById('settingsApiKeyHint').textContent = 'Key ending in …' + key.slice(-6);
+  } else {
+    document.getElementById('settingsApiConnected').style.display = 'none';
+    document.getElementById('settingsApiForm').style.display = '';
+  }
+}
+
+async function homeLoadPortfolio() {
+  try {
+    homeSetLoadingTxt('Fetching KES rate…');
+    await fetchKesRate();
+
+    homeSetLoadingTxt('Loading account balance…');
+    const account = await binanceSignedFetch('/api/v3/account');
+    if (!account?.balances) throw new Error('Invalid API response — check key permissions');
+
+    // Filter to non-zero balances
+    const rawBals = account.balances.filter(b => parseFloat(b.free)+parseFloat(b.locked) > 0.000001);
+
+    // Get prices for all non-USDT assets
+    homeSetLoadingTxt('Fetching live prices…');
+    const nonStable = rawBals.filter(b => !['USDT','BUSD','USDC','TUSD','DAI'].includes(b.asset));
+    const priceMap = { USDT:1, BUSD:1, USDC:1, TUSD:1, DAI:1 };
+    if (nonStable.length > 0) {
+      const syms = nonStable.map(b=>b.asset+'USDT');
+      // Fetch prices in parallel with error tolerance
+      const priceResults = await Promise.allSettled(
+        syms.map(sym => apiFetch(`/ticker/price?symbol=${sym}`))
+      );
+      priceResults.forEach((r,i) => {
+        if (r.status==='fulfilled' && r.value?.price) {
+          priceMap[nonStable[i].asset] = parseFloat(r.value.price);
+        }
+      });
+    }
+
+    // Build portfolio
+    const assets = rawBals.map(b => {
+      const qty    = parseFloat(b.free) + parseFloat(b.locked);
+      const price  = priceMap[b.asset] || 0;
+      const usdt   = qty * price;
+      const kes    = usdt * KES_RATE;
+      return { asset:b.asset, qty, price, usdt, kes, free:parseFloat(b.free), locked:parseFloat(b.locked) };
+    }).filter(a=>a.usdt > 0.01).sort((a,b)=>b.kes-a.kes);
+
+    const totalKes = assets.reduce((s,a)=>s+a.kes, 0);
+    const totalUsd = assets.reduce((s,a)=>s+a.usdt, 0);
+
+    // Simulate 24h PnL from price changes (get 24h ticker for all)
+    homeSetLoadingTxt('Calculating PnL…');
+    let pnlKes = 0;
+    try {
+      const tickers = await apiFetch('/ticker/24hr');
+      const tickMap = {};
+      if (Array.isArray(tickers)) tickers.forEach(t => tickMap[t.symbol] = t);
+      assets.forEach(a => {
+        const sym = a.asset + 'USDT';
+        const t = tickMap[sym];
+        if (t && a.usdt > 0) {
+          const prevPriceUsd = a.price / (1 + parseFloat(t.priceChangePercent)/100);
+          const prevVal = a.qty * prevPriceUsd * KES_RATE;
+          pnlKes += (a.kes - prevVal);
+        }
+      });
+    } catch(e) {}
+
+    homePortfolioData = { assets, totalKes, totalUsd, pnlKes, priceMap, loadedAt: Date.now() };
+    homeRenderPortfolio();
+    homeShowSection('portfolio');
+  } catch(e) {
+    throw e;
+  }
+}
+
+function homeRenderPortfolio() {
+  const d = homePortfolioData;
+  if (!d) return;
+
+  // Header value
+  const pnlPct = d.totalKes > 0 ? (d.pnlKes / (d.totalKes - d.pnlKes)) * 100 : 0;
+  const pnlPos = d.pnlKes >= 0;
+  document.getElementById('homePortVal').innerHTML =
+    homeHidden ? `<span class="home-hidden-val">KSh ••••••</span>` :
+    `KSh${homeFormatNum(d.totalKes)} <span class="home-port-currency">KES</span>`;
+
+  const pnlBadge = document.getElementById('homePnlBadge');
+  pnlBadge.className = 'home-port-pnl' + (pnlPos?'':' neg');
+  pnlBadge.innerHTML = homeHidden ? '••••' :
+    `${pnlPos?'+':''}KSh${homeFormatNum(Math.abs(d.pnlKes))} (${pnlPos?'+':''}${pnlPct.toFixed(2)}%) 24h`;
+
+  // Last refresh
+  document.getElementById('homeLastRefresh').textContent =
+    'Updated ' + new Date(d.loadedAt).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+
+  // Mini chart (simulated sparkline from price range)
+  homeDrawSparkline();
+
+  // Stats strip
+  const topAsset = d.assets[0];
+  document.getElementById('homeStatsStrip').innerHTML = `
+    <div class="home-stat-card">
+      <div class="home-stat-lbl">Total in USDT</div>
+      <div class="home-stat-val" style="font-size:15px">${homeHidden?'••••':'$'+homeFormatNum(d.totalUsd)}</div>
+      <div class="home-stat-sub">≈ KSh${homeFormatNum(d.totalKes)}</div>
+    </div>
+    <div class="home-stat-card">
+      <div class="home-stat-lbl">Today's PnL</div>
+      <div class="home-stat-val" style="font-size:15px;color:${d.pnlKes>=0?'var(--safe)':'var(--danger)'}">${homeHidden?'••••':(d.pnlKes>=0?'+':'')+'KSh'+homeFormatNum(Math.abs(d.pnlKes))}</div>
+      <div class="home-stat-sub">${pnlPct>=0?'+':''}${pnlPct.toFixed(2)}% vs yesterday</div>
+    </div>
+    <div class="home-stat-card">
+      <div class="home-stat-lbl">Assets held</div>
+      <div class="home-stat-val">${d.assets.length}</div>
+      <div class="home-stat-sub">coins / tokens</div>
+    </div>
+    <div class="home-stat-card">
+      <div class="home-stat-lbl">Largest hold</div>
+      <div class="home-stat-val" style="font-size:15px">${topAsset?topAsset.asset:'—'}</div>
+      <div class="home-stat-sub">${topAsset?((topAsset.kes/d.totalKes*100).toFixed(0)+'% of portfolio'):''}</div>
+    </div>`;
+
+  // Allocation bar
+  const allocBar = document.getElementById('homeAllocBar');
+  const allocLeg = document.getElementById('homeAllocLegend');
+  allocBar.innerHTML = '';
+  allocLeg.innerHTML = '';
+  d.assets.slice(0,8).forEach((a,i) => {
+    const pct = (a.kes / d.totalKes * 100).toFixed(1);
+    const col = ALLOC_COLORS[i % ALLOC_COLORS.length];
+    const seg = document.createElement('div');
+    seg.className = 'home-alloc-seg';
+    seg.style.cssText = `width:${pct}%;background:${col}`;
+    seg.title = `${a.asset}: ${pct}%`;
+    allocBar.appendChild(seg);
+    const item = document.createElement('div');
+    item.className = 'home-alloc-item';
+    item.innerHTML = `<div class="home-alloc-dot" style="background:${col}"></div>${a.asset} <span>${pct}%</span>`;
+    allocLeg.appendChild(item);
+  });
+  if (d.assets.length > 8) {
+    const restPct = d.assets.slice(8).reduce((s,a)=>s+(a.kes/d.totalKes*100),0).toFixed(1);
+    allocLeg.innerHTML += `<div class="home-alloc-item"><div class="home-alloc-dot" style="background:var(--dim)"></div>Others <span>${restPct}%</span></div>`;
+  }
+
+  // Balance list
+  document.getElementById('homeBalCount').textContent = `${d.assets.length} assets`;
+  const balList = document.getElementById('homeBalList');
+  balList.innerHTML = d.assets.map((a,i) => {
+    const col = ALLOC_COLORS[i % ALLOC_COLORS.length];
+    const priceTxt = a.price > 0 ? `$${a.price < 0.01 ? a.price.toFixed(6) : a.price < 1 ? a.price.toFixed(4) : homeFormatNum(a.price)}` : '—';
+    return `<div class="home-balance-item">
+      <div class="home-bal-avatar" style="color:${col}">${a.asset.slice(0,3)}</div>
+      <div class="home-bal-info">
+        <div class="home-bal-name">${a.asset}</div>
+        <div class="home-bal-sub">${priceTxt} per coin</div>
+        <div class="home-bal-actions">
+          <button class="home-bal-act-btn" onclick="gotoPage('smc');setTimeout(()=>{document.getElementById('smcPairInput').value='${a.asset}';},100)">📊 SMC</button>
+          <button class="home-bal-act-btn" onclick="addAssetToWatchlist('${a.asset}')">⭐ Watch</button>
+        </div>
+      </div>
+      <div class="home-bal-right">
+        <div class="home-bal-qty">${homeHidden?'••••':a.qty.toFixed(a.qty<1?6:4)}</div>
+        <div class="home-bal-kes">${homeHidden?'••••':'KSh'+homeFormatNum(a.kes)}</div>
+        ${a.locked>0?`<div class="home-bal-pnl" style="color:var(--warn)">🔒 ${a.locked.toFixed(4)} locked</div>`:''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function homeDrawSparkline() {
+  const svg = document.getElementById('homeChartSvg');
+  if (!homePortfolioData) return;
+  // Generate a plausible sparkline using the total and pnl
+  const total = homePortfolioData.totalKes;
+  const pnl   = homePortfolioData.pnlKes;
+  const start = total - pnl;
+  const pts   = 24;
+  const vals  = [];
+  for (let i=0; i<pts; i++) {
+    const prog = i / (pts-1);
+    const jitter = (Math.sin(i*1.3)*0.4 + Math.cos(i*0.7)*0.3) * Math.abs(pnl) * 0.5;
+    vals.push(start + (pnl * prog) + jitter);
+  }
+  const mn = Math.min(...vals), mx = Math.max(...vals);
+  const W=320, H=70, PAD=4;
+  const toX = i => PAD + (i/(pts-1))*(W-PAD*2);
+  const toY = v => PAD + (1-(v-mn)/(mx-mn||1))*(H-PAD*2);
+  const pts2 = vals.map((v,i)=>`${toX(i)},${toY(v)}`).join(' ');
+  const isUp = pnl >= 0;
+  const col  = isUp ? '#1adb8a' : '#f04f6b';
+  svg.innerHTML = `
+    <defs>
+      <linearGradient id="hcg" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="${col}" stop-opacity="0.3"/>
+        <stop offset="100%" stop-color="${col}" stop-opacity="0"/>
+      </linearGradient>
+    </defs>
+    <polygon points="${pts2} ${toX(pts-1)},${H} ${toX(0)},${H}" fill="url(#hcg)"/>
+    <polyline points="${pts2}" fill="none" stroke="${col}" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/>
+    <circle cx="${toX(pts-1)}" cy="${toY(vals[pts-1])}" r="3" fill="${col}"/>`;
+  document.getElementById('homeChartHigh').textContent = 'KSh'+homeFormatNum(mx);
+  document.getElementById('homeChartLow').textContent  = 'KSh'+homeFormatNum(mn);
+}
+
+function homeSetPeriod(p, btn) {
+  homeCurrentPeriod = p;
+  document.querySelectorAll('.home-time-btn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  // Note: changing period would require historical portfolio data endpoint
+  // which Binance doesn't expose freely; we show a toast explaining this
+  if (p !== '1D') showToast(`ℹ️ Historical portfolio data not available via API — showing current snapshot`);
+}
+
+function homeToggleHide() {
+  homeHidden = !homeHidden;
+  document.getElementById('homeEyeBtn').textContent = homeHidden ? '🙈' : '👁️';
+  if (homePortfolioData) homeRenderPortfolio();
+}
+
+async function homeRefresh() {
+  homeShowSection('loading');
+  homeSetLoadingTxt('Refreshing portfolio…');
+  try {
+    await homeLoadPortfolio();
+  } catch(e) {
+    homeShowSection('portfolio');
+    showToast('❌ Refresh failed: ' + e.message);
+  }
+}
+
+function homeDisconnect() {
+  lsSet('home_apikey',''); lsSet('home_apisecret','');
+  homeApiKey = ''; homeApiSecret = '';
+  homePortfolioData = null;
+  homeShowSection('setup');
+  homeRenderDemo();
+  settingsRefreshApiStatus();
+  showToast('🔌 Account disconnected');
+}
+
+function addAssetToWatchlist(asset) {
+  if (!watchlist.has(asset)) {
+    watchlist.set(asset, { alert:0 });
+    saveWL();
+    showToast(`⭐ ${asset} added to watchlist`);
+  } else {
+    showToast(`${asset} is already in your watchlist`);
+  }
+}
+
+function homeFormatNum(n) {
+  if (n >= 1000000) return (n/1000000).toFixed(2)+'M';
+  if (n >= 1000)    return n.toLocaleString('en-KE',{minimumFractionDigits:2,maximumFractionDigits:2});
+  return n.toFixed(2);
+}
+
+function homeRenderDemo() {
+  // Show a greyed-out demo portfolio preview
+  const demo = document.getElementById('homeDemoContent');
+  demo.innerHTML = `
+    <div class="home-portfolio-hdr" style="opacity:.45;pointer-events:none">
+      <div class="home-port-label">Est. Total Value 👁️</div>
+      <div class="home-port-val">KSh29,260.72 <span class="home-port-currency">KES</span></div>
+      <div class="home-port-pnl">+KSh558.06 (+1.94%) 24h</div>
+      <svg viewBox="0 0 320 70" style="width:100%;height:70px">
+        <polyline points="10,55 40,42 70,38 100,30 120,22 150,45 180,40 210,42 250,38 280,36 310,34"
+          fill="none" stroke="#1adb8a" stroke-width="2" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <div class="home-balance-card" style="opacity:.45;pointer-events:none">
+      <div class="home-balance-title">Balance <span style="font-size:10px;color:var(--soft)">3 assets</span></div>
+      ${[['DASH','4.1003','KSh24,234','-21.74%',false],['USDT','38.69','KSh5,025','+0.00%',true],['BTC','0.0012','KSh2,001','+2.1%',true]].map(([a,q,k,p,pos])=>`
+        <div class="home-balance-item">
+          <div class="home-bal-avatar">${a.slice(0,3)}</div>
+          <div class="home-bal-info"><div class="home-bal-name">${a}</div><div class="home-bal-sub">demo</div></div>
+          <div class="home-bal-right">
+            <div class="home-bal-qty">${q}</div>
+            <div class="home-bal-kes">${k}</div>
+            <div class="home-bal-pnl" style="color:${pos?'var(--safe)':'var(--danger)'}">${p}</div>
+          </div>
+        </div>`).join('')}
+    </div>`;
 }
 
 // ══════════════════════════════════════════════════════════
@@ -2448,6 +3117,7 @@ function renderHistory(){
 // INIT
 // ══════════════════════════════════════════════════════════
 load();
+homeInit(); // Home is the default landing page
 document.getElementById('wlCoinInput')?.addEventListener('keydown',e=>{if(e.key==='Enter')addToWatchlist();});
 document.getElementById('smcPairInput')?.addEventListener('keydown',e=>{if(e.key==='Enter')runSMCAnalysis();});
 </script>
