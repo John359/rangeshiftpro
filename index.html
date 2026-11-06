@@ -1198,12 +1198,15 @@ const ALLOC_COLORS = ['#4f8cf5','#9b72f5','#1adb8a','#f5c842','#f04f6b','#f5864f
 // When running coinwatch-proxy.js locally, signed requests go
 // through http://localhost:3128/binance — no CORS, no secret
 // leaves the browser.  Falls back to direct fetch if proxy is down.
-const PROXY_URL = 'http://localhost:3128/binance';
+// ── UPDATE THIS after deploying coinwatch-proxy-deno.ts to Deno Deploy ──
+// Replace the placeholder with your real project URL, e.g.:
+//   const PROXY_URL = 'https://your-project-name.deno.dev/binance';
+const PROXY_URL = 'https://YOUR-PROJECT-NAME.deno.dev/binance';
 let proxyAvailable = false;
 
 async function checkProxy() {
   try {
-    const r = await fetch('http://localhost:3128/ping', { signal: AbortSignal.timeout(1500) });
+    const r = await fetch('https://YOUR-PROJECT-NAME.deno.dev/ping', { signal: AbortSignal.timeout(4000) });
     proxyAvailable = r.ok;
   } catch(e) { proxyAvailable = false; }
   updateProxyStatus();
@@ -1238,7 +1241,7 @@ function updateProxyStatus() {
       dot.style.boxShadow  = 'none';
       txt.style.color = 'var(--soft)';
       txt.textContent = 'Proxy offline — balance unavailable';
-      hint.textContent = 'run coinwatch-proxy.js';
+      hint.textContent = 'deploy coinwatch-proxy-deno.ts to Deno Deploy';
     }
     if (bdot) {
       bdot.style.background = 'var(--dim)';
@@ -1279,7 +1282,7 @@ async function binanceSignedFetch(endpoint, params={}) {
       if (e.name === 'TypeError' || e.name === 'AbortError') {
         proxyAvailable = false;
         updateProxyStatus();
-        throw new Error('Proxy went offline. Restart coinwatch-proxy.js and try again.');
+        throw new Error('Proxy unreachable. Check your Deno Deploy project is live.');
       }
       throw e;
     }
