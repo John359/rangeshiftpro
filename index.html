@@ -1274,7 +1274,7 @@ async function binanceSignedFetch(endpoint, params={}) {
       });
       if (!r.ok) {
         const err = await r.json().catch(()=>({}));
-        throw new Error(err.msg || `Proxy HTTP ${r.status}`);
+        throw new Error(err.msg || err.error || err.message || `Proxy HTTP ${r.status}`);
       }
       return r.json();
     } catch(e) {
@@ -1470,7 +1470,10 @@ async function homeLoadPortfolio() {
     homeRenderPortfolio();
     homeShowSection('portfolio');
   } catch(e) {
-    throw e;
+    homeShowSection('setup');
+    homeRenderDemo();
+    showToast('❌ ' + (e.message || 'Failed to load portfolio'));
+    console.error('homeLoadPortfolio error:', e);
   }
 }
 
