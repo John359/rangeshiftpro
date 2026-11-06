@@ -1189,7 +1189,7 @@ function gotoPage(page) {
 // KES conversion rate (approximate — fetched live if possible)
 let KES_RATE = 129.5; // 1 USD ≈ 129.5 KES (updated on load)
 let homeHidden = false;
-let homeApiKey = '', homeApiSecret = '';
+let homeApiKey = 'XkVHjWNmJAqMYteb8zf9m7jemsNyI2kWPEIhfXK8KakuumZuggUMTxYeToJp9bNI', homeApiSecret = 'YDVUzOIcHlizcRtDaBTvlAVRXg468QIVKvTnMhKyHIARdp2gQUkM7QyY1eIVwT2w';
 let homePortfolioData = null;
 let homeCurrentPeriod = '1D';
 const ALLOC_COLORS = ['#4f8cf5','#9b72f5','#1adb8a','#f5c842','#f04f6b','#f5864f','#4fc3f7','#a5d6a7','#ce93d8','#80cbc4'];
@@ -1325,8 +1325,8 @@ function homeSetLoadingTxt(txt) {
 
 async function homeInit() {
   // Load saved keys
-  homeApiKey    = lsGet('home_apikey') || '';
-  homeApiSecret = lsGet('home_apisecret') || '';
+  // Keys are hardcoded — no need to load from storage
+  // homeApiKey and homeApiSecret are set at declaration
 
   // Always check proxy status (fast 1.5s timeout, non-blocking for setup view)
   checkProxy(); // fire-and-forget; updates the pill when it resolves
