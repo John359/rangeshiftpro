@@ -1201,12 +1201,12 @@ const ALLOC_COLORS = ['#4f8cf5','#9b72f5','#1adb8a','#f5c842','#f04f6b','#f5864f
 // ── UPDATE THIS after deploying coinwatch-proxy-deno.ts to Deno Deploy ──
 // Replace the placeholder with your real project URL, e.g.:
 //   const PROXY_URL = 'https://your-project-name.deno.dev/binance';
-const PROXY_URL = 'https://YOUR-PROJECT-NAME.deno.dev/binance';
+const PROXY_URL = 'https://rangeshiftpro-39.john359.deno.net/binance';
 let proxyAvailable = false;
 
 async function checkProxy() {
   try {
-    const r = await fetch('https://YOUR-PROJECT-NAME.deno.dev/ping', { signal: AbortSignal.timeout(4000) });
+    const r = await fetch('https://rangeshiftpro-39.john359.deno.net/ping', { signal: AbortSignal.timeout(4000) });
     proxyAvailable = r.ok;
   } catch(e) { proxyAvailable = false; }
   updateProxyStatus();
