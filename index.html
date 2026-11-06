@@ -936,66 +936,74 @@ function smcQuickPick(sym) {
   runSMCAnalysis();
 }
 
-function detectSwings(klines, lookback=3) {
-  // Find pivot highs and lows
+// ─────────────────────────────────────────────────────────────
+// SWING DETECTION  (pivot lookback = 5 bars each side for quality)
+// ─────────────────────────────────────────────────────────────
+function detectSwings(klines, lookback=5) {
   const highs=[], lows=[];
   for (let i=lookback; i<klines.length-lookback; i++) {
     const h=+klines[i][2], l=+klines[i][3];
     let isHigh=true, isLow=true;
     for (let j=i-lookback; j<=i+lookback; j++) {
-      if(j===i)continue;
+      if(j===i) continue;
       if(+klines[j][2]>=h) isHigh=false;
       if(+klines[j][3]<=l) isLow=false;
     }
     if(isHigh) highs.push({idx:i, price:h, ts:+klines[i][0]});
-    if(isLow)  lows.push({idx:i, price:l, ts:+klines[i][0]});
+    if(isLow)  lows.push( {idx:i, price:l, ts:+klines[i][0]});
   }
   return {highs, lows};
 }
 
+// ─────────────────────────────────────────────────────────────
+// BOS — price CLOSES beyond the most recent confirmed swing
+//        (a close, not just a wick, is required)
+// ─────────────────────────────────────────────────────────────
 function detectBOS(klines, swings) {
-  // Break of Structure: price closes above last swing high (bullish BOS)
-  // or below last swing low (bearish BOS)
-  const closes = klines.map(k=>+k[4]);
-  const cur = closes[closes.length-1];
   const results = [];
+  const n = klines.length;
 
+  // ── Bullish BOS: close above last swing HIGH (higher high)
   if (swings.highs.length >= 2) {
     const lastH = swings.highs[swings.highs.length-1];
     const prevH = swings.highs[swings.highs.length-2];
-    if (cur > lastH.price && lastH.price > prevH.price) {
-      results.push({ type:'BOS_BULL', level:lastH.price, desc:`Price broke above swing high $${f(lastH.price)} — bullish structure confirmed` });
-    }
-    if (cur < lastH.price && swings.highs.length >= 3) {
-      const h2 = swings.highs[swings.highs.length-3];
-      if (lastH.price < h2.price) {
-        results.push({ type:'BOS_BEAR', level:lastH.price, desc:`Lower high formed at $${f(lastH.price)} — bearish structure forming` });
+    // scan candles AFTER the swing high for a close above it
+    for (let i=lastH.idx+1; i<n; i++) {
+      if (+klines[i][4] > lastH.price) {
+        results.push({
+          type:'BOS_BULL', level:lastH.price, confirmIdx:i,
+          desc:`Bullish BOS: close above swing high $${f(lastH.price)} confirmed at candle ${i} — uptrend structure`
+        });
+        break;
       }
     }
+    // ── Bearish BOS: close below last swing LOW (lower low)
   }
-
   if (swings.lows.length >= 2) {
     const lastL = swings.lows[swings.lows.length-1];
-    const prevL = swings.lows[swings.lows.length-2];
-    if (cur < lastL.price && lastL.price < prevL.price) {
-      results.push({ type:'BOS_BEAR', level:lastL.price, desc:`Price broke below swing low $${f(lastL.price)} — bearish structure confirmed` });
-    }
-    if (cur > lastL.price && swings.lows.length >= 3) {
-      const l2 = swings.lows[swings.lows.length-3];
-      if (lastL.price > l2.price) {
-        results.push({ type:'BOS_BULL', level:lastL.price, desc:`Higher low formed at $${f(lastL.price)} — bullish structure forming` });
+    for (let i=lastL.idx+1; i<n; i++) {
+      if (+klines[i][4] < lastL.price) {
+        results.push({
+          type:'BOS_BEAR', level:lastL.price, confirmIdx:i,
+          desc:`Bearish BOS: close below swing low $${f(lastL.price)} confirmed — downtrend structure`
+        });
+        break;
       }
     }
   }
-
   return results;
 }
 
+// ─────────────────────────────────────────────────────────────
+// CHoCH — Change of Character
+// In a downtrend (lower highs): price closes ABOVE the most recent
+//   swing high → first sign bulls are taking over
+// In an uptrend (higher lows): price closes BELOW the most recent
+//   swing low → first sign bears are taking over
+// ─────────────────────────────────────────────────────────────
 function detectCHoCH(klines, swings) {
-  // CHoCH: a swing in the OPPOSITE direction to the current trend
-  const closes = klines.map(k=>+k[4]);
-  const cur = closes[closes.length-1];
   const results = [];
+  const n = klines.length;
 
   if (swings.highs.length >= 2 && swings.lows.length >= 2) {
     const lastH = swings.highs[swings.highs.length-1];
@@ -1003,175 +1011,442 @@ function detectCHoCH(klines, swings) {
     const lastL = swings.lows[swings.lows.length-1];
     const prevL = swings.lows[swings.lows.length-2];
 
-    // Was in downtrend (lower highs), now last low is higher — CHoCH bullish
-    if (prevH.price > lastH.price && lastL.price > prevL.price) {
-      results.push({ type:'CHOCH_BULL', level:lastL.price, desc:`Trend flip signal: downtrend broken. First higher low at $${f(lastL.price)} — watch for confirmation` });
+    const inDowntrend = lastH.price < prevH.price && lastL.price < prevL.price;
+    const inUptrend   = lastH.price > prevH.price && lastL.price > prevL.price;
+
+    // CHoCH Bullish: was making lower highs, now closes above last swing high
+    if (inDowntrend) {
+      for (let i=lastH.idx+1; i<n; i++) {
+        if (+klines[i][4] > lastH.price) {
+          results.push({
+            type:'CHOCH_BULL', level:lastH.price,
+            desc:`Bullish CHoCH: downtrend broken — close above swing high $${f(lastH.price)}. Trend reversal signal — wait for retest before entering long`
+          });
+          break;
+        }
+      }
     }
-    // Was in uptrend (higher lows), now last high is lower — CHoCH bearish
-    if (prevL.price < lastL.price && lastH.price < prevH.price) {
-      results.push({ type:'CHOCH_BEAR', level:lastH.price, desc:`Trend flip signal: uptrend broken. First lower high at $${f(lastH.price)} — possible reversal` });
+
+    // CHoCH Bearish: was making higher lows, now closes below last swing low
+    if (inUptrend) {
+      for (let i=lastL.idx+1; i<n; i++) {
+        if (+klines[i][4] < lastL.price) {
+          results.push({
+            type:'CHOCH_BEAR', level:lastL.price,
+            desc:`Bearish CHoCH: uptrend broken — close below swing low $${f(lastL.price)}. Trend reversal signal — wait for retest before entering short`
+          });
+          break;
+        }
+      }
     }
   }
-
   return results;
 }
 
-function detectOrderBlocks(klines) {
-  // Bullish OB: last bearish candle before a strong bullish impulse
-  // Bearish OB: last bullish candle before a strong bearish impulse
+// ─────────────────────────────────────────────────────────────
+// ORDER BLOCKS
+// Bullish OB  = last BEARISH candle BEFORE a bullish impulse
+//               that breaks above a swing high (the actual origin candle)
+// Bearish OB  = last BULLISH candle BEFORE a bearish impulse
+//               that breaks below a swing low
+// Only keep OBs that have NOT yet been fully engulfed (mitigated)
+// ─────────────────────────────────────────────────────────────
+function detectOrderBlocks(klines, swings) {
   const obs = [];
-  const minImpulse = 1.5; // % move to count as impulse
 
-  for (let i=1; i<klines.length-2; i++) {
-    const o=+klines[i][1], c=+klines[i][4];
-    const nextC=+klines[i+1][4], nextO=+klines[i+1][1];
-    const nextMove = ((nextC-nextO)/nextO)*100;
+  // Look for moves that constitute a BOS to anchor the OB
+  // Bullish OBs: find the last bearish candle before each bullish impulse leg
+  for (let i=3; i<klines.length-1; i++) {
+    const c0=+klines[i][4], o0=+klines[i][1];
+    const h0=+klines[i][2], l0=+klines[i][3];
 
-    // Bearish candle followed by strong bullish move = Bullish OB
-    if (c < o && nextMove > minImpulse) {
-      obs.push({ type:'OB_BULL', high:+klines[i][2], low:+klines[i][3], open:o, close:c, idx:i,
-        desc:`Bullish order block: $${f(+klines[i][3])}–$${f(+klines[i][2])} — institutional buy zone` });
+    // Bearish candle (close < open)
+    if (c0 >= o0) continue;
+
+    // Check if the NEXT candle starts a bullish impulse (closes well above this candle's high)
+    const nextC = +klines[i+1][4];
+    const nextO = +klines[i+1][1];
+    const impulsePct = ((nextC - o0) / o0) * 100;
+    if (nextC <= h0 || impulsePct < 0.5) continue;
+
+    // Confirm the impulse broke a recent swing high (makes it a valid OB)
+    const recentHighs = swings.highs.filter(sh => sh.idx > i-10 && sh.idx < i);
+    const brokeHigh = recentHighs.some(sh => nextC > sh.price) || impulsePct > 1.5;
+    if (!brokeHigh) continue;
+
+    // Check mitigation: if price later closed BELOW the OB low it's mitigated
+    let mitigated = false;
+    for (let j=i+2; j<klines.length; j++) {
+      if (+klines[j][4] < l0) { mitigated = true; break; }
     }
-    // Bullish candle followed by strong bearish move = Bearish OB
-    if (c > o && nextMove < -minImpulse) {
-      obs.push({ type:'OB_BEAR', high:+klines[i][2], low:+klines[i][3], open:o, close:c, idx:i,
-        desc:`Bearish order block: $${f(+klines[i][3])}–$${f(+klines[i][2])} — institutional sell zone` });
-    }
+    if (mitigated) continue;
+
+    obs.push({
+      type:'OB_BULL', high:h0, low:l0, open:o0, close:c0, idx:i,
+      desc:`Bullish OB candle ${i}: $${f(l0)}–$${f(h0)} — last bearish candle before the bullish impulse. Institutions buy here on retest`
+    });
   }
 
-  // Keep only the 3 most recent of each type
+  // Bearish OBs: last bullish candle before each bearish impulse
+  for (let i=3; i<klines.length-1; i++) {
+    const c0=+klines[i][4], o0=+klines[i][1];
+    const h0=+klines[i][2], l0=+klines[i][3];
+
+    // Bullish candle
+    if (c0 <= o0) continue;
+
+    const nextC = +klines[i+1][4];
+    const nextO = +klines[i+1][1];
+    const impulsePct = ((o0 - nextC) / o0) * 100;
+    if (nextC >= l0 || impulsePct < 0.5) continue;
+
+    const recentLows = swings.lows.filter(sl => sl.idx > i-10 && sl.idx < i);
+    const brokeLow = recentLows.some(sl => nextC < sl.price) || impulsePct > 1.5;
+    if (!brokeLow) continue;
+
+    // Mitigation check: if price later closed ABOVE the OB high it's mitigated
+    let mitigated = false;
+    for (let j=i+2; j<klines.length; j++) {
+      if (+klines[j][4] > h0) { mitigated = true; break; }
+    }
+    if (mitigated) continue;
+
+    obs.push({
+      type:'OB_BEAR', high:h0, low:l0, open:o0, close:c0, idx:i,
+      desc:`Bearish OB candle ${i}: $${f(l0)}–$${f(h0)} — last bullish candle before the bearish impulse. Institutions sell here on retest`
+    });
+  }
+
+  // Keep only the 3 most recent unmitigated of each type
   const bullOBs = obs.filter(o=>o.type==='OB_BULL').slice(-3);
   const bearOBs = obs.filter(o=>o.type==='OB_BEAR').slice(-3);
   return [...bullOBs, ...bearOBs];
 }
 
+// ─────────────────────────────────────────────────────────────
+// FAIR VALUE GAPS (Imbalances / 3-candle gaps)
+// Bullish FVG: candle[i-1].HIGH < candle[i+1].LOW  (gap above)
+// Bearish FVG: candle[i-1].LOW  > candle[i+1].HIGH (gap below)
+// Only unfilled gaps are kept
+// ─────────────────────────────────────────────────────────────
 function detectFVGs(klines) {
-  // Fair Value Gap: candle[i-1].high < candle[i+1].low (bullish FVG)
-  //                candle[i-1].low  > candle[i+1].high (bearish FVG)
   const fvgs = [];
 
   for (let i=1; i<klines.length-1; i++) {
-    const prevHigh  = +klines[i-1][2];
-    const prevLow   = +klines[i-1][3];
-    const nextHigh  = +klines[i+1][2];
-    const nextLow   = +klines[i+1][3];
+    const prevHigh = +klines[i-1][2];
+    const prevLow  = +klines[i-1][3];
+    const nextHigh = +klines[i+1][2];
+    const nextLow  = +klines[i+1][3];
+    const midC     = +klines[i][4];  // the impulse candle close
 
+    // ── Bullish FVG: gap above
     if (prevHigh < nextLow) {
-      const gap = nextLow - prevHigh;
-      const gapPct = (gap / prevHigh) * 100;
-      if (gapPct > 0.3) {
-        fvgs.push({ type:'FVG_BULL', top:nextLow, bottom:prevHigh, idx:i, gapPct,
-          desc:`Bullish FVG: gap from $${f(prevHigh)} to $${f(nextLow)} (${gapPct.toFixed(2)}%) — price likely to fill this` });
+      const bottom = prevHigh, top = nextLow;
+      const gapPct = ((top - bottom) / bottom) * 100;
+      if (gapPct < 0.2) continue;
+      // Check if filled: any subsequent low traded into the gap
+      let filled = false;
+      for (let j=i+2; j<klines.length; j++) {
+        if (+klines[j][3] <= bottom) { filled=true; break; }
+      }
+      if (!filled) {
+        fvgs.push({ type:'FVG_BULL', top, bottom, midpoint:(top+bottom)/2, idx:i, gapPct,
+          desc:`Bullish FVG (imbalance): $${f(bottom)} to $${f(top)} (+${gapPct.toFixed(2)}%) — unfilled gap, price likely to return and fill before continuing up` });
       }
     }
 
+    // ── Bearish FVG: gap below
     if (prevLow > nextHigh) {
-      const gap = prevLow - nextHigh;
-      const gapPct = (gap / nextHigh) * 100;
-      if (gapPct > 0.3) {
-        fvgs.push({ type:'FVG_BEAR', top:prevLow, bottom:nextHigh, idx:i, gapPct,
-          desc:`Bearish FVG: gap from $${f(nextHigh)} to $${f(prevLow)} (${gapPct.toFixed(2)}%) — price likely to fill this` });
+      const top = prevLow, bottom = nextHigh;
+      const gapPct = ((top - bottom) / bottom) * 100;
+      if (gapPct < 0.2) continue;
+      let filled = false;
+      for (let j=i+2; j<klines.length; j++) {
+        if (+klines[j][2] >= top) { filled=true; break; }
+      }
+      if (!filled) {
+        fvgs.push({ type:'FVG_BEAR', top, bottom, midpoint:(top+bottom)/2, idx:i, gapPct,
+          desc:`Bearish FVG (imbalance): $${f(bottom)} to $${f(top)} (+${gapPct.toFixed(2)}%) — unfilled gap above, price likely to fill then continue down` });
       }
     }
   }
 
-  // Most recent 3 unfilled FVGs
-  return fvgs.slice(-3);
+  // Most recent 4 unfilled FVGs
+  return fvgs.slice(-4);
 }
 
+// ─────────────────────────────────────────────────────────────
+// LIQUIDITY SWEEPS (Stop Hunts)
+// Look at the last 10 candles for sweeps of recent swing levels
+// ─────────────────────────────────────────────────────────────
 function detectLiquiditySweep(klines, swings) {
-  // Sweep: price wicks above a swing high then closes back below (bear sweep)
-  //        price wicks below a swing low then closes back above (bull sweep)
   const sweeps = [];
-  const lastK  = klines[klines.length-1];
-  const lastH  = +lastK[2], lastL = +lastK[3], lastC = +lastK[4];
+  const lookWindow = klines.slice(-15);
 
-  if (swings.highs.length >= 2) {
-    const refHigh = swings.highs[swings.highs.length-2].price;
-    if (lastH > refHigh && lastC < refHigh) {
-      sweeps.push({ type:'SWEEP_BEAR', level:refHigh,
-        desc:`Stop hunt above $${f(refHigh)} — wick pierced resistance then closed below. Bearish reversal signal` });
-    }
+  // Check each recent candle for a sweep of a swing level
+  for (let i=5; i<lookWindow.length; i++) {
+    const k    = lookWindow[i];
+    const kH   = +k[2], kL = +k[3], kC = +k[4], kO = +k[1];
+    const wickUp   = kH - Math.max(kO,kC);  // upper wick size
+    const wickDown = Math.min(kO,kC) - kL;  // lower wick size
+
+    // Bear sweep: wick above a swing high + close back below (rejection)
+    swings.highs.slice(-5).forEach(sh => {
+      if (kH > sh.price && kC < sh.price && wickUp > (kH-kL)*0.4) {
+        sweeps.push({ type:'SWEEP_BEAR', level:sh.price,
+          desc:`Bearish liquidity sweep: price spiked above swing high $${f(sh.price)} (taking buy-stop orders), then closed back below — smart money sold into those orders. Short bias.` });
+      }
+    });
+
+    // Bull sweep: wick below a swing low + close back above (rejection)
+    swings.lows.slice(-5).forEach(sl => {
+      if (kL < sl.price && kC > sl.price && wickDown > (kH-kL)*0.4) {
+        sweeps.push({ type:'SWEEP_BULL', level:sl.price,
+          desc:`Bullish liquidity sweep: price spiked below swing low $${f(sl.price)} (taking sell-stop orders), then closed back above — smart money bought those dips. Long bias.` });
+      }
+    });
   }
 
-  if (swings.lows.length >= 2) {
-    const refLow = swings.lows[swings.lows.length-2].price;
-    if (lastL < refLow && lastC > refLow) {
-      sweeps.push({ type:'SWEEP_BULL', level:refLow,
-        desc:`Stop hunt below $${f(refLow)} — wick swept support then closed above. Bullish reversal signal` });
-    }
-  }
-
-  return sweeps;
+  // Deduplicate by level (keep most recent)
+  const seen = new Set();
+  return sweeps.filter(s => {
+    const k = s.type+s.level.toFixed(6);
+    if (seen.has(k)) return false;
+    seen.add(k); return true;
+  }).slice(-3);
 }
 
+// ─────────────────────────────────────────────────────────────
+// PREMIUM / DISCOUNT (Fibonacci-based like real SMC)
+// Range = swing high to swing low of the ENTIRE dataset
+// Equilibrium = 50% (0.5 fib)
+// Discount    = below 50%  (0.0–0.5 fib) — smart money buys here
+// Premium     = above 50%  (0.5–1.0 fib) — smart money sells here
+// Optimal entry for longs: 0.62–0.79 (OTE discount)
+// Optimal entry for shorts: 0.21–0.38 (OTE premium)
+// ─────────────────────────────────────────────────────────────
 function getPremiumDiscount(klines) {
   const highs = klines.map(k=>+k[2]);
   const lows  = klines.map(k=>+k[3]);
   const rangeH = Math.max(...highs);
   const rangeL = Math.min(...lows);
-  const mid    = (rangeH + rangeL) / 2;
-  const q1     = rangeL + (rangeH - rangeL) * 0.25; // discount boundary
-  const q3     = rangeL + (rangeH - rangeL) * 0.75; // premium boundary
+  const span   = rangeH - rangeL || 1;
+  const mid    = rangeL + span * 0.5;         // equilibrium (0.5)
+  const ote_lo = rangeL + span * 0.62;        // OTE long zone bottom
+  const ote_hi = rangeL + span * 0.79;        // OTE long zone top
+  const ote_s_lo = rangeL + span * 0.21;      // OTE short zone bottom
+  const ote_s_hi = rangeL + span * 0.38;      // OTE short zone top
+  const q1     = rangeL + span * 0.25;
+  const q3     = rangeL + span * 0.75;
   const cur    = +klines[klines.length-1][4];
-  const zone   = cur > q3 ? 'premium' : cur < q1 ? 'discount' : 'equilibrium';
-  const pct    = ((cur - rangeL) / (rangeH - rangeL)) * 100;
-  return { rangeH, rangeL, mid, q1, q3, cur, zone, pct };
+  const pct    = ((cur - rangeL) / span) * 100;
+
+  // SMC zone classification
+  let zone, zoneDetail;
+  if (cur > q3)        { zone='premium';     zoneDetail='Above 75% — full premium. Smart money tends to SHORT here.'; }
+  else if (cur > mid)  { zone='premium';     zoneDetail=`Above equilibrium ($${f(mid)}). Price in upper half — favour shorts or tight longs only.`; }
+  else if (cur < q1)   { zone='discount';    zoneDetail='Below 25% — deep discount. Institutional BUY zone.'; }
+  else                 { zone='equilibrium'; zoneDetail=`Near equilibrium ($${f(mid)}). No directional edge from zone alone — wait for OB or FVG confluence.`; }
+
+  // OTE check
+  const inOTELong  = cur >= ote_lo && cur <= ote_hi;
+  const inOTEShort = cur >= ote_s_lo && cur <= ote_s_hi;
+
+  return { rangeH, rangeL, mid, q1, q3, ote_lo, ote_hi, ote_s_lo, ote_s_hi, cur, zone, pct, zoneDetail, inOTELong, inOTEShort };
 }
 
-function smcOverallBias(bos, choch, obs, fvgs, sweeps, pd, rsiVal, obRatio) {
+// ─────────────────────────────────────────────────────────────
+// OVERALL BIAS SCORING
+// ─────────────────────────────────────────────────────────────
+function smcOverallBias(bos, choch, obs, fvgs, sweeps, pd, rsiVal, ema20v, ema50v, obRatio) {
   let bull = 0, bear = 0;
 
-  bos.forEach(b  => { if(b.type==='BOS_BULL') bull+=3;  else bear+=3; });
-  choch.forEach(c => { if(c.type==='CHOCH_BULL') bull+=4; else bear+=4; });
-  obs.forEach(o  => {
-    if(o.type==='OB_BULL' && pd.cur>=o.low && pd.cur<=o.high) bull+=3;
-    if(o.type==='OB_BEAR' && pd.cur>=o.low && pd.cur<=o.high) bear+=3;
-  });
-  fvgs.forEach(g => { if(g.type==='FVG_BULL') bull+=1; else bear+=1; });
-  sweeps.forEach(s => { if(s.type==='SWEEP_BULL') bull+=3; else bear+=3; });
-  if (pd.zone==='discount')    bull+=2;
-  if (pd.zone==='premium')     bear+=2;
-  if (rsiVal < 40)             bull+=2;
-  if (rsiVal > 65)             bear+=2;
-  if (obRatio > 0.60)          bull+=2;
-  if (obRatio < 0.40)          bear+=2;
+  // Structure signals (highest weight)
+  choch.forEach(c => { if(c.type==='CHOCH_BULL') bull+=5; else bear+=5; });
+  bos.forEach(b   => { if(b.type==='BOS_BULL')   bull+=4; else bear+=4; });
 
-  const total = bull + bear || 1;
+  // Liquidity sweeps (strong reversal signals)
+  sweeps.forEach(s => { if(s.type==='SWEEP_BULL') bull+=4; else bear+=4; });
+
+  // Price at order block
+  obs.forEach(o => {
+    const atOB = pd.cur >= o.low && pd.cur <= o.high;
+    const nearOB = pd.cur >= o.low*0.998 && pd.cur <= o.high*1.002;
+    if (o.type==='OB_BULL' && (atOB||nearOB)) bull+=4;
+    if (o.type==='OB_BEAR' && (atOB||nearOB)) bear+=4;
+    // Count unmitigated OBs by direction as general bias
+    if (o.type==='OB_BULL') bull+=1;
+    if (o.type==='OB_BEAR') bear+=1;
+  });
+
+  // FVGs by direction
+  fvgs.forEach(g => {
+    if(g.type==='FVG_BULL') bull+=1;
+    if(g.type==='FVG_BEAR') bear+=1;
+  });
+
+  // Premium/Discount zone (SMC alignment)
+  if (pd.zone==='discount')  bull+=3;
+  if (pd.zone==='premium')   bear+=3;
+  if (pd.inOTELong)          bull+=2;
+  if (pd.inOTEShort)         bear+=2;
+
+  // EMA trend (20/50 ribbon)
+  if (ema20v > ema50v)   bull+=2;
+  if (ema20v < ema50v)   bear+=2;
+
+  // RSI momentum (not overbought/oversold extremes)
+  if (rsiVal < 40)       bull+=2;
+  if (rsiVal > 60)       bear+=2;
+
+  // Order flow (bid/ask)
+  if (obRatio > 0.60)    bull+=2;
+  if (obRatio < 0.40)    bear+=2;
+
+  const total   = bull + bear || 1;
   const bullPct = Math.round((bull/total)*100);
   const bearPct = 100 - bullPct;
-  const bias = bullPct > 60 ? 'bullish' : bearPct > 60 ? 'bearish' : 'neutral';
+  // Require 60%+ for a directional bias
+  const bias    = bullPct >= 60 ? 'bullish' : bearPct >= 60 ? 'bearish' : 'neutral';
   return { bull, bear, bullPct, bearPct, bias };
 }
 
-function smcTradeSetup(bias, pd, obs, fvgs, atrVal) {
+// ─────────────────────────────────────────────────────────────
+// TRADE SETUP — the core fix
+// LONG:
+//   Entry = top of nearest unmitigated bullish OB below price
+//           (or FVG midpoint, or OTE level)
+//   SL    = BELOW the OB low with 0.2% buffer (always BELOW entry)
+//   TP1   = nearest bearish FVG above / or equilibrium
+//   TP2   = swing high / range high
+//
+// SHORT:
+//   Entry = bottom of nearest unmitigated bearish OB ABOVE price
+//           (price must retrace INTO it)
+//   SL    = ABOVE the OB high with 0.2% buffer (always ABOVE entry)
+//   TP1   = nearest bullish FVG below / or equilibrium
+//   TP2   = swing low / range low
+// ─────────────────────────────────────────────────────────────
+function smcTradeSetup(bias, pd, obs, fvgs, atrVal, swings) {
   const cur = pd.cur;
 
   if (bias.bias === 'bullish') {
-    // Find nearest bullish OB below price as entry
-    const nearOB = obs.filter(o=>o.type==='OB_BULL'&&o.high<cur).sort((a,b)=>b.high-a.high)[0];
-    // Find nearest bearish FVG above price as first target
-    const nearFVG = fvgs.filter(g=>g.type==='FVG_BULL'&&g.top>cur).sort((a,b)=>a.bottom-b.bottom)[0];
-    const entry  = nearOB ? nearOB.high : cur * 0.99;
-    const sl     = nearOB ? nearOB.low * 0.998 : cur * (1 - atrVal/cur * 1.5);
-    const tp1    = nearFVG ? nearFVG.top : pd.mid > cur ? pd.mid : cur * 1.03;
-    const tp2    = pd.rangeH;
-    const rr     = sl < entry ? ((tp1-entry)/(entry-sl)).toFixed(1) : '—';
-    return { dir:'LONG', entry, sl, tp1, tp2, rr, nearOB, nearFVG };
+    // Best OB: nearest bullish OB whose HIGH is at or below current price
+    // (we wait for price to pull back into the OB)
+    const candidateOBs = obs
+      .filter(o => o.type==='OB_BULL' && o.high <= cur * 1.005) // allow up to 0.5% above (already retesting)
+      .sort((a,b) => b.high - a.high); // nearest below price first
+    const nearOB = candidateOBs[0];
+
+    // Best FVG target: nearest bullish FVG with bottom ABOVE current price
+    const candidateFVGs = fvgs
+      .filter(g => g.type==='FVG_BULL' && g.bottom > cur)
+      .sort((a,b) => a.bottom - b.bottom);
+    const nearFVG = candidateFVGs[0];
+
+    // Also look for swing highs as targets
+    const nextSwingH = swings.highs.filter(sh => sh.price > cur).sort((a,b)=>a.price-b.price)[0];
+
+    // Entry: OB top, or if no OB then OTE long zone, or ATR-based pullback
+    let entry, sl, entryNote, slNote;
+    if (nearOB) {
+      entry    = nearOB.high;                      // enter at TOP of bullish OB
+      sl       = nearOB.low * (1 - 0.002);        // stop BELOW OB low (always < entry)
+      entryNote = `Top of bullish OB — $${f(nearOB.low)} to $${f(nearOB.high)}`;
+      slNote    = `Below OB low ($${f(nearOB.low)}) with 0.2% buffer`;
+    } else if (pd.inOTELong) {
+      entry    = cur;                              // already in OTE zone
+      sl       = pd.ote_lo * (1 - 0.002);        // stop below OTE zone
+      entryNote = 'Price in OTE discount zone (0.62–0.79 fib)';
+      slNote    = `Below OTE zone ($${f(pd.ote_lo)})`;
+    } else {
+      entry    = cur * (1 - atrVal/cur * 0.5);   // ATR-based pullback level
+      sl       = entry * (1 - atrVal/entry * 1.5);
+      entryNote = 'No OB — ATR-based pullback level';
+      slNote    = '1.5× ATR below entry';
+    }
+
+    // Targets
+    let tp1, tp1Note;
+    if (nearFVG) {
+      tp1      = nearFVG.midpoint;               // fill the FVG midpoint as TP1
+      tp1Note  = `FVG midpoint at $${f(nearFVG.midpoint)}`;
+    } else if (pd.mid > entry) {
+      tp1      = pd.mid;
+      tp1Note  = 'Equilibrium (50% of range)';
+    } else {
+      tp1      = entry * (1 + atrVal/entry * 2);
+      tp1Note  = '2× ATR above entry';
+    }
+    const tp2     = nextSwingH ? nextSwingH.price : pd.rangeH;
+    const tp2Note = nextSwingH ? `Swing high at $${f(tp2)}` : `Range high at $${f(tp2)}`;
+
+    // R:R — sl MUST be < entry for a long
+    const risk   = entry - sl;
+    const reward = tp1 - entry;
+    const rr     = (risk > 0 && reward > 0) ? (reward/risk).toFixed(1) : '—';
+
+    return { dir:'LONG', entry, sl, tp1, tp2, rr, nearOB, nearFVG, entryNote, slNote, tp1Note, tp2Note };
   }
 
   if (bias.bias === 'bearish') {
-    const nearOB = obs.filter(o=>o.type==='OB_BEAR'&&o.low>cur).sort((a,b)=>a.low-b.low)[0];
-    const nearFVG = fvgs.filter(g=>g.type==='FVG_BEAR'&&g.bottom<cur).sort((a,b)=>b.top-a.top)[0];
-    const entry  = nearOB ? nearOB.low : cur * 1.01;
-    const sl     = nearOB ? nearOB.high * 1.002 : cur * (1 + atrVal/cur * 1.5);
-    const tp1    = nearFVG ? nearFVG.bottom : pd.mid < cur ? pd.mid : cur * 0.97;
-    const tp2    = pd.rangeL;
-    const rr     = sl > entry ? ((entry-tp1)/(sl-entry)).toFixed(1) : '—';
-    return { dir:'SHORT', entry, sl, tp1, tp2, rr, nearOB, nearFVG };
+    // Best OB: nearest bearish OB whose LOW is at or above current price
+    // (we wait for price to retrace UP into the OB, then short)
+    const candidateOBs = obs
+      .filter(o => o.type==='OB_BEAR' && o.low >= cur * 0.995)
+      .sort((a,b) => a.low - b.low); // nearest above price first
+    const nearOB = candidateOBs[0];
+
+    // Best FVG target: nearest bearish FVG with top BELOW current price
+    const candidateFVGs = fvgs
+      .filter(g => g.type==='FVG_BEAR' && g.top < cur)
+      .sort((a,b) => b.top - a.top);
+    const nearFVG = candidateFVGs[0];
+
+    const nextSwingL = swings.lows.filter(sl => sl.price < cur).sort((a,b)=>b.price-a.price)[0];
+
+    let entry, sl, entryNote, slNote;
+    if (nearOB) {
+      entry    = nearOB.low;                      // short at BOTTOM of bearish OB (where sellers are)
+      sl       = nearOB.high * (1 + 0.002);      // stop ABOVE OB high (always > entry — fixed!)
+      entryNote = `Bottom of bearish OB — $${f(nearOB.low)} to $${f(nearOB.high)}`;
+      slNote    = `Above OB high ($${f(nearOB.high)}) with 0.2% buffer`;
+    } else if (pd.inOTEShort) {
+      entry    = cur;
+      sl       = pd.ote_s_hi * (1 + 0.002);
+      entryNote = 'Price in OTE premium zone (0.21–0.38 from top)';
+      slNote    = `Above OTE zone ($${f(pd.ote_s_hi)})`;
+    } else {
+      entry    = cur * (1 + atrVal/cur * 0.5);
+      sl       = entry * (1 + atrVal/entry * 1.5); // above entry
+      entryNote = 'No OB — ATR-based retracement level';
+      slNote    = '1.5× ATR above entry';
+    }
+
+    let tp1, tp1Note;
+    if (nearFVG) {
+      tp1      = nearFVG.midpoint;
+      tp1Note  = `Bearish FVG midpoint at $${f(nearFVG.midpoint)}`;
+    } else if (pd.mid < entry) {
+      tp1      = pd.mid;
+      tp1Note  = 'Equilibrium (50% of range)';
+    } else {
+      tp1      = entry * (1 - atrVal/entry * 2);
+      tp1Note  = '2× ATR below entry';
+    }
+    const tp2     = nextSwingL ? nextSwingL.price : pd.rangeL;
+    const tp2Note = nextSwingL ? `Swing low at $${f(tp2)}` : `Range low at $${f(tp2)}`;
+
+    // R:R — sl MUST be > entry for a short
+    const risk   = sl - entry;
+    const reward = entry - tp1;
+    const rr     = (risk > 0 && reward > 0) ? (reward/risk).toFixed(1) : '—';
+
+    return { dir:'SHORT', entry, sl, tp1, tp2, rr, nearOB, nearFVG, entryNote, slNote, tp1Note, tp2Note };
   }
 
-  return { dir:'WAIT', entry:cur, sl:null, tp1:null, tp2:null, rr:'—' };
+  return { dir:'WAIT', entry:cur, sl:null, tp1:null, tp2:null, rr:'—',
+    entryNote:'No trade', slNote:'N/A', tp1Note:'N/A', tp2Note:'N/A' };
 }
 
 // ══════════════════════════════════════════════════════════
@@ -1228,17 +1503,17 @@ async function runSMCAnalysis() {
     }
 
     setSMCProg(55, 'Finding order blocks & FVGs…');
-    const swings  = detectSwings(klines, 3);
+    const swings  = detectSwings(klines, 5);
     const bos     = detectBOS(klines, swings);
     const choch   = detectCHoCH(klines, swings);
-    const obs     = detectOrderBlocks(klines);
+    const obs     = detectOrderBlocks(klines, swings);
     const fvgs    = detectFVGs(klines);
     const sweeps  = detectLiquiditySweep(klines, swings);
     const pd      = getPremiumDiscount(klines);
 
     setSMCProg(80, 'Computing bias & trade setup…');
-    const bias    = smcOverallBias(bos, choch, obs, fvgs, sweeps, pd, rsiVal, obRatio);
-    const setup   = smcTradeSetup(bias, pd, obs, fvgs, atrVal);
+    const bias    = smcOverallBias(bos, choch, obs, fvgs, sweeps, pd, rsiVal, ema20v, ema50v, obRatio);
+    const setup   = smcTradeSetup(bias, pd, obs, fvgs, atrVal, swings);
 
     setSMCProg(100, 'Done!');
     setTimeout(()=>document.getElementById('smcProg').classList.remove('on'), 700);
@@ -1330,7 +1605,7 @@ async function runSMCAnalysis() {
         pass: pd.zone !== 'equilibrium',
         ico: pd.zone==='discount'?'🟢':pd.zone==='premium'?'🔴':'🟡',
         cls: pd.zone==='discount'?'pass':pd.zone==='premium'?'fail':'part',
-        desc: `Price is in the ${pd.zone.toUpperCase()} zone (${pd.pct.toFixed(0)}% through the range). ${pd.zone==='discount'?'Smart money tends to BUY in discount zones.':pd.zone==='premium'?'Smart money tends to SELL in premium zones.':'Wait for a move toward discount (for longs) or premium (for shorts).'}`
+        desc: `${pd.zoneDetail}${pd.inOTELong?' 🎯 OTE Long zone (0.62–0.79 fib) — optimal long entry area.':''}${pd.inOTEShort?' 🎯 OTE Short zone (0.21–0.38 from top) — optimal short entry area.':''}`
       },
       {
         label: `RSI ${rsiVal.toFixed(0)} — Momentum`,
@@ -1453,26 +1728,31 @@ async function runSMCAnalysis() {
         ${setupIco}
       </div>
       <div style="font-size:11px;color:var(--soft);margin-bottom:10px;line-height:1.5">${setupDesc}</div>
+      ${setup.dir!=='WAIT'?`<div style="font-size:10px;background:rgba(79,140,245,.08);border:1px solid rgba(79,140,245,.18);border-radius:8px;padding:8px 10px;margin-bottom:10px;line-height:1.6;color:var(--soft)">
+        ${setup.dir==='LONG'
+          ?`⬆️ <strong style="color:var(--text)">LONG logic:</strong> SL is <strong style="color:var(--safe)">below</strong> entry · TP is <strong style="color:var(--safe)">above</strong> entry`
+          :`⬇️ <strong style="color:var(--text)">SHORT logic:</strong> SL is <strong style="color:var(--danger)">above</strong> entry · TP is <strong style="color:var(--danger)">below</strong> entry`}
+      </div>`:''}
       <div class="smc-setup-grid">
         <div class="smc-setup-cell">
           <div class="smc-setup-lbl">Entry Zone</div>
           <div class="smc-setup-val" style="color:var(--blue)">${setup.entry?'$'+f(setup.entry):'—'}</div>
-          <div class="smc-setup-sub">${setup.nearOB?'At OB level':'Near current price'}</div>
+          <div class="smc-setup-sub" style="font-size:9px">${setup.entryNote||''}</div>
         </div>
         <div class="smc-setup-cell">
-          <div class="smc-setup-lbl">Stop Loss</div>
+          <div class="smc-setup-lbl">Stop Loss ${setup.dir==='LONG'?'(below entry)':setup.dir==='SHORT'?'(above entry)':''}</div>
           <div class="smc-setup-val" style="color:var(--danger)">${setup.sl?'$'+f(setup.sl):'—'}</div>
-          <div class="smc-setup-sub">Beyond OB</div>
+          <div class="smc-setup-sub" style="font-size:9px">${setup.slNote||''}</div>
         </div>
         <div class="smc-setup-cell">
           <div class="smc-setup-lbl">Target 1</div>
           <div class="smc-setup-val" style="color:var(--safe)">${setup.tp1?'$'+f(setup.tp1):'—'}</div>
-          <div class="smc-setup-sub">${setup.nearFVG?'FVG fill':'Mid zone'}</div>
+          <div class="smc-setup-sub" style="font-size:9px">${setup.tp1Note||''}</div>
         </div>
         <div class="smc-setup-cell">
           <div class="smc-setup-lbl">Target 2</div>
           <div class="smc-setup-val" style="color:var(--safe)">${setup.tp2?'$'+f(setup.tp2):'—'}</div>
-          <div class="smc-setup-sub">Range extreme</div>
+          <div class="smc-setup-sub" style="font-size:9px">${setup.tp2Note||''}</div>
         </div>
       </div>
       <div style="display:flex;gap:7px;margin-bottom:10px">
@@ -1575,9 +1855,11 @@ async function runSMCAnalysis() {
             <div>
               <div class="smc-struct-label">Current zone: ${pd.zone.toUpperCase()} (${pd.pct.toFixed(0)}% through range)</div>
               <div class="smc-struct-desc">
-                Range: $${f(pd.rangeL)} (bottom) → $${f(pd.mid)} (mid) → $${f(pd.rangeH)} (top)<br>
-                Discount boundary: $${f(pd.q1)} · Premium boundary: $${f(pd.q3)}<br>
-                ${pd.zone==='discount'?'✅ Price in discount — smart money BUY zone. Favour long setups.':pd.zone==='premium'?'⚠️ Price in premium — smart money SELL zone. Favour short setups or tight stops on longs.':'Price at equilibrium — no edge from zone alone. Wait for OB or FVG confluence.'}
+                Range: $${f(pd.rangeL)} (0%) → $${f(pd.mid)} (50% EQ) → $${f(pd.rangeH)} (100%)<br>
+                Discount &lt;50%: $${f(pd.rangeL)}–$${f(pd.mid)} · Premium &gt;50%: $${f(pd.mid)}–$${f(pd.rangeH)}<br>
+                OTE Long zone: $${f(pd.ote_lo)}–$${f(pd.ote_hi)} (0.62–0.79 fib)<br>
+                OTE Short zone: $${f(pd.ote_s_lo)}–$${f(pd.ote_s_hi)} (0.21–0.38 from top)<br>
+                ${pd.zoneDetail}${pd.inOTELong?' 🎯 Price in OTE Long zone now.':''}${pd.inOTEShort?' 🎯 Price in OTE Short zone now.':''}
               </div>
             </div>
           </div>
