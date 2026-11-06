@@ -312,10 +312,10 @@ body { color:var(--text); font-family:var(--font); display:flex; flex-direction:
 .danger-btn { background:none; border:1px solid rgba(240,79,107,.3); color:var(--danger); border-radius:8px; padding:6px 13px; font-family:var(--font); font-size:12px; font-weight:600; cursor:pointer; }
 .set-footer { text-align:center; font-size:11px; color:var(--dim); margin-top:20px; line-height:1.6; }
 
-.bottom-nav { background:rgba(7,9,15,.97); border-top:1px solid var(--border); display:flex; padding:7px 4px calc(8px + var(--safe-bot)); gap:1px; flex-shrink:0; }
-.bnav { flex:1; display:flex; flex-direction:column; align-items:center; gap:2px; background:none; border:none; cursor:pointer; color:var(--soft); font-family:var(--font); font-size:9px; font-weight:500; padding:5px 2px; border-radius:9px; transition:color .18s; position:relative; }
+.bottom-nav { background:rgba(7,9,15,.97); border-top:1px solid var(--border); display:flex; padding:6px 2px calc(6px + var(--safe-bot)); gap:0; flex-shrink:0; }
+.bnav { flex:1; display:flex; flex-direction:column; align-items:center; gap:1px; background:none; border:none; cursor:pointer; color:var(--soft); font-family:var(--font); font-size:8px; font-weight:600; padding:4px 1px; border-radius:7px; transition:color .18s; position:relative; min-height:44px; justify-content:center; }
 .bnav.on { color:var(--blue); }
-.bnav svg { width:19px; height:19px; }
+.bnav svg { width:17px; height:17px; }
 .bnav-dot { position:absolute; top:3px; right:8px; width:7px; height:7px; background:var(--danger); border-radius:50%; display:none; border:2px solid var(--bg); }
 .bnav-dot.on { display:block; }
 
@@ -514,12 +514,12 @@ body { color:var(--text); font-family:var(--font); display:flex; flex-direction:
     </div>
   </div>
   <div class="nav-tabs">
-    <button class="ntab on" data-page="alerts"    onclick="gotoPage('alerts',this)">📡 Signals</button>
-    <button class="ntab"    data-page="smc"       onclick="gotoPage('smc',this)">🧠 SMC</button>
-    <button class="ntab"    data-page="protect"   onclick="gotoPage('protect',this)">🛡️ Am I Safe?</button>
-    <button class="ntab"    data-page="watchlist" onclick="gotoPage('watchlist',this)">⭐ Watchlist</button>
-    <button class="ntab"    data-page="history"   onclick="gotoPage('history',this)">📜 History</button>
-    <button class="ntab"    data-page="settings"  onclick="gotoPage('settings',this)">⚙️ Settings</button>
+    <button class="ntab on" data-page="alerts"    onclick="gotoPage('alerts')">📡 Signals</button>
+    <button class="ntab"    data-page="smc"       onclick="gotoPage('smc')">🧠 SMC</button>
+    <button class="ntab"    data-page="protect"   onclick="gotoPage('protect')">🛡️ Am I Safe?</button>
+    <button class="ntab"    data-page="watchlist" onclick="gotoPage('watchlist')">⭐ Watchlist</button>
+    <button class="ntab"    data-page="history"   onclick="gotoPage('history')">📜 History</button>
+    <button class="ntab"    data-page="settings"  onclick="gotoPage('settings')">⚙️ Settings</button>
   </div>
 </div>
 
@@ -702,25 +702,25 @@ body { color:var(--text); font-family:var(--font); display:flex; flex-direction:
 
 <!-- Bottom Nav -->
 <div class="bottom-nav">
-  <button class="bnav on" id="bn-alerts" onclick="gotoPage('alerts',document.querySelector('[data-page=alerts]'))">
+  <button class="bnav on" id="bn-alerts" onclick="gotoPage('alerts')">
     <div class="bnav-dot" id="alertDot"></div>
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>Signals
   </button>
-  <button class="bnav" id="bn-smc" onclick="gotoPage('smc',document.querySelector('[data-page=smc]'))">
+  <button class="bnav" id="bn-smc" onclick="gotoPage('smc')">
     <div class="bnav-dot" id="smcDot"></div>
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>SMC
   </button>
-  <button class="bnav" id="bn-protect" onclick="gotoPage('protect',document.querySelector('[data-page=protect]'))">
+  <button class="bnav" id="bn-protect" onclick="gotoPage('protect')">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Am I Safe?
   </button>
-  <button class="bnav" id="bn-watchlist" onclick="gotoPage('watchlist',document.querySelector('[data-page=watchlist]'))">
+  <button class="bnav" id="bn-watchlist" onclick="gotoPage('watchlist')">
     <div class="bnav-dot" id="wlDot"></div>
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>Watchlist
   </button>
-  <button class="bnav" id="bn-history" onclick="gotoPage('history',document.querySelector('[data-page=history]'))">
+  <button class="bnav" id="bn-history" onclick="gotoPage('history')">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>History
   </button>
-  <button class="bnav" id="bn-settings" onclick="gotoPage('settings',document.querySelector('[data-page=settings]'))">
+  <button class="bnav" id="bn-settings" onclick="gotoPage('settings')">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>Settings
   </button>
 </div>
@@ -826,19 +826,23 @@ function clearHistory() { history=[]; saveHist(); renderHistory(); showToast('Hi
 // ══════════════════════════════════════════════════════════
 // NAVIGATION
 // ══════════════════════════════════════════════════════════
-function gotoPage(page, tabEl) {
+function gotoPage(page) {
   currentPage = page;
-  document.querySelectorAll('.ntab').forEach(t=>t.classList.remove('on'));
-  if (tabEl) tabEl.classList.add('on');
-  document.querySelectorAll('.bnav').forEach(b=>b.classList.remove('on'));
-  const bn = document.getElementById('bn-'+page);
+  // Top nav — highlight the tab that owns this page via data-page attribute
+  document.querySelectorAll('.ntab').forEach(t => t.classList.remove('on'));
+  const ntab = document.querySelector('.ntab[data-page="' + page + '"]');
+  if (ntab) ntab.classList.add('on');
+  // Bottom nav — highlight by element id
+  document.querySelectorAll('.bnav').forEach(b => b.classList.remove('on'));
+  const bn = document.getElementById('bn-' + page);
   if (bn) bn.classList.add('on');
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
-  document.getElementById('pg-'+page).classList.add('on');
+  // Show the right page panel
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('on'));
+  document.getElementById('pg-' + page).classList.add('on');
   document.getElementById('mainScroll').scrollTop = 0;
-  if (page==='watchlist') renderWatchlist();
-  if (page==='history')   renderHistory();
-  if (page==='protect')   renderProtectAlerts();
+  if (page === 'watchlist') renderWatchlist();
+  if (page === 'history')   renderHistory();
+  if (page === 'protect')   renderProtectAlerts();
 }
 
 // ══════════════════════════════════════════════════════════
