@@ -766,7 +766,7 @@ async function apiFetch(path) {
   }
   throw new Error('All Binance servers unreachable. Check your internet connection. (' + (lastErr?.message||'unknown') + ')');
 }
-let signals = [], history = [];
+let signals = [], signalHistory = [];
 let watchlist = new Map();
 let settings = { autoMins:5, minConf:70, minVol:5000000 };
 let activeFilter = 'all', currentPage = 'alerts';
@@ -778,7 +778,7 @@ let monitorOn = false, monitorTimer = null;
 // ══════════════════════════════════════════════════════════
 window.addEventListener('beforeinstallprompt', e => {
   e.preventDefault(); deferredInstall = e;
-  if (!localStorage.getItem('ib-dismissed')) document.getElementById('installBar').classList.add('show');
+  if (!lsGet('ib-dismissed')) document.getElementById('installBar').classList.add('show');
 });
 document.getElementById('installBtn').onclick = async () => {
   if (!deferredInstall) return;
@@ -787,7 +787,7 @@ document.getElementById('installBtn').onclick = async () => {
   deferredInstall = null;
   document.getElementById('installBar').classList.remove('show');
 };
-function dismissInstall() { localStorage.setItem('ib-dismissed','1'); document.getElementById('installBar').classList.remove('show'); }
+function dismissInstall() { lsSet('ib-dismissed','1'); document.getElementById('installBar').classList.remove('show'); }
 if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(()=>{});
 
 // ══════════════════════════════════════════════════════════
@@ -814,19 +814,21 @@ function notify(title, body) {
 // ══════════════════════════════════════════════════════════
 function load() {
   try {
-    const wl = localStorage.getItem('wl2');
+    const wl = lsGet('wl2');
     if (wl) watchlist = new Map(JSON.parse(wl));
-    const h = localStorage.getItem('hist'); if (h) history = JSON.parse(h);
-    const s = localStorage.getItem('cfg');
+    const h = lsGet('hist'); if (h) signalHistory = JSON.parse(h);
+    const s = lsGet('cfg');
     if (s) { const saved = JSON.parse(s); settings = {...settings, ...saved}; }
     applySettings();
     if (settings.autoOn)    setTimeout(() => toggleAuto(), 1000);
     if (settings.monitorOn) setTimeout(() => toggleMonitor(), 1500);
   } catch(e){ console.error('Load error:', e); }
 }
-function saveWL()   { localStorage.setItem('wl2', JSON.stringify([...watchlist])); }
-function saveHist() { localStorage.setItem('hist', JSON.stringify(history.slice(0,300))); }
-function saveCfg()  { localStorage.setItem('cfg', JSON.stringify(settings)); }
+function lsGet(k)      { try { return localStorage.getItem(k); } catch(e) { return null; } }
+function lsSet(k,v)    { try { localStorage.setItem(k,v); } catch(e) {} }
+function saveWL()   { lsSet('wl2', JSON.stringify([...watchlist])); }
+function saveHist() { lsSet('hist', JSON.stringify(signalHistory.slice(0,300))); }
+function saveCfg()  { lsSet('cfg', JSON.stringify(settings)); }
 function saveSettings() {
   settings.itvl     = document.getElementById('itvl').value;
   settings.topN     = document.getElementById('topN').value;
@@ -844,7 +846,7 @@ function applySettings() {
   if (settings.minConf)  document.getElementById('minConf').value  = settings.minConf;
   if (settings.minVol)   document.getElementById('minVol').value   = settings.minVol;
 }
-function clearHistory() { history=[]; saveHist(); renderHistory(); showToast('History cleared'); }
+function clearHistory() { signalHistory=[]; saveHist(); renderHistory(); showToast('History cleared'); }
 
 // ══════════════════════════════════════════════════════════
 // NAVIGATION
@@ -861,8 +863,10 @@ function gotoPage(page) {
   if (bn) bn.classList.add('on');
   // Show the right page panel
   document.querySelectorAll('.page').forEach(p => p.classList.remove('on'));
-  document.getElementById('pg-' + page).classList.add('on');
-  document.getElementById('mainScroll').scrollTop = 0;
+  const pg = document.getElementById('pg-' + page);
+  if (pg) pg.classList.add('on');
+  const ms = document.getElementById('mainScroll');
+  if (ms) ms.scrollTop = 0;
   if (page === 'watchlist') renderWatchlist();
   if (page === 'history')   renderHistory();
   if (page === 'protect')   renderProtectAlerts();
@@ -1684,7 +1688,7 @@ async function runScan() {
         if(res){
           const sym=p.symbol.replace('USDT','');
           signals.push({sym,full:p.symbol,vol:+p.quoteVolume,...res});
-          history.unshift({sym,type:res.type,score:res.score,ts:Date.now()});
+          signalHistory.unshift({sym,type:res.type,score:res.score,ts:Date.now()});
         }
       }catch(e){}
       if(i%8===7)await new Promise(r=>setTimeout(r,100));
@@ -2154,8 +2158,8 @@ function renderProtectAlerts(){
 // ══════════════════════════════════════════════════════════
 function renderHistory(){
   const el=document.getElementById('histContent');
-  if(history.length===0){el.innerHTML=`<div class="empty"><div class="empty-ico">📜</div><div class="empty-h">No history yet</div><div class="empty-p">Run your first scan and every signal found will be saved here.</div></div>`;return;}
-  el.innerHTML=history.slice(0,60).map(h=>`<div class="hist-item"><div class="hi-left"><div class="sym">${h.sym}/USDT</div><div class="ts">${new Date(h.ts).toLocaleString([],{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})}</div></div><div class="hi-right"><div class="hi-score" style="color:${h.score>=70?'var(--safe)':h.score>=40?'var(--warn)':'var(--soft)'}">${h.score}/100</div><div class="hi-type">${typeLabel[h.type]||h.type}</div></div></div>`).join('');
+  if(signalHistory.length===0){el.innerHTML=`<div class="empty"><div class="empty-ico">📜</div><div class="empty-h">No history yet</div><div class="empty-p">Run your first scan and every signal found will be saved here.</div></div>`;return;}
+  el.innerHTML=signalHistory.slice(0,60).map(h=>`<div class="hist-item"><div class="hi-left"><div class="sym">${h.sym}/USDT</div><div class="ts">${new Date(h.ts).toLocaleString([],{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})}</div></div><div class="hi-right"><div class="hi-score" style="color:${h.score>=70?'var(--safe)':h.score>=40?'var(--warn)':'var(--soft)'}">${h.score}/100</div><div class="hi-type">${typeLabel[h.type]||h.type}</div></div></div>`).join('');
 }
 
 // ══════════════════════════════════════════════════════════
