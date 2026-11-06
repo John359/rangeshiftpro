@@ -627,14 +627,14 @@ body { color:var(--text); font-family:var(--font); display:flex; flex-direction:
           <div style="font-size:15px;font-weight:700;margin-bottom:6px">Your Portfolio Dashboard</div>
           <div style="font-size:12px;color:var(--soft);line-height:1.6;margin-bottom:18px">
             Connect your Binance account to see your live balance, PnL, and asset allocation here.<br>
-            Requires the <strong style="color:var(--text)">local proxy</strong> — run <code style="background:var(--s2);padding:1px 5px;border-radius:4px;font-size:11px">node coinwatch-proxy.js</code> first, then enter your API keys in <strong style="color:var(--text)">Settings</strong>.
+            Requires the <strong style="color:var(--text)">local proxy</strong> — run <code style="background:var(--s2);padding:1px 5px;border-radius:4px;font-size:11px">node coinwatch-proxy.js</code> first, then tap <strong style="color:var(--text)">Connect</strong> below.
           </div>
           <div id="homeBannerProxyPill" style="display:inline-flex;align-items:center;gap:6px;padding:5px 13px;border-radius:20px;border:1px solid var(--border);background:var(--s2);font-size:11px;color:var(--soft);margin-bottom:16px">
             <div id="homeBannerProxyDot" style="width:6px;height:6px;border-radius:50%;background:var(--dim)"></div>
             <span id="homeBannerProxyTxt">Proxy not detected</span>
           </div><br>
-          <button class="home-api-btn" onclick="gotoPage('settings')" style="padding:11px 28px;font-size:13px">
-            ⚙️ Go to Settings to Connect
+          <button class="home-api-btn" onclick="homeInit()" style="padding:11px 28px;font-size:13px">
+            🔗 Connect
           </button>
         </div>
         <!-- Demo preview -->
