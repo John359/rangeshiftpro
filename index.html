@@ -626,8 +626,13 @@ body { color:var(--text); font-family:var(--font); display:flex; flex-direction:
           <div style="font-size:40px;margin-bottom:10px">🏦</div>
           <div style="font-size:15px;font-weight:700;margin-bottom:6px">Your Portfolio Dashboard</div>
           <div style="font-size:12px;color:var(--soft);line-height:1.6;margin-bottom:18px">
-            Connect your Binance account to see your live balance, PnL, and asset allocation here.<br>Your API keys are entered securely in <strong style="color:var(--text)">Settings</strong>.
+            Connect your Binance account to see your live balance, PnL, and asset allocation here.<br>
+            Requires the <strong style="color:var(--text)">local proxy</strong> — run <code style="background:var(--s2);padding:1px 5px;border-radius:4px;font-size:11px">node coinwatch-proxy.js</code> first, then enter your API keys in <strong style="color:var(--text)">Settings</strong>.
           </div>
+          <div id="homeBannerProxyPill" style="display:inline-flex;align-items:center;gap:6px;padding:5px 13px;border-radius:20px;border:1px solid var(--border);background:var(--s2);font-size:11px;color:var(--soft);margin-bottom:16px">
+            <div id="homeBannerProxyDot" style="width:6px;height:6px;border-radius:50%;background:var(--dim)"></div>
+            <span id="homeBannerProxyTxt">Proxy not detected</span>
+          </div><br>
           <button class="home-api-btn" onclick="gotoPage('settings')" style="padding:11px 28px;font-size:13px">
             ⚙️ Go to Settings to Connect
           </button>
@@ -642,6 +647,12 @@ body { color:var(--text); font-family:var(--font); display:flex; flex-direction:
         <div class="home-connected-badge">
           <div class="dot"></div>Connected to Binance
           <span style="margin-left:auto;font-size:10px;color:var(--dim)" id="homeLastRefresh"></span>
+        </div>
+        <!-- Proxy status pill -->
+        <div id="proxyStatusBar" style="display:flex;align-items:center;gap:7px;background:var(--s2);border:1px solid var(--border);border-radius:9px;padding:7px 12px;margin-bottom:10px;font-size:11px;">
+          <div id="proxyDot" style="width:7px;height:7px;border-radius:50%;background:var(--dim);flex-shrink:0"></div>
+          <span id="proxyStatusTxt" style="color:var(--soft);flex:1">Checking local proxy…</span>
+          <span id="proxyHint" style="color:var(--dim);font-size:10px"></span>
         </div>
 
         <!-- Total Value Header -->
@@ -1183,6 +1194,61 @@ let homePortfolioData = null;
 let homeCurrentPeriod = '1D';
 const ALLOC_COLORS = ['#4f8cf5','#9b72f5','#1adb8a','#f5c842','#f04f6b','#f5864f','#4fc3f7','#a5d6a7','#ce93d8','#80cbc4'];
 
+// ── LOCAL PROXY ───────────────────────────────────────────
+// When running coinwatch-proxy.js locally, signed requests go
+// through http://localhost:3128/binance — no CORS, no secret
+// leaves the browser.  Falls back to direct fetch if proxy is down.
+const PROXY_URL = 'http://localhost:3128/binance';
+let proxyAvailable = false;
+
+async function checkProxy() {
+  try {
+    const r = await fetch('http://localhost:3128/ping', { signal: AbortSignal.timeout(1500) });
+    proxyAvailable = r.ok;
+  } catch(e) { proxyAvailable = false; }
+  updateProxyStatus();
+}
+
+function updateProxyStatus() {
+  // Portfolio page pill
+  const dot = document.getElementById('proxyDot');
+  const txt = document.getElementById('proxyStatusTxt');
+  const hint = document.getElementById('proxyHint');
+  // Setup banner pill
+  const bdot = document.getElementById('homeBannerProxyDot');
+  const btxt = document.getElementById('homeBannerProxyTxt');
+
+  if (proxyAvailable) {
+    if (dot) {
+      dot.style.background = 'var(--safe)';
+      dot.style.boxShadow  = '0 0 6px var(--safe)';
+      txt.style.color = 'var(--safe)';
+      txt.textContent = 'Local proxy running — live balance enabled';
+      hint.textContent = '';
+    }
+    if (bdot) {
+      bdot.style.background = 'var(--safe)';
+      bdot.style.boxShadow  = '0 0 5px var(--safe)';
+      btxt.style.color = 'var(--safe)';
+      btxt.textContent = 'Proxy running ✓';
+    }
+  } else {
+    if (dot) {
+      dot.style.background = 'var(--warn)';
+      dot.style.boxShadow  = 'none';
+      txt.style.color = 'var(--soft)';
+      txt.textContent = 'Proxy offline — balance unavailable';
+      hint.textContent = 'run coinwatch-proxy.js';
+    }
+    if (bdot) {
+      bdot.style.background = 'var(--dim)';
+      bdot.style.boxShadow  = 'none';
+      btxt.style.color = 'var(--soft)';
+      btxt.textContent = 'Proxy not detected';
+    }
+  }
+}
+
 // HMAC-SHA256 for Binance signed requests (pure JS, no external libs)
 async function hmacSHA256(key, data) {
   const enc = new TextEncoder();
@@ -1192,6 +1258,34 @@ async function hmacSHA256(key, data) {
 }
 
 async function binanceSignedFetch(endpoint, params={}) {
+  // ── Route through local proxy when available ──────────────
+  // The proxy handles signing server-side so the secret never
+  // crosses CORS; it also adds the required CORS headers.
+  if (proxyAvailable) {
+    try {
+      const r = await fetch(PROXY_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ endpoint, params, apiKey: homeApiKey, apiSecret: homeApiSecret }),
+        signal: AbortSignal.timeout(12000)
+      });
+      if (!r.ok) {
+        const err = await r.json().catch(()=>({}));
+        throw new Error(err.msg || `Proxy HTTP ${r.status}`);
+      }
+      return r.json();
+    } catch(e) {
+      // If the proxy went down mid-session, mark it offline and fall through
+      if (e.name === 'TypeError' || e.name === 'AbortError') {
+        proxyAvailable = false;
+        updateProxyStatus();
+        throw new Error('Proxy went offline. Restart coinwatch-proxy.js and try again.');
+      }
+      throw e;
+    }
+  }
+
+  // ── Direct fetch (works only if Binance ever lifts CORS) ──
   const ts = Date.now();
   const qParts = Object.entries({...params, timestamp:ts}).map(([k,v])=>`${k}=${v}`).join('&');
   const signature = await hmacSHA256(homeApiSecret, qParts);
@@ -1230,8 +1324,20 @@ async function homeInit() {
   // Load saved keys
   homeApiKey    = lsGet('home_apikey') || '';
   homeApiSecret = lsGet('home_apisecret') || '';
+
+  // Always check proxy status (fast 1.5s timeout, non-blocking for setup view)
+  checkProxy(); // fire-and-forget; updates the pill when it resolves
+
   if (homeApiKey && homeApiSecret) {
     homeShowSection('loading');
+    homeSetLoadingTxt('Checking local proxy…');
+    await checkProxy(); // await here so we know before the first signed call
+    if (!proxyAvailable) {
+      homeShowSection('setup');
+      homeRenderDemo();
+      showToast('⚠️ Start coinwatch-proxy.js to load your balance');
+      return;
+    }
     homeSetLoadingTxt('Loading your portfolio…');
     await homeLoadPortfolio();
   } else {
