@@ -1,0 +1,136 @@
+/**
+ * coinwatch-proxy.js — CoinWatch local proxy for Binance signed requests
+ *
+ * Usage:
+ *   node coinwatch-proxy.js
+ *
+ * What it does:
+ *   - Listens on http://localhost:3128
+ *   - POST /binance  → signs the request with your API secret and forwards it
+ *                       to Binance, then returns the JSON response to the app
+ *   - GET  /ping     → health-check used by the app to detect if proxy is running
+ *
+ * Requirements: Node.js 18+ (uses built-in fetch + crypto — no npm install needed)
+ *
+ * Security:
+ *   - Only listens on localhost; never exposed to the internet
+ *   - Your API key/secret are sent from the browser over localhost only
+ *   - Use a Read-Only Binance API key (no trading/withdrawal permissions)
+ */
+
+const http   = require('http');
+const https  = require('https');
+const crypto = require('crypto');
+
+const PORT = 3128;
+
+// CORS headers — allows the HTML file opened from disk (file://) or any localhost origin
+const CORS = {
+  'Access-Control-Allow-Origin':  '*',
+  'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type',
+};
+
+function hmacSHA256(secret, data) {
+  return crypto.createHmac('sha256', secret).update(data).digest('hex');
+}
+
+function readBody(req) {
+  return new Promise((resolve, reject) => {
+    let body = '';
+    req.on('data', chunk => { body += chunk; if (body.length > 1e6) reject(new Error('Body too large')); });
+    req.on('end', () => resolve(body));
+    req.on('error', reject);
+  });
+}
+
+function binanceFetch(endpoint, queryString, apiKey) {
+  return new Promise((resolve, reject) => {
+    const url = `https://api.binance.com${endpoint}?${queryString}`;
+    const opts = {
+      method: 'GET',
+      headers: { 'X-MBX-APIKEY': apiKey },
+      timeout: 12000,
+    };
+    const req = https.request(url, opts, res => {
+      let data = '';
+      res.on('data', c => data += c);
+      res.on('end', () => {
+        try { resolve({ status: res.statusCode, body: JSON.parse(data) }); }
+        catch(e) { resolve({ status: res.statusCode, body: data }); }
+      });
+    });
+    req.on('error', reject);
+    req.on('timeout', () => { req.destroy(); reject(new Error('Binance request timed out')); });
+    req.end();
+  });
+}
+
+const server = http.createServer(async (req, res) => {
+  // Handle CORS preflight
+  if (req.method === 'OPTIONS') {
+    res.writeHead(204, CORS);
+    res.end();
+    return;
+  }
+
+  // Health check
+  if (req.method === 'GET' && req.url === '/ping') {
+    res.writeHead(200, { ...CORS, 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ ok: true, proxy: 'CoinWatch local proxy', version: '1.0' }));
+    return;
+  }
+
+  // Signed Binance request
+  if (req.method === 'POST' && req.url === '/binance') {
+    try {
+      const raw  = await readBody(req);
+      const { endpoint, params = {}, apiKey, apiSecret } = JSON.parse(raw);
+
+      if (!endpoint || !apiKey || !apiSecret) {
+        res.writeHead(400, { ...CORS, 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'Missing endpoint, apiKey or apiSecret' }));
+        return;
+      }
+
+      // Build signed query string
+      const ts = Date.now();
+      const qParts = Object.entries({ ...params, timestamp: ts })
+        .map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`)
+        .join('&');
+      const signature = hmacSHA256(apiSecret, qParts);
+      const fullQuery = `${qParts}&signature=${signature}`;
+
+      const { status, body } = await binanceFetch(endpoint, fullQuery, apiKey);
+
+      res.writeHead(status, { ...CORS, 'Content-Type': 'application/json' });
+      res.end(JSON.stringify(body));
+    } catch (e) {
+      res.writeHead(500, { ...CORS, 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: e.message }));
+    }
+    return;
+  }
+
+  // 404 for anything else
+  res.writeHead(404, { ...CORS, 'Content-Type': 'application/json' });
+  res.end(JSON.stringify({ error: 'Not found' }));
+});
+
+server.listen(PORT, '127.0.0.1', () => {
+  console.log(`\n✅ CoinWatch proxy running on http://localhost:${PORT}`);
+  console.log(`   POST /binance  — forwards signed Binance API calls`);
+  console.log(`   GET  /ping     — health check`);
+  console.log(`\n   Open coinwatch.html in your browser, then go to Home tab.`);
+  console.log(`   Press Ctrl+C to stop.\n`);
+});
+
+server.on('error', e => {
+  if (e.code === 'EADDRINUSE') {
+    console.error(`\n❌ Port ${PORT} is already in use.`);
+    console.error(`   Another proxy may already be running — check with: lsof -i :${PORT}`);
+  } else {
+    console.error('\n❌ Proxy error:', e.message);
+  }
+  process.exit(1);
+});
