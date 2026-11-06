@@ -8,7 +8,6 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="CoinWatch">
 <meta name="theme-color" content="#07090f">
-<link rel="manifest" href="manifest.json">
 <title>CoinWatch — Spot Trader Assistant</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap');
@@ -39,7 +38,6 @@
 html, body { height:100%; overflow:hidden; background:var(--bg); }
 body { color:var(--text); font-family:var(--font); display:flex; flex-direction:column; max-width:430px; margin:0 auto; }
 
-/* ── INSTALL BANNER ── */
 #installBar { display:none; background:linear-gradient(135deg,rgba(79,140,245,.15),rgba(155,114,245,.15)); border-bottom:1px solid rgba(79,140,245,.2); padding:calc(var(--safe-top) + 10px) 16px 10px; align-items:center; gap:10px; flex-shrink:0; }
 #installBar.show { display:flex; }
 .ib-text { flex:1; font-size:12px; line-height:1.4; color:var(--soft); }
@@ -47,7 +45,6 @@ body { color:var(--text); font-family:var(--font); display:flex; flex-direction:
 .ib-btn { background:var(--blue); color:#fff; border:none; border-radius:8px; padding:7px 14px; font-family:var(--font); font-size:12px; font-weight:700; cursor:pointer; }
 .ib-x   { background:none; border:none; color:var(--soft); font-size:20px; cursor:pointer; }
 
-/* ── HEADER ── */
 .hdr { background:rgba(7,9,15,.96); border-bottom:1px solid var(--border); padding:13px 16px 0; flex-shrink:0; position:relative; z-index:50; }
 .hdr-top { display:flex; justify-content:space-between; align-items:center; }
 .brand { display:flex; align-items:center; gap:9px; }
@@ -66,12 +63,10 @@ body { color:var(--text); font-family:var(--font); display:flex; flex-direction:
 .ntab { flex-shrink:0; padding:7px 14px; border:none; background:transparent; color:var(--soft); font-family:var(--font); font-size:12px; font-weight:600; cursor:pointer; border-bottom:2px solid transparent; transition:all .18s; }
 .ntab.on { color:var(--text); border-bottom-color:var(--blue); }
 
-/* ── MAIN ── */
 .main { flex:1; overflow-y:auto; overflow-x:hidden; -webkit-overflow-scrolling:touch; overscroll-behavior:contain; }
 .page { display:none; }
 .page.on { display:block; }
 
-/* ── SCAN HERO ── */
 .scan-hero { margin:14px 15px 0; background:linear-gradient(135deg,rgba(79,140,245,.1),rgba(155,114,245,.08)); border:1px solid rgba(79,140,245,.18); border-radius:var(--r); padding:16px; }
 .scan-hero-title { font-size:14px; font-weight:700; margin-bottom:4px; }
 .scan-hero-sub { font-size:12px; color:var(--soft); line-height:1.5; margin-bottom:14px; }
@@ -89,19 +84,16 @@ body { color:var(--text); font-family:var(--font); display:flex; flex-direction:
 .prog-bar { height:4px; background:var(--s3); border-radius:2px; overflow:hidden; }
 .prog-fill { height:100%; background:linear-gradient(90deg,var(--blue),var(--purple)); border-radius:2px; transition:width .3s; }
 
-/* ── SUMMARY ── */
 .summary-strip { display:flex; gap:7px; padding:12px 15px 0; }
 .ss-card { flex:1; background:var(--s1); border:1px solid var(--border); border-radius:11px; padding:9px 10px; text-align:center; }
 .ss-num { font-size:22px; font-weight:800; font-family:var(--mono); }
 .ss-lbl { font-size:10px; color:var(--soft); margin-top:2px; }
 
-/* ── FILTER ROW ── */
 .filter-row { display:flex; gap:5px; padding:10px 15px 0; overflow-x:auto; scrollbar-width:none; }
 .filter-row::-webkit-scrollbar { display:none; }
 .ftab { flex-shrink:0; padding:5px 12px; border-radius:20px; border:1px solid var(--border); background:transparent; color:var(--soft); font-family:var(--font); font-size:11px; font-weight:600; cursor:pointer; transition:all .18s; }
 .ftab.on { background:var(--blue); border-color:var(--blue); color:#fff; }
 
-/* ── SIGNAL CARDS ── */
 .cards { padding:10px 15px 10px; display:flex; flex-direction:column; gap:10px; }
 .scard { background:var(--s1); border:1px solid var(--border); border-radius:var(--r); overflow:hidden; }
 .scard-stripe { height:4px; }
@@ -188,7 +180,6 @@ body { color:var(--text); font-family:var(--font); display:flex; flex-direction:
 .empty-h   { font-size:16px; font-weight:700; }
 .empty-p   { font-size:13px; color:var(--soft); line-height:1.6; max-width:280px; }
 
-/* ── PROTECTION PAGE ── */
 .protect-page { padding:14px 15px; }
 .protect-hero { background:linear-gradient(135deg,rgba(240,79,107,.1),rgba(155,114,245,.08)); border:1px solid rgba(240,79,107,.2); border-radius:var(--r); padding:16px; margin-bottom:14px; }
 .protect-hero h2 { font-size:16px; font-weight:800; margin-bottom:4px; }
@@ -228,9 +219,6 @@ body { color:var(--text); font-family:var(--font); display:flex; flex-direction:
 .wla-body { font-size:12px; color:var(--soft); line-height:1.5; }
 .wla-time { font-size:10px; color:var(--dim); margin-top:6px; }
 
-/* ══════════════════════════════════
-   WATCHLIST PAGE — ORIGINAL STYLES
-══════════════════════════════════ */
 .wl-page { padding:14px 15px; }
 .wl-page h2 { font-size:15px; font-weight:700; margin-bottom:4px; }
 .wl-page .wl-desc { font-size:12px; color:var(--soft); margin-bottom:14px; line-height:1.5; }
@@ -257,26 +245,17 @@ body { color:var(--text); font-family:var(--font); display:flex; flex-direction:
 .monitor-toggle { display:flex; align-items:center; gap:7px; font-size:12px; color:var(--soft); cursor:pointer; }
 .wl-section-title { font-size:11px; font-weight:700; color:var(--soft); text-transform:uppercase; letter-spacing:.4px; margin-bottom:8px; }
 
-/* ══════════════════════════════════
-   TRAP ANALYSIS PANEL (NEW — sits inside each wl-item)
-══════════════════════════════════ */
 .trap-panel { margin-top:12px; border-top:1px solid var(--border); padding-top:12px; }
 .trap-panel-hdr { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
 .trap-panel-title { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.4px; color:var(--soft); display:flex; align-items:center; gap:5px; }
 .trap-run-btn { background:linear-gradient(135deg,var(--blue),var(--purple)); border:none; color:#fff; font-family:var(--font); font-size:10px; font-weight:700; border-radius:7px; padding:4px 11px; cursor:pointer; }
 .trap-run-btn:disabled { opacity:.4; }
-
-/* Risk badge inside trap panel */
 .trap-risk-badge { display:inline-flex; align-items:center; gap:5px; padding:4px 11px; border-radius:7px; font-size:11px; font-weight:700; }
 .trap-risk-badge.high { background:rgba(240,79,107,.15); color:var(--danger); }
 .trap-risk-badge.med  { background:rgba(245,200,66,.15);  color:var(--warn); }
 .trap-risk-badge.low  { background:rgba(26,219,138,.15);  color:var(--safe); }
-
-/* Risk score bar */
 .trap-score-bar-bg   { height:6px; background:var(--s3); border-radius:3px; overflow:hidden; margin:6px 0 10px; }
 .trap-score-bar-fill { height:100%; border-radius:3px; transition:width .6s; }
-
-/* Verdict inside trap panel */
 .trap-verdict { border-radius:9px; padding:10px 12px; margin-bottom:10px; border:1px solid; }
 .trap-verdict.danger { background:rgba(240,79,107,.07); border-color:rgba(240,79,107,.2); }
 .trap-verdict.warn   { background:rgba(245,200,66,.07);  border-color:rgba(245,200,66,.2); }
@@ -285,8 +264,6 @@ body { color:var(--text); font-family:var(--font); display:flex; flex-direction:
 .trap-verdict-ico  { font-size:16px; margin-bottom:3px; }
 .trap-verdict-head { font-size:12px; font-weight:700; margin-bottom:3px; }
 .trap-verdict-body { font-size:11px; color:var(--soft); line-height:1.55; }
-
-/* Signal rows inside trap panel */
 .trap-sig-row  { display:flex; align-items:flex-start; gap:7px; background:var(--s2); border-radius:7px; padding:7px 9px; margin-bottom:5px; }
 .trap-sig-ico  { font-size:13px; flex-shrink:0; margin-top:1px; }
 .trap-sig-lbl  { font-size:11px; font-weight:600; margin-bottom:1px; }
@@ -295,32 +272,23 @@ body { color:var(--text); font-family:var(--font); display:flex; flex-direction:
 .trap-sig-row.warn .trap-sig-lbl { color:var(--warn); }
 .trap-sig-row.ok   .trap-sig-lbl { color:var(--safe); }
 .trap-sig-row.neu  .trap-sig-lbl { color:var(--soft); }
-
-/* Trailing stop panel */
 .trap-ts-grid { display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-bottom:10px; }
 .trap-ts-cell { background:var(--s3); border-radius:8px; padding:8px 10px; }
 .trap-ts-lbl  { font-size:9px; color:var(--soft); text-transform:uppercase; letter-spacing:.3px; margin-bottom:3px; }
 .trap-ts-val  { font-size:13px; font-weight:700; font-family:var(--mono); }
 .trap-ts-sub  { font-size:10px; color:var(--soft); margin-top:1px; }
-
-/* Scale-out targets */
 .trap-scale-row   { display:flex; align-items:center; gap:7px; margin-bottom:5px; }
 .trap-scale-pct   { font-size:10px; font-weight:700; width:34px; color:var(--soft); flex-shrink:0; }
 .trap-scale-track { flex:1; height:5px; background:var(--s3); border-radius:3px; overflow:hidden; }
 .trap-scale-fill  { height:100%; border-radius:3px; transition:width .6s; }
 .trap-scale-price { font-size:10px; font-family:var(--mono); width:70px; text-align:right; flex-shrink:0; }
 .trap-scale-label { font-size:10px; color:var(--soft); width:52px; flex-shrink:0; }
-
-/* Volume bars */
 .trap-vol-bars { display:flex; align-items:flex-end; gap:2px; height:32px; margin-bottom:5px; }
 .trap-vol-bar  { flex:1; border-radius:2px 2px 0 0; min-height:3px; }
 .trap-vol-bar.green { background:rgba(26,219,138,.5); }
 .trap-vol-bar.red   { background:rgba(240,79,107,.5); }
-
-/* sub-section label */
 .trap-sub-lbl { font-size:10px; font-weight:700; color:var(--soft); text-transform:uppercase; letter-spacing:.3px; margin:10px 0 6px; }
 
-/* ── HISTORY PAGE ── */
 .hist-page { padding:14px 15px; }
 .hist-page h2 { font-size:15px; font-weight:700; margin-bottom:12px; }
 .hist-item { background:var(--s1); border:1px solid var(--border); border-radius:11px; padding:11px 14px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center; }
@@ -330,7 +298,6 @@ body { color:var(--text); font-family:var(--font); display:flex; flex-direction:
 .hi-score { font-size:13px; font-weight:700; font-family:var(--mono); }
 .hi-type  { font-size:10px; color:var(--soft); margin-top:2px; }
 
-/* ── SETTINGS PAGE ── */
 .set-page { padding:14px 15px; }
 .set-page h2 { font-size:15px; font-weight:700; margin-bottom:12px; }
 .set-row { background:var(--s1); border:1px solid var(--border); border-radius:11px; padding:13px 14px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center; }
@@ -345,19 +312,16 @@ body { color:var(--text); font-family:var(--font); display:flex; flex-direction:
 .danger-btn { background:none; border:1px solid rgba(240,79,107,.3); color:var(--danger); border-radius:8px; padding:6px 13px; font-family:var(--font); font-size:12px; font-weight:600; cursor:pointer; }
 .set-footer { text-align:center; font-size:11px; color:var(--dim); margin-top:20px; line-height:1.6; }
 
-/* ── BOTTOM NAV ── */
-.bottom-nav { background:rgba(7,9,15,.97); border-top:1px solid var(--border); display:flex; padding:7px 8px calc(8px + var(--safe-bot)); gap:2px; flex-shrink:0; }
-.bnav { flex:1; display:flex; flex-direction:column; align-items:center; gap:2px; background:none; border:none; cursor:pointer; color:var(--soft); font-family:var(--font); font-size:10px; font-weight:500; padding:5px 4px; border-radius:9px; transition:color .18s; position:relative; }
+.bottom-nav { background:rgba(7,9,15,.97); border-top:1px solid var(--border); display:flex; padding:7px 4px calc(8px + var(--safe-bot)); gap:1px; flex-shrink:0; }
+.bnav { flex:1; display:flex; flex-direction:column; align-items:center; gap:2px; background:none; border:none; cursor:pointer; color:var(--soft); font-family:var(--font); font-size:9px; font-weight:500; padding:5px 2px; border-radius:9px; transition:color .18s; position:relative; }
 .bnav.on { color:var(--blue); }
-.bnav svg { width:21px; height:21px; }
-.bnav-dot { position:absolute; top:3px; right:10px; width:7px; height:7px; background:var(--danger); border-radius:50%; display:none; border:2px solid var(--bg); }
+.bnav svg { width:19px; height:19px; }
+.bnav-dot { position:absolute; top:3px; right:8px; width:7px; height:7px; background:var(--danger); border-radius:50%; display:none; border:2px solid var(--bg); }
 .bnav-dot.on { display:block; }
 
-/* ── TOAST ── */
 .toast { position:fixed; top:max(18px,calc(var(--safe-top)+8px)); left:50%; transform:translateX(-50%) translateY(-70px); background:var(--s2); border:1px solid var(--border); border-radius:11px; padding:10px 18px; font-size:12px; font-weight:500; box-shadow:0 8px 32px rgba(0,0,0,.7); z-index:999; transition:transform .28s cubic-bezier(.34,1.56,.64,1); white-space:nowrap; }
 .toast.on { transform:translateX(-50%) translateY(0); }
 
-/* ── MODAL ── */
 .modal-bg { position:fixed; inset:0; background:rgba(0,0,0,.75); z-index:100; display:none; align-items:flex-end; justify-content:center; }
 .modal-bg.on { display:flex; }
 .modal-box { background:var(--s1); border:1px solid var(--border); border-radius:18px 18px 0 0; padding:24px 20px calc(28px + var(--safe-bot)); width:100%; max-width:430px; }
@@ -368,15 +332,163 @@ body { color:var(--text); font-family:var(--font); display:flex; flex-direction:
 .modal-btn.pri { background:linear-gradient(135deg,var(--blue),var(--purple)); color:#fff; }
 .modal-btn.sec { background:var(--s2); color:var(--soft); }
 
-/* utils */
 .spin { display:inline-block; width:14px; height:14px; border:2px solid rgba(255,255,255,.2); border-top-color:#fff; border-radius:50%; animation:rot .6s linear infinite; vertical-align:middle; }
 @keyframes rot { to { transform:rotate(360deg); } }
 .section-title { font-size:13px; font-weight:700; color:var(--soft); text-transform:uppercase; letter-spacing:.5px; padding:12px 15px 4px; }
+
+/* ══════════════════════════════════
+   SMC SCANNER — NEW TAB STYLES
+══════════════════════════════════ */
+.smc-page { padding:14px 15px 24px; }
+
+.smc-hero {
+  background:linear-gradient(135deg,rgba(155,114,245,.12),rgba(79,140,245,.08));
+  border:1px solid rgba(155,114,245,.22);
+  border-radius:var(--r);
+  padding:16px;
+  margin-bottom:14px;
+  position:relative;
+  overflow:hidden;
+}
+.smc-hero::before {
+  content:'';
+  position:absolute;
+  top:-30px; right:-30px;
+  width:120px; height:120px;
+  background:radial-gradient(circle,rgba(155,114,245,.18) 0%,transparent 70%);
+  pointer-events:none;
+}
+.smc-hero-title { font-size:16px; font-weight:800; margin-bottom:4px; }
+.smc-hero-sub   { font-size:12px; color:var(--soft); line-height:1.55; margin-bottom:14px; }
+
+.smc-controls { display:flex; gap:7px; flex-wrap:wrap; margin-bottom:12px; }
+.smc-ctrl { display:flex; align-items:center; gap:5px; background:rgba(0,0,0,.3); border:1px solid var(--border); border-radius:8px; padding:6px 11px; font-size:12px; color:var(--soft); }
+.smc-ctrl label { font-size:11px; white-space:nowrap; }
+.smc-ctrl select { background:transparent; border:none; outline:none; color:var(--text); font-family:var(--mono); font-size:12px; cursor:pointer; }
+.smc-ctrl input  { background:transparent; border:none; outline:none; color:var(--text); font-family:var(--mono); font-size:12px; width:50px; }
+
+.smc-pair-row { display:flex; gap:7px; margin-bottom:10px; }
+.smc-pair-wrap { flex:1; }
+.smc-pair-wrap label { font-size:11px; color:var(--soft); display:block; margin-bottom:4px; }
+.smc-pair-input { width:100%; background:rgba(0,0,0,.3); border:1px solid var(--border); border-radius:8px; padding:9px 12px; color:var(--text); font-family:var(--mono); font-size:14px; font-weight:700; outline:none; letter-spacing:.5px; }
+.smc-pair-input:focus { border-color:var(--purple); }
+
+.smc-analyse-btn { width:100%; padding:13px; border-radius:10px; border:none; background:linear-gradient(135deg,var(--purple),var(--blue)); color:#fff; font-family:var(--font); font-size:15px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; transition:opacity .2s; }
+.smc-analyse-btn:disabled { opacity:.35; cursor:not-allowed; }
+
+/* Quick-pick chips */
+.smc-quick-chips { display:flex; gap:5px; flex-wrap:wrap; margin-bottom:14px; }
+.smc-chip { padding:4px 11px; border-radius:20px; border:1px solid var(--border); background:var(--s2); color:var(--soft); font-family:var(--mono); font-size:11px; font-weight:700; cursor:pointer; transition:all .18s; }
+.smc-chip:active { background:var(--purple); border-color:var(--purple); color:#fff; }
+
+/* SMC result container */
+.smc-result-wrap { display:none; }
+.smc-result-wrap.on { display:block; }
+
+/* Overall bias banner */
+.smc-bias-banner {
+  border-radius:12px;
+  padding:14px 16px;
+  margin-bottom:12px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  border:1px solid;
+}
+.smc-bias-banner.bullish { background:rgba(26,219,138,.08); border-color:rgba(26,219,138,.25); }
+.smc-bias-banner.bearish { background:rgba(240,79,107,.08); border-color:rgba(240,79,107,.25); }
+.smc-bias-banner.neutral { background:rgba(79,140,245,.08); border-color:rgba(79,140,245,.25); }
+.smc-bias-ico  { font-size:28px; flex-shrink:0; }
+.smc-bias-body { flex:1; }
+.smc-bias-label { font-size:10px; color:var(--soft); text-transform:uppercase; letter-spacing:.4px; margin-bottom:2px; }
+.smc-bias-head  { font-size:16px; font-weight:800; margin-bottom:3px; }
+.smc-bias-sub   { font-size:11px; color:var(--soft); line-height:1.5; }
+.smc-bias-score { font-size:22px; font-weight:800; font-family:var(--mono); flex-shrink:0; }
+
+/* Score bar */
+.smc-score-row { display:flex; justify-content:space-between; font-size:11px; color:var(--soft); margin-bottom:4px; }
+.smc-score-bar-bg   { height:7px; background:var(--s3); border-radius:4px; overflow:hidden; margin-bottom:12px; display:flex; }
+.smc-score-bar-bear { height:100%; border-radius:4px 0 0 4px; background:linear-gradient(90deg,var(--danger),rgba(240,79,107,.5)); transition:width .6s; }
+.smc-score-bar-bull { height:100%; border-radius:0 4px 4px 0; background:linear-gradient(90deg,rgba(26,219,138,.5),var(--safe)); transition:width .6s; }
+
+/* SMC concept cards */
+.smc-concepts { display:flex; flex-direction:column; gap:9px; margin-bottom:12px; }
+.smc-concept-card { background:var(--s1); border:1px solid var(--border); border-radius:12px; overflow:hidden; }
+.smc-concept-card.active-bull { border-color:rgba(26,219,138,.3); }
+.smc-concept-card.active-bear { border-color:rgba(240,79,107,.3); }
+.smc-concept-card.active-warn { border-color:rgba(245,200,66,.3); }
+.smc-cc-header { display:flex; align-items:center; gap:10px; padding:11px 13px; cursor:pointer; }
+.smc-cc-ico { font-size:16px; flex-shrink:0; }
+.smc-cc-title { flex:1; font-size:13px; font-weight:700; }
+.smc-cc-badge { padding:3px 9px; border-radius:6px; font-size:10px; font-weight:700; flex-shrink:0; }
+.smc-cc-badge.bull { background:rgba(26,219,138,.15); color:var(--safe); }
+.smc-cc-badge.bear { background:rgba(240,79,107,.15); color:var(--danger); }
+.smc-cc-badge.warn { background:rgba(245,200,66,.15); color:var(--warn); }
+.smc-cc-badge.neu  { background:var(--s3); color:var(--soft); }
+.smc-cc-chevron { font-size:12px; color:var(--soft); transition:transform .2s; }
+.smc-cc-chevron.open { transform:rotate(180deg); }
+.smc-cc-body { padding:0 13px 12px; display:none; }
+.smc-cc-body.open { display:block; }
+
+/* Structure row */
+.smc-struct-row { display:flex; align-items:flex-start; gap:8px; padding:8px 10px; background:var(--s2); border-radius:8px; margin-bottom:6px; border-left:3px solid; }
+.smc-struct-row.bull { border-left-color:var(--safe); }
+.smc-struct-row.bear { border-left-color:var(--danger); }
+.smc-struct-row.warn { border-left-color:var(--warn); }
+.smc-struct-row.neu  { border-left-color:var(--dim); }
+.smc-struct-label { font-size:11px; font-weight:700; margin-bottom:2px; }
+.smc-struct-desc  { font-size:10px; color:var(--soft); line-height:1.5; }
+
+/* Price levels visual */
+.smc-levels-chart { background:var(--s2); border-radius:10px; padding:12px; margin-bottom:12px; border:1px solid var(--border); }
+.smc-levels-title { font-size:12px; font-weight:700; margin-bottom:12px; display:flex; align-items:center; gap:6px; }
+.smc-price-track  { position:relative; height:160px; background:var(--s3); border-radius:8px; margin-bottom:8px; overflow:hidden; }
+.smc-track-zone   { position:absolute; left:0; right:0; border-radius:0; }
+.smc-track-label  { position:absolute; right:6px; font-size:9px; font-family:var(--mono); font-weight:700; display:flex; align-items:center; }
+.smc-price-line   { position:absolute; left:0; right:0; height:2px; }
+.smc-price-line-label { position:absolute; left:6px; font-size:9px; font-family:var(--mono); font-weight:700; transform:translateY(-10px); }
+.smc-current-pin  { position:absolute; left:0; right:0; height:3px; background:#fff; box-shadow:0 0 8px rgba(255,255,255,.6); z-index:10; }
+.smc-current-pin::after { content:'▶ NOW'; position:absolute; left:6px; top:-9px; font-size:9px; font-family:var(--mono); font-weight:700; color:#fff; }
+.smc-levels-legend { display:flex; flex-wrap:wrap; gap:8px; }
+.smc-legend-item   { display:flex; align-items:center; gap:5px; font-size:10px; color:var(--soft); }
+.smc-legend-dot    { width:8px; height:8px; border-radius:2px; flex-shrink:0; }
+
+/* Trade setup card */
+.smc-setup-card { background:linear-gradient(135deg,rgba(79,140,245,.07),rgba(155,114,245,.05)); border:1px solid rgba(79,140,245,.2); border-radius:12px; padding:14px; margin-bottom:12px; }
+.smc-setup-title { font-size:13px; font-weight:800; margin-bottom:10px; display:flex; align-items:center; gap:7px; }
+.smc-setup-grid  { display:grid; grid-template-columns:1fr 1fr; gap:7px; margin-bottom:10px; }
+.smc-setup-cell  { background:rgba(0,0,0,.25); border-radius:9px; padding:9px 11px; }
+.smc-setup-lbl   { font-size:9px; color:var(--soft); text-transform:uppercase; letter-spacing:.3px; margin-bottom:4px; }
+.smc-setup-val   { font-size:14px; font-weight:700; font-family:var(--mono); }
+.smc-setup-sub   { font-size:10px; color:var(--soft); margin-top:2px; }
+.smc-setup-action { width:100%; padding:11px; border-radius:9px; border:none; font-family:var(--font); font-size:13px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:7px; }
+.smc-setup-action.long  { background:rgba(26,219,138,.15); color:var(--safe); border:1px solid rgba(26,219,138,.3); }
+.smc-setup-action.short { background:rgba(240,79,107,.15); color:var(--danger); border:1px solid rgba(240,79,107,.3); }
+.smc-setup-action.wait  { background:rgba(245,200,66,.1);  color:var(--warn);   border:1px solid rgba(245,200,66,.25); }
+
+/* Checklist */
+.smc-checklist { display:flex; flex-direction:column; gap:5px; margin-bottom:12px; }
+.smc-check-item { display:flex; align-items:flex-start; gap:8px; background:var(--s2); border-radius:8px; padding:8px 10px; }
+.smc-check-ico  { font-size:14px; flex-shrink:0; margin-top:1px; }
+.smc-check-lbl  { font-size:11px; font-weight:600; margin-bottom:2px; }
+.smc-check-desc { font-size:10px; color:var(--soft); line-height:1.5; }
+.smc-check-item.pass .smc-check-lbl { color:var(--safe); }
+.smc-check-item.fail .smc-check-lbl { color:var(--danger); }
+.smc-check-item.part .smc-check-lbl { color:var(--warn); }
+
+/* SMC progress bar */
+.smc-prog { margin:8px 0 0; display:none; }
+.smc-prog.on { display:block; }
+.smc-prog-info { display:flex; justify-content:space-between; font-size:11px; color:var(--soft); margin-bottom:5px; }
+.smc-prog-bar  { height:4px; background:var(--s3); border-radius:2px; overflow:hidden; }
+.smc-prog-fill { height:100%; background:linear-gradient(90deg,var(--purple),var(--blue)); border-radius:2px; transition:width .3s; }
+
+/* Disclaimer */
+.smc-disclaimer { font-size:10px; color:var(--dim); text-align:center; line-height:1.6; padding:4px 0 8px; }
 </style>
 </head>
 <body>
 
-<!-- Install Banner -->
 <div id="installBar">
   <div style="font-size:24px">📲</div>
   <div class="ib-text"><strong>Add CoinWatch to your home screen</strong>Get instant alerts even when app is closed</div>
@@ -384,7 +496,6 @@ body { color:var(--text); font-family:var(--font); display:flex; flex-direction:
   <button class="ib-x" onclick="dismissInstall()">×</button>
 </div>
 
-<!-- Header -->
 <div class="hdr">
   <div class="hdr-top">
     <div class="brand">
@@ -404,6 +515,7 @@ body { color:var(--text); font-family:var(--font); display:flex; flex-direction:
   </div>
   <div class="nav-tabs">
     <button class="ntab on" data-page="alerts"    onclick="gotoPage('alerts',this)">📡 Signals</button>
+    <button class="ntab"    data-page="smc"       onclick="gotoPage('smc',this)">🧠 SMC</button>
     <button class="ntab"    data-page="protect"   onclick="gotoPage('protect',this)">🛡️ Am I Safe?</button>
     <button class="ntab"    data-page="watchlist" onclick="gotoPage('watchlist',this)">⭐ Watchlist</button>
     <button class="ntab"    data-page="history"   onclick="gotoPage('history',this)">📜 History</button>
@@ -411,7 +523,6 @@ body { color:var(--text); font-family:var(--font); display:flex; flex-direction:
   </div>
 </div>
 
-<!-- MAIN -->
 <div class="main" id="mainScroll">
 
   <!-- ══ SIGNALS PAGE ══ -->
@@ -449,6 +560,59 @@ body { color:var(--text); font-family:var(--font); display:flex; flex-direction:
     </div>
   </div>
 
+  <!-- ══ SMC SCANNER PAGE ══ -->
+  <div class="page" id="pg-smc">
+    <div class="smc-page">
+
+      <div class="smc-hero">
+        <div class="smc-hero-title">🧠 SMC Trade Signal Scanner</div>
+        <div class="smc-hero-sub">Analyses any crypto/USDT pair using Smart Money Concepts — Break of Structure, Order Blocks, Fair Value Gaps, Liquidity Sweeps, and Premium/Discount zones. Enter a pair and get a full institutional-grade read.</div>
+
+        <div class="smc-pair-row">
+          <div class="smc-pair-wrap">
+            <label>Coin symbol (e.g. BTC, ETH, SOL)</label>
+            <input class="smc-pair-input" id="smcPairInput" placeholder="e.g. BTC" maxlength="12" style="text-transform:uppercase" oninput="this.value=this.value.toUpperCase().replace('USDT','')">
+          </div>
+          <div class="smc-pair-wrap" style="max-width:110px">
+            <label>Timeframe</label>
+            <select class="smc-pair-input" id="smcTf" style="font-size:13px">
+              <option value="15m">15 min</option>
+              <option value="1h" selected>1 hour</option>
+              <option value="4h">4 hours</option>
+              <option value="1d">1 day</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="margin-bottom:10px">
+          <div style="font-size:11px;color:var(--soft);margin-bottom:6px;">Quick pick:</div>
+          <div class="smc-quick-chips">
+            <div class="smc-chip" onclick="smcQuickPick('BTC')">BTC</div>
+            <div class="smc-chip" onclick="smcQuickPick('ETH')">ETH</div>
+            <div class="smc-chip" onclick="smcQuickPick('SOL')">SOL</div>
+            <div class="smc-chip" onclick="smcQuickPick('BNB')">BNB</div>
+            <div class="smc-chip" onclick="smcQuickPick('XRP')">XRP</div>
+            <div class="smc-chip" onclick="smcQuickPick('ADA')">ADA</div>
+            <div class="smc-chip" onclick="smcQuickPick('DOGE')">DOGE</div>
+            <div class="smc-chip" onclick="smcQuickPick('AVAX')">AVAX</div>
+          </div>
+        </div>
+
+        <button class="smc-analyse-btn" id="smcAnalyseBtn" onclick="runSMCAnalysis()">🧠 Analyse SMC Signals</button>
+
+        <div class="smc-prog" id="smcProg">
+          <div class="smc-prog-info"><span id="smcProgLbl">Fetching data…</span><span id="smcProgPct">0%</span></div>
+          <div class="smc-prog-bar"><div class="smc-prog-fill" id="smcProgFill" style="width:0"></div></div>
+        </div>
+      </div>
+
+      <!-- SMC results inject here -->
+      <div id="smcResult"></div>
+
+      <div class="smc-disclaimer">SMC analysis is educational and not financial advice. Always manage risk with stop-losses.</div>
+    </div>
+  </div>
+
   <!-- ══ PROTECTION PAGE ══ -->
   <div class="page" id="pg-protect">
     <div class="protect-page">
@@ -480,12 +644,11 @@ body { color:var(--text); font-family:var(--font); display:flex; flex-direction:
     </div>
   </div>
 
-  <!-- ══ WATCHLIST PAGE — ORIGINAL + TRAP PANEL ══ -->
+  <!-- ══ WATCHLIST PAGE ══ -->
   <div class="page" id="pg-watchlist">
     <div class="wl-page">
       <h2>⭐ My Favourite Coins</h2>
-      <p class="wl-desc">Save your favourite coins and set a <strong>minimum price alert</strong>. The app will send you a notification the moment the price drops to or below your target. Each coin also has a <strong>⚡ Trap Analysis</strong> section you can run any time.</p>
-
+      <p class="wl-desc">Save your favourite coins and set a <strong>minimum price alert</strong>. Each coin also has a <strong>⚡ Trap Analysis</strong> section you can run any time.</p>
       <div class="monitor-strip">
         <div class="monitor-left">
           <strong>🔔 Auto Range Monitor</strong>
@@ -496,10 +659,9 @@ body { color:var(--text); font-family:var(--font); display:flex; flex-direction:
           <span id="monitorLabel">Off</span>
         </div>
       </div>
-
       <div class="wl-add-box">
         <h3>➕ Add a Favourite Coin</h3>
-        <p>Just type the coin name and tap Add. The app will automatically calculate the bottom of its current price range and alert you the moment the price drops there — no manual price setting needed.</p>
+        <p>Type the coin name and tap Add. The app automatically calculates the bottom of its current price range and alerts you the moment the price drops there.</p>
         <div class="wl-add-row">
           <div class="wl-add-inp-wrap">
             <label>Coin name (e.g. BTC, ETH, SOL, BNB)</label>
@@ -508,10 +670,9 @@ body { color:var(--text); font-family:var(--font); display:flex; flex-direction:
         </div>
         <button class="wl-add-btn" onclick="addToWatchlist()" style="width:100%">⭐ Add to Watchlist — Auto Alert</button>
       </div>
-
       <div class="wl-section-title">Your saved coins</div>
       <div id="wlContent">
-        <div class="empty"><div class="empty-ico">⭐</div><div class="empty-h">No coins saved yet</div><div class="empty-p">Use the form above to add your first coin. You can also tap ☆ Save on any signal card.</div></div>
+        <div class="empty"><div class="empty-ico">⭐</div><div class="empty-h">No coins saved yet</div><div class="empty-p">Use the form above to add your first coin.</div></div>
       </div>
     </div>
   </div>
@@ -545,6 +706,10 @@ body { color:var(--text); font-family:var(--font); display:flex; flex-direction:
     <div class="bnav-dot" id="alertDot"></div>
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>Signals
   </button>
+  <button class="bnav" id="bn-smc" onclick="gotoPage('smc',document.querySelector('[data-page=smc]'))">
+    <div class="bnav-dot" id="smcDot"></div>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>SMC
+  </button>
   <button class="bnav" id="bn-protect" onclick="gotoPage('protect',document.querySelector('[data-page=protect]'))">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Am I Safe?
   </button>
@@ -560,11 +725,10 @@ body { color:var(--text); font-family:var(--font); display:flex; flex-direction:
   </button>
 </div>
 
-<!-- Modal -->
 <div class="modal-bg" id="modal">
   <div class="modal-box">
     <h3>🔔 Turn On Alerts</h3>
-    <p>Get a notification on your phone the moment a strong signal is found — even when this app is closed. Tap "Yes, Alert Me" and then tap "Allow" when your phone asks.</p>
+    <p>Get a notification on your phone the moment a strong signal is found — even when this app is closed.</p>
     <div class="modal-btns">
       <button class="modal-btn sec" onclick="closeModal()">Not now</button>
       <button class="modal-btn pri" onclick="enableNotifications()">Yes, Alert Me</button>
@@ -572,7 +736,6 @@ body { color:var(--text); font-family:var(--font); display:flex; flex-direction:
   </div>
 </div>
 
-<!-- Toast -->
 <div class="toast" id="toast"></div>
 
 <script>
@@ -581,7 +744,7 @@ body { color:var(--text); font-family:var(--font); display:flex; flex-direction:
 // ══════════════════════════════════════════════════════════
 const API = 'https://api.binance.com/api/v3';
 let signals = [], history = [];
-let watchlist = new Map(); // sym -> { rangeBottom, rangeTop, lastPrice, triggered, lastChecked, trend, triggerCount, rangeShiftAlerted }
+let watchlist = new Map();
 let settings = { autoMins:5, minConf:70, minVol:5000000 };
 let activeFilter = 'all', currentPage = 'alerts';
 let autoTimer = null, autoOn = false, deferredInstall = null;
@@ -630,19 +793,12 @@ function load() {
   try {
     const wl = localStorage.getItem('wl2');
     if (wl) watchlist = new Map(JSON.parse(wl));
-    else {
-      const oldWl = localStorage.getItem('wl');
-      if (oldWl) {
-        const arr = JSON.parse(oldWl);
-        arr.forEach(sym => watchlist.set(sym, { rangeBottom:null, rangeTop:null, lastPrice:null, triggered:false, lastChecked:null, trend:'up', triggerCount:0 }));
-      }
-    }
     const h = localStorage.getItem('hist'); if (h) history = JSON.parse(h);
     const s = localStorage.getItem('cfg');
     if (s) { const saved = JSON.parse(s); settings = {...settings, ...saved}; }
     applySettings();
-    if (settings.autoOn)    { autoOn = false;    setTimeout(() => toggleAuto(), 1000); }
-    if (settings.monitorOn) { monitorOn = false;  setTimeout(() => toggleMonitor(), 1500); }
+    if (settings.autoOn)    setTimeout(() => toggleAuto(), 1000);
+    if (settings.monitorOn) setTimeout(() => toggleMonitor(), 1500);
   } catch(e){ console.error('Load error:', e); }
 }
 function saveWL()   { localStorage.setItem('wl2', JSON.stringify([...watchlist])); }
@@ -697,6 +853,11 @@ function setStatus(live, txt) {
   document.getElementById('dot').className = 'dot' + (live?' live':'');
   document.getElementById('statusTxt').textContent = txt;
 }
+function setSMCProg(pct, lbl) {
+  document.getElementById('smcProgFill').style.width = pct+'%';
+  document.getElementById('smcProgPct').textContent  = Math.round(pct)+'%';
+  if (lbl) document.getElementById('smcProgLbl').textContent = lbl;
+}
 function setProgress(pct, lbl) {
   document.getElementById('progFill').style.width = pct+'%';
   document.getElementById('progPct').textContent = Math.round(pct)+'%';
@@ -711,10 +872,10 @@ function setFilter(f, el) {
 function f(n)    { return n>=10?n.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}):n>=1?n.toFixed(4):n>=0.01?n.toFixed(5):n.toFixed(8); }
 function pct(n)  { return (n>=0?'+':'')+n.toFixed(2)+'%'; }
 function volFmt(v){ return v>=1e9?(v/1e9).toFixed(1)+'B':v>=1e6?(v/1e6).toFixed(1)+'M':(v/1e3).toFixed(0)+'K'; }
-function avgArr(arr){ return arr.reduce((s,v)=>s+v,0)/arr.length; }
+function avgArr(arr){ return arr.length ? arr.reduce((s,v)=>s+v,0)/arr.length : 0; }
 
 // ══════════════════════════════════════════════════════════
-// INDICATORS
+// INDICATORS (shared)
 // ══════════════════════════════════════════════════════════
 function rsi(closes, p=14) {
   if (closes.length<p+1) return null;
@@ -735,7 +896,688 @@ function conviction(klines,n=5){let b=0,r=0;for(const k of klines.slice(-n)){con
 function volAccel(vols){const h=Math.floor(vols.length/2);const oa=vols.slice(0,h).reduce((a,b)=>a+b,0)/h;const na=vols.slice(h).reduce((a,b)=>a+b,0)/h;return((na-oa)/oa)*100;}
 
 // ══════════════════════════════════════════════════════════
-// CONFIDENCE SCORE (signals tab)
+// ══ SMC ENGINE ══
+// Detects: BOS, CHoCH, Order Blocks, FVGs, Liquidity Sweeps,
+//          Premium/Discount zones, structure bias
+// ══════════════════════════════════════════════════════════
+function smcQuickPick(sym) {
+  document.getElementById('smcPairInput').value = sym;
+  runSMCAnalysis();
+}
+
+function detectSwings(klines, lookback=3) {
+  // Find pivot highs and lows
+  const highs=[], lows=[];
+  for (let i=lookback; i<klines.length-lookback; i++) {
+    const h=+klines[i][2], l=+klines[i][3];
+    let isHigh=true, isLow=true;
+    for (let j=i-lookback; j<=i+lookback; j++) {
+      if(j===i)continue;
+      if(+klines[j][2]>=h) isHigh=false;
+      if(+klines[j][3]<=l) isLow=false;
+    }
+    if(isHigh) highs.push({idx:i, price:h, ts:+klines[i][0]});
+    if(isLow)  lows.push({idx:i, price:l, ts:+klines[i][0]});
+  }
+  return {highs, lows};
+}
+
+function detectBOS(klines, swings) {
+  // Break of Structure: price closes above last swing high (bullish BOS)
+  // or below last swing low (bearish BOS)
+  const closes = klines.map(k=>+k[4]);
+  const cur = closes[closes.length-1];
+  const results = [];
+
+  if (swings.highs.length >= 2) {
+    const lastH = swings.highs[swings.highs.length-1];
+    const prevH = swings.highs[swings.highs.length-2];
+    if (cur > lastH.price && lastH.price > prevH.price) {
+      results.push({ type:'BOS_BULL', level:lastH.price, desc:`Price broke above swing high $${f(lastH.price)} — bullish structure confirmed` });
+    }
+    if (cur < lastH.price && swings.highs.length >= 3) {
+      const h2 = swings.highs[swings.highs.length-3];
+      if (lastH.price < h2.price) {
+        results.push({ type:'BOS_BEAR', level:lastH.price, desc:`Lower high formed at $${f(lastH.price)} — bearish structure forming` });
+      }
+    }
+  }
+
+  if (swings.lows.length >= 2) {
+    const lastL = swings.lows[swings.lows.length-1];
+    const prevL = swings.lows[swings.lows.length-2];
+    if (cur < lastL.price && lastL.price < prevL.price) {
+      results.push({ type:'BOS_BEAR', level:lastL.price, desc:`Price broke below swing low $${f(lastL.price)} — bearish structure confirmed` });
+    }
+    if (cur > lastL.price && swings.lows.length >= 3) {
+      const l2 = swings.lows[swings.lows.length-3];
+      if (lastL.price > l2.price) {
+        results.push({ type:'BOS_BULL', level:lastL.price, desc:`Higher low formed at $${f(lastL.price)} — bullish structure forming` });
+      }
+    }
+  }
+
+  return results;
+}
+
+function detectCHoCH(klines, swings) {
+  // CHoCH: a swing in the OPPOSITE direction to the current trend
+  const closes = klines.map(k=>+k[4]);
+  const cur = closes[closes.length-1];
+  const results = [];
+
+  if (swings.highs.length >= 2 && swings.lows.length >= 2) {
+    const lastH = swings.highs[swings.highs.length-1];
+    const prevH = swings.highs[swings.highs.length-2];
+    const lastL = swings.lows[swings.lows.length-1];
+    const prevL = swings.lows[swings.lows.length-2];
+
+    // Was in downtrend (lower highs), now last low is higher — CHoCH bullish
+    if (prevH.price > lastH.price && lastL.price > prevL.price) {
+      results.push({ type:'CHOCH_BULL', level:lastL.price, desc:`Trend flip signal: downtrend broken. First higher low at $${f(lastL.price)} — watch for confirmation` });
+    }
+    // Was in uptrend (higher lows), now last high is lower — CHoCH bearish
+    if (prevL.price < lastL.price && lastH.price < prevH.price) {
+      results.push({ type:'CHOCH_BEAR', level:lastH.price, desc:`Trend flip signal: uptrend broken. First lower high at $${f(lastH.price)} — possible reversal` });
+    }
+  }
+
+  return results;
+}
+
+function detectOrderBlocks(klines) {
+  // Bullish OB: last bearish candle before a strong bullish impulse
+  // Bearish OB: last bullish candle before a strong bearish impulse
+  const obs = [];
+  const minImpulse = 1.5; // % move to count as impulse
+
+  for (let i=1; i<klines.length-2; i++) {
+    const o=+klines[i][1], c=+klines[i][4];
+    const nextC=+klines[i+1][4], nextO=+klines[i+1][1];
+    const nextMove = ((nextC-nextO)/nextO)*100;
+
+    // Bearish candle followed by strong bullish move = Bullish OB
+    if (c < o && nextMove > minImpulse) {
+      obs.push({ type:'OB_BULL', high:+klines[i][2], low:+klines[i][3], open:o, close:c, idx:i,
+        desc:`Bullish order block: $${f(+klines[i][3])}–$${f(+klines[i][2])} — institutional buy zone` });
+    }
+    // Bullish candle followed by strong bearish move = Bearish OB
+    if (c > o && nextMove < -minImpulse) {
+      obs.push({ type:'OB_BEAR', high:+klines[i][2], low:+klines[i][3], open:o, close:c, idx:i,
+        desc:`Bearish order block: $${f(+klines[i][3])}–$${f(+klines[i][2])} — institutional sell zone` });
+    }
+  }
+
+  // Keep only the 3 most recent of each type
+  const bullOBs = obs.filter(o=>o.type==='OB_BULL').slice(-3);
+  const bearOBs = obs.filter(o=>o.type==='OB_BEAR').slice(-3);
+  return [...bullOBs, ...bearOBs];
+}
+
+function detectFVGs(klines) {
+  // Fair Value Gap: candle[i-1].high < candle[i+1].low (bullish FVG)
+  //                candle[i-1].low  > candle[i+1].high (bearish FVG)
+  const fvgs = [];
+
+  for (let i=1; i<klines.length-1; i++) {
+    const prevHigh  = +klines[i-1][2];
+    const prevLow   = +klines[i-1][3];
+    const nextHigh  = +klines[i+1][2];
+    const nextLow   = +klines[i+1][3];
+
+    if (prevHigh < nextLow) {
+      const gap = nextLow - prevHigh;
+      const gapPct = (gap / prevHigh) * 100;
+      if (gapPct > 0.3) {
+        fvgs.push({ type:'FVG_BULL', top:nextLow, bottom:prevHigh, idx:i, gapPct,
+          desc:`Bullish FVG: gap from $${f(prevHigh)} to $${f(nextLow)} (${gapPct.toFixed(2)}%) — price likely to fill this` });
+      }
+    }
+
+    if (prevLow > nextHigh) {
+      const gap = prevLow - nextHigh;
+      const gapPct = (gap / nextHigh) * 100;
+      if (gapPct > 0.3) {
+        fvgs.push({ type:'FVG_BEAR', top:prevLow, bottom:nextHigh, idx:i, gapPct,
+          desc:`Bearish FVG: gap from $${f(nextHigh)} to $${f(prevLow)} (${gapPct.toFixed(2)}%) — price likely to fill this` });
+      }
+    }
+  }
+
+  // Most recent 3 unfilled FVGs
+  return fvgs.slice(-3);
+}
+
+function detectLiquiditySweep(klines, swings) {
+  // Sweep: price wicks above a swing high then closes back below (bear sweep)
+  //        price wicks below a swing low then closes back above (bull sweep)
+  const sweeps = [];
+  const lastK  = klines[klines.length-1];
+  const lastH  = +lastK[2], lastL = +lastK[3], lastC = +lastK[4];
+
+  if (swings.highs.length >= 2) {
+    const refHigh = swings.highs[swings.highs.length-2].price;
+    if (lastH > refHigh && lastC < refHigh) {
+      sweeps.push({ type:'SWEEP_BEAR', level:refHigh,
+        desc:`Stop hunt above $${f(refHigh)} — wick pierced resistance then closed below. Bearish reversal signal` });
+    }
+  }
+
+  if (swings.lows.length >= 2) {
+    const refLow = swings.lows[swings.lows.length-2].price;
+    if (lastL < refLow && lastC > refLow) {
+      sweeps.push({ type:'SWEEP_BULL', level:refLow,
+        desc:`Stop hunt below $${f(refLow)} — wick swept support then closed above. Bullish reversal signal` });
+    }
+  }
+
+  return sweeps;
+}
+
+function getPremiumDiscount(klines) {
+  const highs = klines.map(k=>+k[2]);
+  const lows  = klines.map(k=>+k[3]);
+  const rangeH = Math.max(...highs);
+  const rangeL = Math.min(...lows);
+  const mid    = (rangeH + rangeL) / 2;
+  const q1     = rangeL + (rangeH - rangeL) * 0.25; // discount boundary
+  const q3     = rangeL + (rangeH - rangeL) * 0.75; // premium boundary
+  const cur    = +klines[klines.length-1][4];
+  const zone   = cur > q3 ? 'premium' : cur < q1 ? 'discount' : 'equilibrium';
+  const pct    = ((cur - rangeL) / (rangeH - rangeL)) * 100;
+  return { rangeH, rangeL, mid, q1, q3, cur, zone, pct };
+}
+
+function smcOverallBias(bos, choch, obs, fvgs, sweeps, pd, rsiVal, obRatio) {
+  let bull = 0, bear = 0;
+
+  bos.forEach(b  => { if(b.type==='BOS_BULL') bull+=3;  else bear+=3; });
+  choch.forEach(c => { if(c.type==='CHOCH_BULL') bull+=4; else bear+=4; });
+  obs.forEach(o  => {
+    if(o.type==='OB_BULL' && pd.cur>=o.low && pd.cur<=o.high) bull+=3;
+    if(o.type==='OB_BEAR' && pd.cur>=o.low && pd.cur<=o.high) bear+=3;
+  });
+  fvgs.forEach(g => { if(g.type==='FVG_BULL') bull+=1; else bear+=1; });
+  sweeps.forEach(s => { if(s.type==='SWEEP_BULL') bull+=3; else bear+=3; });
+  if (pd.zone==='discount')    bull+=2;
+  if (pd.zone==='premium')     bear+=2;
+  if (rsiVal < 40)             bull+=2;
+  if (rsiVal > 65)             bear+=2;
+  if (obRatio > 0.60)          bull+=2;
+  if (obRatio < 0.40)          bear+=2;
+
+  const total = bull + bear || 1;
+  const bullPct = Math.round((bull/total)*100);
+  const bearPct = 100 - bullPct;
+  const bias = bullPct > 60 ? 'bullish' : bearPct > 60 ? 'bearish' : 'neutral';
+  return { bull, bear, bullPct, bearPct, bias };
+}
+
+function smcTradeSetup(bias, pd, obs, fvgs, atrVal) {
+  const cur = pd.cur;
+
+  if (bias.bias === 'bullish') {
+    // Find nearest bullish OB below price as entry
+    const nearOB = obs.filter(o=>o.type==='OB_BULL'&&o.high<cur).sort((a,b)=>b.high-a.high)[0];
+    // Find nearest bearish FVG above price as first target
+    const nearFVG = fvgs.filter(g=>g.type==='FVG_BULL'&&g.top>cur).sort((a,b)=>a.bottom-b.bottom)[0];
+    const entry  = nearOB ? nearOB.high : cur * 0.99;
+    const sl     = nearOB ? nearOB.low * 0.998 : cur * (1 - atrVal/cur * 1.5);
+    const tp1    = nearFVG ? nearFVG.top : pd.mid > cur ? pd.mid : cur * 1.03;
+    const tp2    = pd.rangeH;
+    const rr     = sl < entry ? ((tp1-entry)/(entry-sl)).toFixed(1) : '—';
+    return { dir:'LONG', entry, sl, tp1, tp2, rr, nearOB, nearFVG };
+  }
+
+  if (bias.bias === 'bearish') {
+    const nearOB = obs.filter(o=>o.type==='OB_BEAR'&&o.low>cur).sort((a,b)=>a.low-b.low)[0];
+    const nearFVG = fvgs.filter(g=>g.type==='FVG_BEAR'&&g.bottom<cur).sort((a,b)=>b.top-a.top)[0];
+    const entry  = nearOB ? nearOB.low : cur * 1.01;
+    const sl     = nearOB ? nearOB.high * 1.002 : cur * (1 + atrVal/cur * 1.5);
+    const tp1    = nearFVG ? nearFVG.bottom : pd.mid < cur ? pd.mid : cur * 0.97;
+    const tp2    = pd.rangeL;
+    const rr     = sl > entry ? ((entry-tp1)/(sl-entry)).toFixed(1) : '—';
+    return { dir:'SHORT', entry, sl, tp1, tp2, rr, nearOB, nearFVG };
+  }
+
+  return { dir:'WAIT', entry:cur, sl:null, tp1:null, tp2:null, rr:'—' };
+}
+
+// ══════════════════════════════════════════════════════════
+// SMC RENDER
+// ══════════════════════════════════════════════════════════
+function toggleSMCCard(id) {
+  const body    = document.getElementById('smcbody-'+id);
+  const chevron = document.getElementById('smcchev-'+id);
+  const isOpen  = body.classList.contains('open');
+  body.classList.toggle('open', !isOpen);
+  chevron.classList.toggle('open', !isOpen);
+}
+
+async function runSMCAnalysis() {
+  const rawSym = (document.getElementById('smcPairInput').value||'').toUpperCase().trim().replace('USDT','').replace('/','');
+  if (!rawSym) { showToast('⚠️ Enter a coin name first e.g. BTC'); return; }
+  const tf  = document.getElementById('smcTf').value;
+  const sym = rawSym + 'USDT';
+  const btn = document.getElementById('smcAnalyseBtn');
+  const res = document.getElementById('smcResult');
+
+  btn.disabled = true; btn.innerHTML = '<span class="spin"></span> Analysing…';
+  document.getElementById('smcProg').classList.add('on');
+  res.innerHTML = '';
+  setStatus(true, 'SMC analysis…');
+
+  try {
+    setSMCProg(10, 'Fetching kline data…');
+    const [klines, ticker, depth] = await Promise.all([
+      fetch(`${API}/klines?symbol=${sym}&interval=${tf}&limit=100`).then(r=>r.json()),
+      fetch(`${API}/ticker/24hr?symbol=${sym}`).then(r=>r.json()),
+      fetch(`${API}/depth?symbol=${sym}&limit=20`).then(r=>r.json())
+    ]);
+
+    if (!Array.isArray(klines) || klines.length < 20) {
+      throw new Error('Not enough data — check the coin name');
+    }
+
+    setSMCProg(35, 'Detecting market structure…');
+    const closes  = klines.map(k=>+k[4]);
+    const vols    = klines.map(k=>+k[5]);
+    const price   = parseFloat(ticker.lastPrice);
+    const ch24    = parseFloat(ticker.priceChangePercent);
+    const atrVal  = atr(klines);
+    const rsiVal  = rsi(closes) || 50;
+    const ema20v  = ema(closes, 20);
+    const ema50v  = ema(closes, 50);
+
+    let obRatio = 0.5;
+    if (depth?.bids && depth?.asks) {
+      const bv = depth.bids.slice(0,15).reduce((s,b)=>s+parseFloat(b[1]),0);
+      const av = depth.asks.slice(0,15).reduce((s,a)=>s+parseFloat(a[1]),0);
+      obRatio = bv / (bv + av);
+    }
+
+    setSMCProg(55, 'Finding order blocks & FVGs…');
+    const swings  = detectSwings(klines, 3);
+    const bos     = detectBOS(klines, swings);
+    const choch   = detectCHoCH(klines, swings);
+    const obs     = detectOrderBlocks(klines);
+    const fvgs    = detectFVGs(klines);
+    const sweeps  = detectLiquiditySweep(klines, swings);
+    const pd      = getPremiumDiscount(klines);
+
+    setSMCProg(80, 'Computing bias & trade setup…');
+    const bias    = smcOverallBias(bos, choch, obs, fvgs, sweeps, pd, rsiVal, obRatio);
+    const setup   = smcTradeSetup(bias, pd, obs, fvgs, atrVal);
+
+    setSMCProg(100, 'Done!');
+    setTimeout(()=>document.getElementById('smcProg').classList.remove('on'), 700);
+    setStatus(true, `SMC: ${rawSym} analysed`);
+
+    // ── BUILD HTML ──
+    const biasColor  = bias.bias==='bullish'?'var(--safe)':bias.bias==='bearish'?'var(--danger)':'var(--blue)';
+    const biasIco    = bias.bias==='bullish'?'📈':bias.bias==='bearish'?'📉':'⚖️';
+    const biasLabel  = bias.bias==='bullish'?'BULLISH BIAS':'BEARISH BIAS':'NEUTRAL — WAIT';
+    const biasDesc   = bias.bias==='bullish'
+      ? `Smart money signals favour the upside. ${bos.some(b=>b.type==='BOS_BULL')?'Structure is bullish. ':''}${sweeps.some(s=>s.type==='SWEEP_BULL')?'Liquidity sweep suggests institutional buying. ':''}`
+      : bias.bias==='bearish'
+      ? `Smart money signals favour the downside. ${bos.some(b=>b.type==='BOS_BEAR')?'Structure is bearish. ':''}${sweeps.some(s=>s.type==='SWEEP_BEAR')?'Stop hunt detected above resistance. ':''}`
+      : 'No clear institutional direction yet. Signals are mixed — best to wait for a cleaner setup.';
+
+    // Price levels visual
+    const rangeSpan = pd.rangeH - pd.rangeL || 1;
+    const toY = price => Math.max(2,Math.min(96, 100 - ((price - pd.rangeL) / rangeSpan * 100)));
+    const curY = toY(pd.cur);
+    const midY = toY(pd.mid);
+    const q1Y  = toY(pd.q1);
+    const q3Y  = toY(pd.q3);
+
+    // OB markers for chart
+    const obMarkers = obs.slice(-3).map(o => {
+      const topY = toY(o.high), botY = toY(o.low);
+      const h = Math.max(3, botY - topY);
+      const color = o.type==='OB_BULL'?'rgba(26,219,138,.25)':'rgba(240,79,107,.25)';
+      const border= o.type==='OB_BULL'?'rgba(26,219,138,.5)':'rgba(240,79,107,.5)';
+      return `<div style="position:absolute;left:0;right:0;top:${topY}%;height:${h}%;background:${color};border-top:1px solid ${border};border-bottom:1px solid ${border};"></div>`;
+    }).join('');
+
+    // FVG markers
+    const fvgMarkers = fvgs.slice(-2).map(g => {
+      const topY = toY(g.top), botY = toY(g.bottom);
+      const h = Math.max(2, botY - topY);
+      const color = g.type==='FVG_BULL'?'rgba(79,140,245,.2)':'rgba(155,114,245,.2)';
+      return `<div style="position:absolute;left:0;right:0;top:${topY}%;height:${h}%;background:${color};border-top:1px dashed rgba(79,140,245,.4);"></div>`;
+    }).join('');
+
+    // Setup action
+    const setupCls  = setup.dir==='LONG'?'long':setup.dir==='SHORT'?'short':'wait';
+    const setupIco  = setup.dir==='LONG'?'📈 LONG SETUP':setup.dir==='SHORT'?'📉 SHORT SETUP':'⏳ NO TRADE YET';
+    const setupDesc = setup.dir==='LONG'
+      ? `Bullish SMC structure detected. Wait for price to pull back into the order block or FVG below, then enter long with stop below the OB.`
+      : setup.dir==='SHORT'
+      ? `Bearish SMC structure detected. Watch for price to retrace into the OB/FVG above current price, then short with stop above the OB.`
+      : `No high-probability SMC setup right now. Signals conflict or lack confirmation. Mark your levels and wait — the setup will come.`;
+
+    // Checklist items
+    const checks = [
+      {
+        label: 'Market Structure',
+        pass: bos.length > 0,
+        ico: bos.length > 0 ? '✅' : '❌',
+        cls: bos.length > 0 ? 'pass' : 'fail',
+        desc: bos.length > 0 ? bos.map(b=>b.desc).join(' · ') : 'No clear BOS detected on this timeframe. Market is ranging.'
+      },
+      {
+        label: 'Change of Character',
+        pass: choch.length > 0,
+        ico: choch.length > 0 ? '🔄' : '➖',
+        cls: choch.length > 0 ? 'pass' : 'part',
+        desc: choch.length > 0 ? choch.map(c=>c.desc).join(' · ') : 'No CHoCH detected — trend continuation likely.'
+      },
+      {
+        label: `Order Blocks (${obs.length} found)`,
+        pass: obs.some(o=>o.type==='OB_BULL'&&pd.cur>=o.low&&pd.cur<=o.high)||obs.some(o=>o.type==='OB_BEAR'&&pd.cur>=o.low&&pd.cur<=o.high),
+        ico: obs.length > 0 ? '🟩' : '❌',
+        cls: obs.length > 0 ? 'pass' : 'fail',
+        desc: obs.length > 0 ? obs.slice(-3).map(o=>o.desc).join(' · ') : 'No significant order blocks found.'
+      },
+      {
+        label: `Fair Value Gaps (${fvgs.length} found)`,
+        pass: fvgs.length > 0,
+        ico: fvgs.length > 0 ? '🔷' : '➖',
+        cls: fvgs.length > 0 ? 'pass' : 'part',
+        desc: fvgs.length > 0 ? fvgs.slice(-2).map(g=>g.desc).join(' · ') : 'No significant FVGs detected — price action is balanced.'
+      },
+      {
+        label: 'Liquidity Sweep',
+        pass: sweeps.length > 0,
+        ico: sweeps.length > 0 ? '🌊' : '➖',
+        cls: sweeps.length > 0 ? 'pass' : 'part',
+        desc: sweeps.length > 0 ? sweeps.map(s=>s.desc).join(' · ') : 'No recent liquidity sweep detected.'
+      },
+      {
+        label: `Premium / Discount Zone`,
+        pass: pd.zone !== 'equilibrium',
+        ico: pd.zone==='discount'?'🟢':pd.zone==='premium'?'🔴':'🟡',
+        cls: pd.zone==='discount'?'pass':pd.zone==='premium'?'fail':'part',
+        desc: `Price is in the ${pd.zone.toUpperCase()} zone (${pd.pct.toFixed(0)}% through the range). ${pd.zone==='discount'?'Smart money tends to BUY in discount zones.':pd.zone==='premium'?'Smart money tends to SELL in premium zones.':'Wait for a move toward discount (for longs) or premium (for shorts).'}`
+      },
+      {
+        label: `RSI ${rsiVal.toFixed(0)} — Momentum`,
+        pass: (bias.bias==='bullish'&&rsiVal<60)||(bias.bias==='bearish'&&rsiVal>40),
+        ico: rsiVal>70?'🔴':rsiVal<35?'🟢':'🟡',
+        cls: rsiVal>70?'fail':rsiVal<35?'pass':'part',
+        desc: rsiVal>70?`RSI ${rsiVal.toFixed(0)}: Overbought — trend may be exhausting. Avoid new longs.`:rsiVal<35?`RSI ${rsiVal.toFixed(0)}: Oversold — potential reversal zone. Favour longs.`:`RSI ${rsiVal.toFixed(0)}: Neutral — no extreme momentum signal.`
+      },
+      {
+        label: `Order Book Pressure`,
+        pass: obRatio>0.55||obRatio<0.45,
+        ico: obRatio>0.6?'🟢':obRatio<0.4?'🔴':'🟡',
+        cls: obRatio>0.55?'pass':obRatio<0.45?'fail':'part',
+        desc: `${(obRatio*100).toFixed(0)}% bid support. ${obRatio>0.6?'Buyers dominating the book — smart money accumulating.':obRatio<0.4?'Sellers dominating — distribution possible.':'Roughly balanced — no strong institutional hand visible.'}`
+      }
+    ];
+    const passCount = checks.filter(c=>c.cls==='pass').length;
+    const checkHtml = checks.map(c=>`
+      <div class="smc-check-item ${c.cls}">
+        <div class="smc-check-ico">${c.ico}</div>
+        <div><div class="smc-check-lbl">${c.label}</div><div class="smc-check-desc">${c.desc}</div></div>
+      </div>`).join('');
+
+    // Structure rows for BOS/CHoCH card
+    const bosRows = [...bos, ...choch].map(b=>{
+      const isBull = b.type.includes('BULL');
+      return `<div class="smc-struct-row ${isBull?'bull':'bear'}">
+        <div><div class="smc-struct-label">${b.type.replace('_',' ')}</div><div class="smc-struct-desc">${b.desc}</div></div>
+      </div>`;
+    }).join('') || `<div class="smc-struct-row neu"><div><div class="smc-struct-desc">No BOS or CHoCH detected on this timeframe. Consider switching to a longer timeframe.</div></div></div>`;
+
+    const obRows = obs.slice(-4).map(o=>{
+      const isBull = o.type==='OB_BULL';
+      const inZone = pd.cur>=o.low && pd.cur<=o.high;
+      return `<div class="smc-struct-row ${isBull?'bull':'bear'}">
+        <div><div class="smc-struct-label">${isBull?'🟩 Bullish OB':'🟥 Bearish OB'}${inZone?' ⚡ PRICE IS HERE':''}</div><div class="smc-struct-desc">${o.desc}</div></div>
+      </div>`;
+    }).join('') || `<div class="smc-struct-row neu"><div><div class="smc-struct-desc">No significant order blocks detected.</div></div></div>`;
+
+    const fvgRows = fvgs.slice(-3).map(g=>{
+      const isBull = g.type==='FVG_BULL';
+      const filled = isBull ? pd.cur > g.top : pd.cur < g.bottom;
+      return `<div class="smc-struct-row ${isBull?'bull':'bear'}">
+        <div><div class="smc-struct-label">${isBull?'🔷 Bullish FVG':'🔶 Bearish FVG'}${filled?' ✅ Filled':''}</div><div class="smc-struct-desc">${g.desc}</div></div>
+      </div>`;
+    }).join('') || `<div class="smc-struct-row neu"><div><div class="smc-struct-desc">No fair value gaps detected — price action is in balance.</div></div></div>`;
+
+    const sweepRows = sweeps.map(s=>{
+      const isBull = s.type==='SWEEP_BULL';
+      return `<div class="smc-struct-row ${isBull?'bull':'bear'}">
+        <div><div class="smc-struct-label">${isBull?'🌊 Bullish Sweep':'🌊 Bearish Sweep'}</div><div class="smc-struct-desc">${s.desc}</div></div>
+      </div>`;
+    }).join('') || `<div class="smc-struct-row neu"><div><div class="smc-struct-desc">No recent liquidity sweep detected.</div></div></div>`;
+
+    const ts = new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+    const tfLabel = {'15m':'15 min','1h':'1 hour','4h':'4 hours','1d':'1 day'}[tf]||tf;
+
+    res.innerHTML = `
+    <!-- BIAS BANNER -->
+    <div class="smc-bias-banner ${bias.bias}">
+      <div class="smc-bias-ico">${biasIco}</div>
+      <div class="smc-bias-body">
+        <div class="smc-bias-label">${rawSym}/USDT · ${tfLabel}</div>
+        <div class="smc-bias-head" style="color:${biasColor}">${biasLabel}</div>
+        <div class="smc-bias-sub">${biasDesc}</div>
+      </div>
+      <div class="smc-bias-score" style="color:${biasColor}">${bias.bullPct}<span style="font-size:12px;color:var(--soft)">%</span></div>
+    </div>
+
+    <!-- SCORE BAR -->
+    <div class="smc-score-row"><span style="color:var(--danger)">🐻 Bear ${bias.bearPct}%</span><span style="color:var(--safe)">Bull ${bias.bullPct}% 🐂</span></div>
+    <div class="smc-score-bar-bg">
+      <div class="smc-score-bar-bear" style="width:${bias.bearPct}%"></div>
+      <div class="smc-score-bar-bull" style="width:${bias.bullPct}%"></div>
+    </div>
+
+    <!-- PRICE LEVELS CHART -->
+    <div class="smc-levels-chart">
+      <div class="smc-levels-title">📊 Price Structure Map — ${rawSym}/USDT</div>
+      <div class="smc-price-track">
+        <!-- Premium zone (top 25%) -->
+        <div class="smc-track-zone" style="top:0%;height:${q3Y}%;background:rgba(240,79,107,.07);">
+          <div class="smc-track-label" style="top:4px;color:var(--danger)">PREMIUM ▲</div>
+        </div>
+        <!-- Equilibrium -->
+        <div class="smc-track-zone" style="top:${q3Y}%;height:${q1Y-q3Y}%;background:rgba(79,140,245,.05);">
+          <div class="smc-track-label" style="top:30%;color:var(--soft)">EQ.</div>
+        </div>
+        <!-- Discount zone (bottom 25%) -->
+        <div class="smc-track-zone" style="top:${q1Y}%;height:${100-q1Y}%;background:rgba(26,219,138,.07);">
+          <div class="smc-track-label" style="bottom:4px;color:var(--safe)">DISCOUNT ▼</div>
+        </div>
+        <!-- OBs -->
+        ${obMarkers}
+        <!-- FVGs -->
+        ${fvgMarkers}
+        <!-- Midline -->
+        <div class="smc-price-line" style="top:${midY}%;background:rgba(79,140,245,.4);">
+          <div class="smc-price-line-label" style="color:var(--blue)">MID $${f(pd.mid)}</div>
+        </div>
+        <!-- Current price pin -->
+        <div class="smc-current-pin" style="top:${curY}%;"></div>
+      </div>
+      <div class="smc-levels-legend">
+        <div class="smc-legend-item"><div class="smc-legend-dot" style="background:rgba(240,79,107,.4)"></div>Premium</div>
+        <div class="smc-legend-item"><div class="smc-legend-dot" style="background:rgba(26,219,138,.4)"></div>Discount</div>
+        <div class="smc-legend-item"><div class="smc-legend-dot" style="background:rgba(26,219,138,.3)"></div>Bullish OB</div>
+        <div class="smc-legend-item"><div class="smc-legend-dot" style="background:rgba(240,79,107,.3)"></div>Bearish OB</div>
+        <div class="smc-legend-item"><div class="smc-legend-dot" style="background:rgba(79,140,245,.3)"></div>FVG</div>
+        <div class="smc-legend-item"><div class="smc-legend-dot" style="background:#fff"></div>Price now</div>
+      </div>
+      <div style="margin-top:8px;font-size:10px;color:var(--soft)">
+        Range: $${f(pd.rangeL)} – $${f(pd.rangeH)} · Now: $${f(pd.cur)} · Zone: <span style="color:${pd.zone==='discount'?'var(--safe)':pd.zone==='premium'?'var(--danger)':'var(--blue)'};font-weight:700">${pd.zone.toUpperCase()} (${pd.pct.toFixed(0)}%)</span>
+      </div>
+    </div>
+
+    <!-- TRADE SETUP -->
+    <div class="smc-setup-card">
+      <div class="smc-setup-title" style="color:${setup.dir==='LONG'?'var(--safe)':setup.dir==='SHORT'?'var(--danger)':'var(--warn)'}">
+        ${setupIco}
+      </div>
+      <div style="font-size:11px;color:var(--soft);margin-bottom:10px;line-height:1.5">${setupDesc}</div>
+      <div class="smc-setup-grid">
+        <div class="smc-setup-cell">
+          <div class="smc-setup-lbl">Entry Zone</div>
+          <div class="smc-setup-val" style="color:var(--blue)">${setup.entry?'$'+f(setup.entry):'—'}</div>
+          <div class="smc-setup-sub">${setup.nearOB?'At OB level':'Near current price'}</div>
+        </div>
+        <div class="smc-setup-cell">
+          <div class="smc-setup-lbl">Stop Loss</div>
+          <div class="smc-setup-val" style="color:var(--danger)">${setup.sl?'$'+f(setup.sl):'—'}</div>
+          <div class="smc-setup-sub">Beyond OB</div>
+        </div>
+        <div class="smc-setup-cell">
+          <div class="smc-setup-lbl">Target 1</div>
+          <div class="smc-setup-val" style="color:var(--safe)">${setup.tp1?'$'+f(setup.tp1):'—'}</div>
+          <div class="smc-setup-sub">${setup.nearFVG?'FVG fill':'Mid zone'}</div>
+        </div>
+        <div class="smc-setup-cell">
+          <div class="smc-setup-lbl">Target 2</div>
+          <div class="smc-setup-val" style="color:var(--safe)">${setup.tp2?'$'+f(setup.tp2):'—'}</div>
+          <div class="smc-setup-sub">Range extreme</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:7px;margin-bottom:10px">
+        <div class="smc-setup-cell" style="flex:1;background:rgba(0,0,0,.3)">
+          <div class="smc-setup-lbl">Risk : Reward</div>
+          <div class="smc-setup-val" style="color:${parseFloat(setup.rr)>=2?'var(--safe)':parseFloat(setup.rr)>=1.5?'var(--warn)':'var(--soft)'}">${setup.rr} : 1</div>
+        </div>
+        <div class="smc-setup-cell" style="flex:1;background:rgba(0,0,0,.3)">
+          <div class="smc-setup-lbl">ATR (volatility)</div>
+          <div class="smc-setup-val">$${f(atrVal)}</div>
+        </div>
+        <div class="smc-setup-cell" style="flex:1;background:rgba(0,0,0,.3)">
+          <div class="smc-setup-lbl">24h Change</div>
+          <div class="smc-setup-val" style="color:${ch24>=0?'var(--safe)':'var(--danger)'}">${ch24>=0?'+':''}${ch24.toFixed(2)}%</div>
+        </div>
+      </div>
+      <button class="smc-setup-action ${setupCls}">${setup.dir==='LONG'?'📈 Look for Long entry at OB below':setup.dir==='SHORT'?'📉 Look for Short entry at OB above':'⏳ No trade — mark levels and wait'}</button>
+    </div>
+
+    <!-- EXPANDABLE CONCEPT CARDS -->
+    <div class="smc-concepts">
+
+      <!-- BOS / CHoCH -->
+      <div class="smc-concept-card ${bos.some(b=>b.type==='BOS_BULL')||choch.some(c=>c.type==='CHOCH_BULL')?'active-bull':bos.length?'active-bear':''}">
+        <div class="smc-cc-header" onclick="toggleSMCCard('bos')">
+          <div class="smc-cc-ico">🏗️</div>
+          <div class="smc-cc-title">Market Structure — BOS & CHoCH</div>
+          <div class="smc-cc-badge ${bos.some(b=>b.type==='BOS_BULL')?'bull':bos.length?'bear':'neu'}">${bos.length+choch.length} signals</div>
+          <div class="smc-cc-chevron" id="smcchev-bos">▼</div>
+        </div>
+        <div class="smc-cc-body" id="smcbody-bos">
+          <div style="font-size:11px;color:var(--soft);margin-bottom:8px;line-height:1.5">
+            <strong style="color:var(--text)">Break of Structure (BOS)</strong> confirms trend direction — price closes beyond a swing high/low. <strong style="color:var(--text)">Change of Character (CHoCH)</strong> signals a potential trend reversal.
+          </div>
+          ${bosRows}
+        </div>
+      </div>
+
+      <!-- Order Blocks -->
+      <div class="smc-concept-card ${obs.some(o=>o.type==='OB_BULL')?'active-bull':obs.length?'active-bear':''}">
+        <div class="smc-cc-header" onclick="toggleSMCCard('ob')">
+          <div class="smc-cc-ico">🟩</div>
+          <div class="smc-cc-title">Order Blocks — Institutional Zones</div>
+          <div class="smc-cc-badge ${obs.some(o=>o.type==='OB_BULL')?'bull':obs.length?'bear':'neu'}">${obs.length} found</div>
+          <div class="smc-cc-chevron" id="smcchev-ob">▼</div>
+        </div>
+        <div class="smc-cc-body" id="smcbody-ob">
+          <div style="font-size:11px;color:var(--soft);margin-bottom:8px;line-height:1.5">
+            Order blocks are the last candle before a significant move. They represent where large institutions placed orders and where price is likely to revisit for a reaction.
+          </div>
+          ${obRows}
+        </div>
+      </div>
+
+      <!-- FVGs -->
+      <div class="smc-concept-card ${fvgs.some(g=>g.type==='FVG_BULL')?'active-bull':fvgs.length?'active-bear':''}">
+        <div class="smc-cc-header" onclick="toggleSMCCard('fvg')">
+          <div class="smc-cc-ico">🔷</div>
+          <div class="smc-cc-title">Fair Value Gaps — Price Imbalances</div>
+          <div class="smc-cc-badge ${fvgs.some(g=>g.type==='FVG_BULL')?'bull':fvgs.length?'bear':'neu'}">${fvgs.length} gaps</div>
+          <div class="smc-cc-chevron" id="smcchev-fvg">▼</div>
+        </div>
+        <div class="smc-cc-body" id="smcbody-fvg">
+          <div style="font-size:11px;color:var(--soft);margin-bottom:8px;line-height:1.5">
+            A Fair Value Gap is a 3-candle imbalance where price moved so fast that candle 1 and candle 3 don't overlap. Markets tend to return to fill these gaps before continuing.
+          </div>
+          ${fvgRows}
+        </div>
+      </div>
+
+      <!-- Liquidity -->
+      <div class="smc-concept-card ${sweeps.some(s=>s.type==='SWEEP_BULL')?'active-bull':sweeps.length?'active-bear':''}">
+        <div class="smc-cc-header" onclick="toggleSMCCard('liq')">
+          <div class="smc-cc-ico">🌊</div>
+          <div class="smc-cc-title">Liquidity Sweeps — Stop Hunts</div>
+          <div class="smc-cc-badge ${sweeps.length?sweeps[0].type==='SWEEP_BULL'?'bull':'bear':'neu'}">${sweeps.length} detected</div>
+          <div class="smc-cc-chevron" id="smcchev-liq">▼</div>
+        </div>
+        <div class="smc-cc-body" id="smcbody-liq">
+          <div style="font-size:11px;color:var(--soft);margin-bottom:8px;line-height:1.5">
+            Smart money hunts retail stop losses. A sweep is when price wicks beyond a key level (triggering stops) then immediately reverses — signalling the real institutional move.
+          </div>
+          ${sweepRows}
+        </div>
+      </div>
+
+      <!-- Premium/Discount -->
+      <div class="smc-concept-card ${pd.zone==='discount'?'active-bull':pd.zone==='premium'?'active-bear':''}">
+        <div class="smc-cc-header" onclick="toggleSMCCard('pd')">
+          <div class="smc-cc-ico">⚖️</div>
+          <div class="smc-cc-title">Premium &amp; Discount Zones</div>
+          <div class="smc-cc-badge ${pd.zone==='discount'?'bull':pd.zone==='premium'?'bear':'warn'}">${pd.zone.toUpperCase()}</div>
+          <div class="smc-cc-chevron" id="smcchev-pd">▼</div>
+        </div>
+        <div class="smc-cc-body" id="smcbody-pd">
+          <div style="font-size:11px;color:var(--soft);margin-bottom:8px;line-height:1.5">
+            Smart money buys in the <strong style="color:var(--safe)">discount</strong> (bottom 25% of range) and sells in the <strong style="color:var(--danger)">premium</strong> (top 25%). Equilibrium is the 50% midpoint of the range.
+          </div>
+          <div class="smc-struct-row ${pd.zone==='discount'?'bull':pd.zone==='premium'?'bear':'warn'}">
+            <div>
+              <div class="smc-struct-label">Current zone: ${pd.zone.toUpperCase()} (${pd.pct.toFixed(0)}% through range)</div>
+              <div class="smc-struct-desc">
+                Range: $${f(pd.rangeL)} (bottom) → $${f(pd.mid)} (mid) → $${f(pd.rangeH)} (top)<br>
+                Discount boundary: $${f(pd.q1)} · Premium boundary: $${f(pd.q3)}<br>
+                ${pd.zone==='discount'?'✅ Price in discount — smart money BUY zone. Favour long setups.':pd.zone==='premium'?'⚠️ Price in premium — smart money SELL zone. Favour short setups or tight stops on longs.':'Price at equilibrium — no edge from zone alone. Wait for OB or FVG confluence.'}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- SMC CHECKLIST -->
+    <div style="font-size:12px;font-weight:700;margin-bottom:8px;">✅ SMC Confluence Checklist — ${passCount}/${checks.length} passing</div>
+    <div class="smc-checklist">${checkHtml}</div>
+
+    <div style="font-size:10px;color:var(--dim);text-align:center;padding:4px 0 8px">Analysis at ${ts} · ${rawSym}/USDT · ${tfLabel} · Data: Binance</div>
+    `;
+
+  } catch(e) {
+    document.getElementById('smcProg').classList.remove('on');
+    res.innerHTML = `<div style="background:rgba(240,79,107,.08);border:1px solid rgba(240,79,107,.25);border-radius:12px;padding:16px;margin-bottom:12px">
+      <div style="font-size:20px;margin-bottom:6px">❌</div>
+      <div style="font-size:14px;font-weight:700;margin-bottom:4px">Could not analyse ${rawSym}</div>
+      <div style="font-size:12px;color:var(--soft)">${e.message||'Check the coin name and your internet connection.'} Try: BTC, ETH, SOL, BNB</div>
+    </div>`;
+    setStatus(false, 'Error');
+  }
+
+  btn.disabled = false;
+  btn.innerHTML = '🧠 Analyse SMC Signals';
+}
+
+// ══════════════════════════════════════════════════════════
+// ORIGINAL SIGNALS SCAN (unchanged)
 // ══════════════════════════════════════════════════════════
 function confidence(s, type) {
   let sc=0;
@@ -750,9 +1592,6 @@ function confidence(s, type) {
   return Math.min(100,Math.round(sc));
 }
 
-// ══════════════════════════════════════════════════════════
-// ANALYSE ONE COIN (signals tab — unchanged)
-// ══════════════════════════════════════════════════════════
 function analyse(klines, depth, thresh) {
   if (klines.length<24) return null;
   const highs=klines.map(k=>+k[2]),lows=klines.map(k=>+k[3]),closes=klines.map(k=>+k[4]),vols=klines.map(k=>+k[5]);
@@ -793,9 +1632,6 @@ function analyse(klines, depth, thresh) {
   return sig;
 }
 
-// ══════════════════════════════════════════════════════════
-// RUN SCAN
-// ══════════════════════════════════════════════════════════
 async function runScan() {
   const btn=document.getElementById('scanBtn');
   const itvl=document.getElementById('itvl').value;
@@ -832,7 +1668,7 @@ async function runScan() {
     saveHist();
     const highConf=signals.filter(s=>s.score>=settings.minConf);
     if(highConf.length>0){
-      notify('📡 CoinWatch Alert',`${highConf.length} strong signal${highConf.length>1?'s':''} found — open the app to see`);
+      notify('📡 CoinWatch Alert',`${highConf.length} strong signal${highConf.length>1?'s':''} found`);
       document.getElementById('alertDot').classList.add('on');
     }
     setStatus(true,`${signals.length} signals found`);
@@ -855,9 +1691,6 @@ function toggleAuto(){
 }
 function resetAutoTimer(){clearInterval(autoTimer);autoTimer=setInterval(()=>runScan(),settings.autoMins*60*1000);}
 
-// ══════════════════════════════════════════════════════════
-// RENDER SIGNALS CARDS (original — unchanged)
-// ══════════════════════════════════════════════════════════
 function updateSummary(){
   document.getElementById('sD').textContent=signals.filter(s=>s.type==='dn').length;
   document.getElementById('sU').textContent=signals.filter(s=>s.type==='up').length;
@@ -874,10 +1707,10 @@ function renderCards(){
 }
 function getVerdict(s){
   const score=s.score;
-  if(s.type==='dn'){if(score>=70)return{cls:'bad',ico:'⚠️',head:'Price zone is moving DOWN — be careful',body:`This coin has shifted to a lower price zone. If you already own it, the price may continue falling before recovering. ${score>=85?'The evidence for this downward move is very strong.':'Most indicators agree this is a real move down.'} This is NOT a good time to buy.`};return{cls:'meh',ico:'🔸',head:'Price may be drifting lower',body:`There are some signs this coin's price zone is moving down, but the signal is not very strong yet. Watch it closely before making any decision.`};}
-  if(s.type==='up'){if(score>=70)return{cls:'good',ico:'✅',head:'Price zone is moving UP — good momentum',body:`This coin has shifted to a higher price zone. ${score>=85?'The evidence for this upward move is very strong — most indicators agree.':'Multiple indicators suggest this move is real.'} If you were waiting to buy, this may be the beginning of a good run — but always set a loss limit.`};return{cls:'meh',ico:'🔸',head:'Price may be trending upward',body:`There are early signs of upward movement but the signal isn't strong enough to be confident yet.`};}
-  if(s.type==='sq')return{cls:'info',ico:'⏳',head:'Price is squeezing — a big move is coming',body:`This coin's price has been getting stuck in a very tight range. This usually means it's building up energy for a big move — either up or down. Don't buy yet — wait to see which direction it breaks.`};
-  if(s.type==='ex')return{cls:'info',ico:'💥',head:'Price is starting to break out',body:`The price range is suddenly widening and the coin is near a boundary. A breakout is starting. The direction it moves in the next few candles will tell you whether this is a buying or selling opportunity.`};
+  if(s.type==='dn'){if(score>=70)return{cls:'bad',ico:'⚠️',head:'Price zone is moving DOWN — be careful',body:`This coin has shifted to a lower price zone. ${score>=85?'The evidence for this downward move is very strong.':'Most indicators agree this is a real move down.'} This is NOT a good time to buy.`};return{cls:'meh',ico:'🔸',head:'Price may be drifting lower',body:`There are some signs this coin's price zone is moving down, but the signal is not very strong yet.`};}
+  if(s.type==='up'){if(score>=70)return{cls:'good',ico:'✅',head:'Price zone is moving UP — good momentum',body:`This coin has shifted to a higher price zone. ${score>=85?'The evidence for this upward move is very strong.':'Multiple indicators suggest this move is real.'} If you were waiting to buy, this may be the beginning of a good run.`};return{cls:'meh',ico:'🔸',head:'Price may be trending upward',body:`There are early signs of upward movement but the signal isn't strong enough to be confident yet.`};}
+  if(s.type==='sq')return{cls:'info',ico:'⏳',head:'Price is squeezing — a big move is coming',body:`This coin's price has been getting stuck in a very tight range. Usually means it's building energy for a big move — either up or down.`};
+  if(s.type==='ex')return{cls:'info',ico:'💥',head:'Price is starting to break out',body:`The price range is suddenly widening. A breakout is starting.`};
   return{cls:'meh',ico:'🔸',head:'Signal detected',body:'Check the details below.'};
 }
 function scoreClass(s){return s>=80?'score-top':s>=60?'score-high':s>=35?'score-med':'score-low';}
@@ -888,28 +1721,24 @@ const typeBadge={dn:'badge-dn',up:'badge-up',sq:'badge-sq',ex:'badge-ex'};
 
 function buildObPanel(s) {
   const bidPct=(s.ob*100).toFixed(0),askPct=(100-s.ob*100).toFixed(0);
-  const spreadQuality=s.spreadPct<0.05?{cls:'good',txt:'✅ Very tight spread — cheap to buy and sell'}:s.spreadPct<0.15?{cls:'neu',txt:'👌 Normal spread — healthy market'}:s.spreadPct<0.4?{cls:'warn',txt:'⚠️ Wide spread — costs more to trade this coin'}:{cls:'bad',txt:'❌ Very wide spread — be careful'};
-  const pressure=s.ob>0.65?{cls:'good',txt:`🟢 Strong buying pressure — ${bidPct}% of orders are bids.`}:s.ob>0.55?{cls:'good',txt:`🟢 Slight buying pressure — buyers have the edge (${bidPct}% bids).`}:s.ob<0.35?{cls:'bad',txt:`🔴 Strong selling pressure — ${askPct}% of orders are asks.`}:s.ob<0.45?{cls:'bad',txt:`🔴 Slight selling pressure — sellers have the edge.`}:{cls:'neu',txt:'⚖️ Balanced — buyers and sellers are roughly equal right now.'};
-  const wallNote=s.bidWall>s.askWall*2?`<div style="font-size:11px;color:var(--safe);margin-top:6px">🏦 Large buy wall detected — big buyers are defending the price below</div>`:s.askWall>s.bidWall*2?`<div style="font-size:11px;color:var(--danger);margin-top:6px">🧱 Large sell wall detected — big sellers are blocking price from going up</div>`:'';
-  const bidRows=(s.topBids||[]).map(b=>`<div class="ob-price-row"><span class="ob-price-val up">$${f(b.price)}</span><span class="ob-qty">${b.qty.toFixed(2)} coins</span></div>`).join('');
-  const askRows=(s.topAsks||[]).map(a=>`<div class="ob-price-row"><span class="ob-price-val dn">$${f(a.price)}</span><span class="ob-qty">${a.qty.toFixed(2)} coins</span></div>`).join('');
+  const spreadQuality=s.spreadPct<0.05?{cls:'good',txt:'✅ Very tight spread'}:s.spreadPct<0.15?{cls:'neu',txt:'👌 Normal spread'}:s.spreadPct<0.4?{cls:'warn',txt:'⚠️ Wide spread'}:{cls:'bad',txt:'❌ Very wide spread'};
+  const pressure=s.ob>0.65?{cls:'good',txt:`🟢 Strong buying pressure`}:s.ob>0.55?{cls:'good',txt:`🟢 Slight buying pressure`}:s.ob<0.35?{cls:'bad',txt:`🔴 Strong selling pressure`}:s.ob<0.45?{cls:'bad',txt:`🔴 Slight selling pressure`}:{cls:'neu',txt:'⚖️ Balanced'};
+  const bidRows=(s.topBids||[]).map(b=>`<div class="ob-price-row"><span class="ob-price-val up">$${f(b.price)}</span><span class="ob-qty">${b.qty.toFixed(2)}</span></div>`).join('');
+  const askRows=(s.topAsks||[]).map(a=>`<div class="ob-price-row"><span class="ob-price-val dn">$${f(a.price)}</span><span class="ob-qty">${a.qty.toFixed(2)}</span></div>`).join('');
   return `<div class="ob-panel">
-    <div class="ob-panel-title">📖 Live Order Book — Bid &amp; Ask</div>
-    <div style="font-size:11px;color:var(--soft);margin-bottom:5px">Who is winning right now?</div>
+    <div class="ob-panel-title">📖 Live Order Book</div>
     <div style="height:10px;background:var(--s3);border-radius:4px;overflow:hidden;display:flex;margin-bottom:4px"><div style="background:var(--safe);width:${bidPct}%"></div><div style="background:var(--danger);flex:1"></div></div>
     <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:10px"><span class="up">🟢 Buyers ${bidPct}%</span><span class="dn">🔴 Sellers ${askPct}%</span></div>
     <div class="ob-two-col">
-      <div><div class="ob-col-head up">🟢 Top 5 Buyers</div>${bidRows||'<div style="font-size:11px;color:var(--soft)">No data</div>'}</div>
-      <div><div class="ob-col-head dn">🔴 Top 5 Sellers</div>${askRows||'<div style="font-size:11px;color:var(--soft)">No data</div>'}</div>
+      <div><div class="ob-col-head up">🟢 Top Buyers</div>${bidRows}</div>
+      <div><div class="ob-col-head dn">🔴 Top Sellers</div>${askRows}</div>
     </div>
     <div class="ob-spread-row">
-      <div class="ob-spread-cell"><div class="ob-spread-lbl">Best Bid</div><div class="ob-spread-val up">$${s.bidPrice?f(s.bidPrice):'—'}</div></div>
+      <div class="ob-spread-cell"><div class="ob-spread-lbl">Bid</div><div class="ob-spread-val up">$${s.bidPrice?f(s.bidPrice):'—'}</div></div>
       <div class="ob-spread-cell"><div class="ob-spread-lbl">Spread</div><div class="ob-spread-val ${s.spreadPct<0.15?'up':s.spreadPct<0.4?'wa':'dn'}">$${s.spread?s.spread.toFixed(4):'—'}</div></div>
-      <div class="ob-spread-cell"><div class="ob-spread-lbl">Best Ask</div><div class="ob-spread-val dn">$${s.askPrice?f(s.askPrice):'—'}</div></div>
+      <div class="ob-spread-cell"><div class="ob-spread-lbl">Ask</div><div class="ob-spread-val dn">$${s.askPrice?f(s.askPrice):'—'}</div></div>
     </div>
-    <div class="ob-verdict" style="background:${spreadQuality.cls==='good'?'rgba(26,219,138,.07)':spreadQuality.cls==='bad'?'rgba(240,79,107,.07)':spreadQuality.cls==='warn'?'rgba(245,200,66,.07)':'var(--s3)'};border-color:${spreadQuality.cls==='good'?'rgba(26,219,138,.2)':spreadQuality.cls==='bad'?'rgba(240,79,107,.2)':spreadQuality.cls==='warn'?'rgba(245,200,66,.2)':'var(--border)'}"><strong>Spread:</strong> ${spreadQuality.txt}</div>
-    <div class="ob-verdict" style="margin-top:6px;background:${pressure.cls==='good'?'rgba(26,219,138,.07)':pressure.cls==='bad'?'rgba(240,79,107,.07)':'var(--s3)'};border-color:${pressure.cls==='good'?'rgba(26,219,138,.2)':pressure.cls==='bad'?'rgba(240,79,107,.2)':'var(--border)'}">${pressure.txt}</div>
-    ${wallNote}
+    <div class="ob-verdict" style="background:var(--s3);border-color:var(--border);margin-top:8px">${spreadQuality.txt} · ${pressure.txt}</div>
   </div>`;
 }
 
@@ -924,15 +1753,15 @@ function buildCard(s){
   const cp=Math.min(99,Math.max(1,((s.cur-minP)/span*100))).toFixed(1);
   const pVe20=((s.cur-s.ema20)/s.ema20*100).toFixed(2);
   const pVe50=((s.cur-s.ema50)/s.ema50*100).toFixed(2);
-  const rsiPill=s.rsi===null?`<div class="sig-pill neu">Momentum: unknown</div>`:s.rsi>70?`<div class="sig-pill bad">📈 Momentum too high — may drop soon</div>`:s.rsi<30?`<div class="sig-pill good">📉 Momentum very low — may bounce soon</div>`:s.rsi>55?`<div class="sig-pill warn">Momentum is elevated</div>`:s.rsi<45?`<div class="sig-pill good">Momentum is low — room to grow</div>`:`<div class="sig-pill neu">Momentum is balanced</div>`;
-  const emaPill=s.ema20>s.ema50?`<div class="sig-pill good">📊 Short-term trend: Going UP</div>`:`<div class="sig-pill bad">📊 Short-term trend: Going DOWN</div>`;
-  const vaPill=s.va>20?`<div class="sig-pill good">🔊 Trading activity is increasing — real move</div>`:s.va>0?`<div class="sig-pill neu">Trading activity slightly up</div>`:`<div class="sig-pill bad">🔇 Trading activity is low — weak move</div>`;
-  const obPill=s.ob>0.6?`<div class="sig-pill good">🛒 More people are buying than selling</div>`:s.ob<0.4?`<div class="sig-pill bad">🚪 More people are selling than buying</div>`:`<div class="sig-pill neu">Buyers and sellers are balanced</div>`;
-  const convPill=s.conv.net>2?`<div class="sig-pill good">🕯️ Last 5 candles: mostly green (bullish)</div>`:s.conv.net<-2?`<div class="sig-pill bad">🕯️ Last 5 candles: mostly red (bearish)</div>`:`<div class="sig-pill neu">🕯️ Last 5 candles: mixed direction</div>`;
-  const boundPill=s.nearBound?`<div class="sig-pill warn">⚡ Very close to price boundary — breakout watch</div>`:'';
+  const rsiPill=s.rsi===null?`<div class="sig-pill neu">Momentum: unknown</div>`:s.rsi>70?`<div class="sig-pill bad">📈 Momentum too high</div>`:s.rsi<30?`<div class="sig-pill good">📉 Momentum very low — may bounce</div>`:s.rsi>55?`<div class="sig-pill warn">Momentum elevated</div>`:s.rsi<45?`<div class="sig-pill good">Momentum low — room to grow</div>`:`<div class="sig-pill neu">Momentum balanced</div>`;
+  const emaPill=s.ema20>s.ema50?`<div class="sig-pill good">📊 Trend: Going UP</div>`:`<div class="sig-pill bad">📊 Trend: Going DOWN</div>`;
+  const vaPill=s.va>20?`<div class="sig-pill good">🔊 Volume increasing</div>`:s.va>0?`<div class="sig-pill neu">Volume slightly up</div>`:`<div class="sig-pill bad">🔇 Volume low</div>`;
+  const obPill=s.ob>0.6?`<div class="sig-pill good">🛒 More buyers than sellers</div>`:s.ob<0.4?`<div class="sig-pill bad">🚪 More sellers than buyers</div>`:`<div class="sig-pill neu">Buyers &amp; sellers balanced</div>`;
+  const convPill=s.conv.net>2?`<div class="sig-pill good">🕯️ Last 5 candles mostly green</div>`:s.conv.net<-2?`<div class="sig-pill bad">🕯️ Last 5 candles mostly red</div>`:`<div class="sig-pill neu">🕯️ Mixed candles</div>`;
+  const boundPill=s.nearBound?`<div class="sig-pill warn">⚡ Near price boundary</div>`:'';
   return `<div class="scard ${typeClass[s.type]}"><div class="scard-stripe"></div><div class="scard-body">
     <div class="coin-header">
-      <div class="coin-left"><div class="coin-avatar">${abbr}</div><div><div class="coin-name">${s.sym}/USDT</div><div class="coin-price">Current price: $${f(s.cur)} · Vol: $${volFmt(s.vol)}</div></div></div>
+      <div class="coin-left"><div class="coin-avatar">${abbr}</div><div><div class="coin-name">${s.sym}/USDT</div><div class="coin-price">$${f(s.cur)} · Vol: $${volFmt(s.vol)}</div></div></div>
       <div class="coin-right"><div class="signal-badge ${typeBadge[s.type]}">${typeLabel[s.type]}</div><button class="watch-star ${isWatching?'on':''}" onclick="toggleWatch('${s.sym}',this)">${isWatching?'⭐ Saved':'☆ Save'}</button></div>
     </div>
     <div class="verdict-box ${v.cls}"><div class="verdict-ico">${v.ico}</div><div class="verdict-head">${v.head}</div><div class="verdict-body">${v.body}</div></div>
@@ -941,10 +1770,9 @@ function buildCard(s){
       <div class="conf-bar-bg"><div class="conf-bar-fill" style="width:${s.score}%"></div></div>
       <div class="conf-meaning">${scoreMeaning(s.score)}</div>
     </div>
-    <div style="font-size:11px;color:var(--soft);margin-bottom:6px;font-weight:600;text-transform:uppercase;letter-spacing:.3px;">What the data says</div>
     <div class="signals-row">${rsiPill}${emaPill}${vaPill}${obPill}${convPill}${boundPill}</div>
     <div class="range-visual">
-      <div class="rv-title">📊 Price zone — old vs new (white line = current price)</div>
+      <div class="rv-title">📊 Price zone — old vs new</div>
       <div class="rv-row"><div class="rv-lbl">Before</div><div class="rv-track-wrap"><div class="rv-track"><div class="rv-fill rv-old" style="left:${oL}%;width:${oW}%"></div></div><div class="rv-vals"><span>$${f(s.oldL)}</span><span>$${f(s.oldH)}</span></div></div></div>
       <div class="rv-row"><div class="rv-lbl">Now</div><div class="rv-track-wrap"><div class="rv-track"><div class="rv-fill rv-new" style="left:${nL}%;width:${nW}%"></div><div class="rv-pin" style="left:${cp}%"></div></div><div class="rv-vals"><span>$${f(s.newL)}</span><span>$${f(s.newH)}</span></div></div></div>
     </div>
@@ -962,413 +1790,211 @@ function buildCard(s){
 }
 
 // ══════════════════════════════════════════════════════════
-// ORIGINAL WATCHLIST (unchanged)
+// WATCHLIST (original)
 // ══════════════════════════════════════════════════════════
 async function addToWatchlist() {
-  const sym = (document.getElementById('wlCoinInput').value||'').toUpperCase().trim().replace('USDT','');
-  if (!sym) { showToast('⚠️ Please enter a coin name e.g. BTC'); return; }
-  if (watchlist.has(sym)) { showToast(`${sym} is already in your watchlist`); return; }
-  const btn = document.querySelector('.wl-add-btn');
-  btn.disabled = true; btn.textContent = '⏳ Fetching range…';
-  try {
-    const entry = await fetchCoinRange(sym);
-    watchlist.set(sym, entry);
-    saveWL();
-    document.getElementById('wlCoinInput').value = '';
+  const sym=(document.getElementById('wlCoinInput').value||'').toUpperCase().trim().replace('USDT','');
+  if(!sym){showToast('⚠️ Please enter a coin name');return;}
+  if(watchlist.has(sym)){showToast(`${sym} is already in your watchlist`);return;}
+  const btn=document.querySelector('.wl-add-btn');
+  btn.disabled=true; btn.textContent='⏳ Fetching range…';
+  try{
+    const entry=await fetchCoinRange(sym);
+    watchlist.set(sym,entry); saveWL();
+    document.getElementById('wlCoinInput').value='';
     renderWatchlist();
-    showToast(`✅ ${sym} added — auto-alert at range bottom $${f(entry.rangeBottom)}`);
-  } catch(e) { showToast(`❌ Could not find ${sym} — check the name`); }
-  btn.disabled = false; btn.textContent = '⭐ Add to Watchlist — Auto Alert';
+    showToast(`✅ ${sym} added — alert at $${f(entry.rangeBottom)}`);
+  }catch(e){showToast(`❌ Could not find ${sym}`);}
+  btn.disabled=false; btn.textContent='⭐ Add to Watchlist — Auto Alert';
 }
-
-async function toggleWatch(sym, btn) {
-  if (watchlist.has(sym)) {
-    watchlist.delete(sym); btn.textContent='☆ Save'; btn.classList.remove('on');
-    showToast(`Removed ${sym} from watchlist`); saveWL(); return;
-  }
-  btn.textContent='⏳'; btn.disabled=true;
-  try {
-    const entry = await fetchCoinRange(sym);
-    watchlist.set(sym, entry);
-    btn.textContent='⭐ Saved'; btn.classList.add('on');
-    showToast(`⭐ ${sym} saved — auto-alert at $${f(entry.rangeBottom)}`);
-  } catch(e) { btn.textContent='☆ Save'; showToast(`❌ Could not fetch ${sym} range`); }
-  btn.disabled=false; saveWL();
+async function toggleWatch(sym,btn){
+  if(watchlist.has(sym)){watchlist.delete(sym);btn.textContent='☆ Save';btn.classList.remove('on');showToast(`Removed ${sym}`);saveWL();return;}
+  btn.textContent='⏳';btn.disabled=true;
+  try{const entry=await fetchCoinRange(sym);watchlist.set(sym,entry);btn.textContent='⭐ Saved';btn.classList.add('on');showToast(`⭐ ${sym} saved`);}
+  catch(e){btn.textContent='☆ Save';showToast(`❌ Could not fetch ${sym}`);}
+  btn.disabled=false;saveWL();
 }
-
-async function fetchCoinRange(sym) {
-  const [ticker, klines] = await Promise.all([
+async function fetchCoinRange(sym){
+  const [ticker,klines]=await Promise.all([
     fetch(`${API}/ticker/price?symbol=${sym}USDT`).then(r=>r.json()),
     fetch(`${API}/klines?symbol=${sym}USDT&interval=4h&limit=50`).then(r=>r.json())
   ]);
-  const cur    = parseFloat(ticker.price);
-  const highs  = klines.map(k=>+k[2]);
-  const lows   = klines.map(k=>+k[3]);
-  const closes = klines.map(k=>+k[4]);
-  const half   = Math.floor(klines.length/2);
-  const rangeBottom = Math.min(...lows.slice(half));
-  const rangeTop    = Math.max(...highs.slice(half));
-  const e20 = ema(closes,20), e50 = ema(closes,50);
-  return { rangeBottom, rangeTop, lastPrice:cur, triggered:false, lastChecked:Date.now(), trend:e20>e50?'up':'down', triggerCount:0, rangeShiftAlerted:false };
+  const cur=parseFloat(ticker.price);
+  const highs=klines.map(k=>+k[2]),lows=klines.map(k=>+k[3]),closes=klines.map(k=>+k[4]);
+  const half=Math.floor(klines.length/2);
+  const rangeBottom=Math.min(...lows.slice(half));
+  const rangeTop=Math.max(...highs.slice(half));
+  const e20=ema(closes,20),e50=ema(closes,50);
+  return{rangeBottom,rangeTop,lastPrice:cur,triggered:false,lastChecked:Date.now(),trend:e20>e50?'up':'down',triggerCount:0,rangeShiftAlerted:false};
 }
-
-async function refreshRange(sym) {
+async function refreshRange(sym){
   showToast(`Refreshing ${sym}…`);
-  try {
-    const entry = await fetchCoinRange(sym);
-    entry.triggerCount = watchlist.get(sym)?.triggerCount||0;
-    watchlist.set(sym, entry); saveWL(); renderWatchlist();
-    showToast(`✅ ${sym} refreshed — alert at $${f(entry.rangeBottom)}`);
-  } catch(e) { showToast(`❌ Could not refresh ${sym}`); }
+  try{const entry=await fetchCoinRange(sym);entry.triggerCount=watchlist.get(sym)?.triggerCount||0;watchlist.set(sym,entry);saveWL();renderWatchlist();showToast(`✅ ${sym} refreshed`);}
+  catch(e){showToast(`❌ Could not refresh ${sym}`);}
 }
+function removeWL(sym){watchlist.delete(sym);saveWL();renderWatchlist();showToast(`Removed ${sym}`);}
+function timeSince(ts){const s=Math.floor((Date.now()-ts)/1000);if(s<60)return`${s}s ago`;if(s<3600)return`${Math.floor(s/60)}m ago`;return`${Math.floor(s/3600)}h ago`;}
 
-function removeWL(sym) { watchlist.delete(sym); saveWL(); renderWatchlist(); showToast(`Removed ${sym}`); }
-
-function timeSince(ts) {
-  const s=Math.floor((Date.now()-ts)/1000);
-  if(s<60) return `${s}s ago`;
-  if(s<3600) return `${Math.floor(s/60)}m ago`;
-  return `${Math.floor(s/3600)}h ago`;
-}
-
-// ── RENDER WATCHLIST (original layout + trap panel added) ──
-function renderWatchlist() {
-  const el = document.getElementById('wlContent');
-  if (watchlist.size === 0) {
-    el.innerHTML = `<div class="empty"><div class="empty-ico">⭐</div><div class="empty-h">No coins saved yet</div><div class="empty-p">Type a coin name above and tap Add. The app automatically finds its current price range and alerts you the moment the price drops to the bottom.</div></div>`;
-    return;
-  }
-  el.innerHTML = [...watchlist.entries()].map(([sym, entry]) => {
-    const cur = entry.lastPrice;
-    const rb = entry.rangeBottom, rt = entry.rangeTop;
-    const range = rt - rb || 1;
-    const barPct = cur ? Math.min(100,Math.max(0,((cur-rb)/range)*100)) : 50;
-    const pctFromBottom = cur ? (((cur-rb)/range)*100).toFixed(0) : null;
-    const nearBottom = pctFromBottom !== null && parseFloat(pctFromBottom) <= 15;
-    const triggered = entry.triggered;
-    const trendColor = entry.trend==='up'?'var(--safe)':'var(--danger)';
-    const trendTxt   = entry.trend==='up'?'⬆️ Trend going up':'⬇️ Trend going down';
-    const checkedAgo = entry.lastChecked ? timeSince(entry.lastChecked) : 'not yet';
-    return `
-    <div class="wl-item" style="border-color:${triggered?'var(--danger)':nearBottom?'var(--warn)':'var(--border)'}">
+function renderWatchlist(){
+  const el=document.getElementById('wlContent');
+  if(watchlist.size===0){el.innerHTML=`<div class="empty"><div class="empty-ico">⭐</div><div class="empty-h">No coins saved yet</div><div class="empty-p">Type a coin name above and tap Add.</div></div>`;return;}
+  el.innerHTML=[...watchlist.entries()].map(([sym,entry])=>{
+    const cur=entry.lastPrice,rb=entry.rangeBottom,rt=entry.rangeTop,range=rt-rb||1;
+    const barPct=cur?Math.min(100,Math.max(0,((cur-rb)/range)*100)):50;
+    const pctFromBottom=cur?(((cur-rb)/range)*100).toFixed(0):null;
+    const nearBottom=pctFromBottom!==null&&parseFloat(pctFromBottom)<=15;
+    const triggered=entry.triggered;
+    const trendColor=entry.trend==='up'?'var(--safe)':'var(--danger)';
+    const trendTxt=entry.trend==='up'?'⬆️ Trend going up':'⬇️ Trend going down';
+    const checkedAgo=entry.lastChecked?timeSince(entry.lastChecked):'not yet';
+    return `<div class="wl-item" style="border-color:${triggered?'var(--danger)':nearBottom?'var(--warn)':'var(--border)'}">
       <div class="wl-item-top">
-        <div class="wl-item-left">
-          <div class="sym">${sym}/USDT</div>
-          <div class="sub" style="color:${trendColor}">${trendTxt} · ${checkedAgo}</div>
-        </div>
+        <div class="wl-item-left"><div class="sym">${sym}/USDT</div><div class="sub" style="color:${trendColor}">${trendTxt} · ${checkedAgo}</div></div>
         <div class="wl-item-right">
-          <button class="wl-alert-edit" onclick="refreshRange('${sym}')">🔄 Refresh</button>
+          <button class="wl-alert-edit" onclick="refreshRange('${sym}')">🔄</button>
           <button class="wl-remove" onclick="removeWL('${sym}')">×</button>
         </div>
       </div>
       <div>
         <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--soft);margin-bottom:6px">
           <span>📍 Now: <strong style="color:var(--text);font-family:var(--mono)">${cur?'$'+f(cur):'Loading…'}</strong></span>
-          <span style="color:${nearBottom?'var(--warn)':'var(--soft)'}">
-            ${pctFromBottom!==null?pctFromBottom+'% above bottom':'Calculating…'}
-          </span>
+          <span style="color:${nearBottom?'var(--warn)':'var(--soft)'}">${pctFromBottom!==null?pctFromBottom+'% above bottom':'Calculating…'}</span>
         </div>
         <div style="height:8px;background:var(--s3);border-radius:4px;position:relative;overflow:hidden;margin-bottom:4px">
           <div style="position:absolute;inset:0;background:linear-gradient(90deg,var(--danger) 0%,var(--warn) 40%,var(--safe) 100%);opacity:.25;border-radius:4px"></div>
           <div style="position:absolute;left:${barPct}%;top:-1px;width:3px;height:10px;background:#fff;border-radius:2px;transform:translateX(-50%)"></div>
         </div>
         <div style="display:flex;justify-content:space-between;font-size:10px;font-family:var(--mono);margin-bottom:10px">
-          <span style="color:var(--danger)">⬇ Bottom $${rb?f(rb):'…'}</span>
-          <span style="color:var(--safe)">Top $${rt?f(rt):'…'} ⬆</span>
+          <span style="color:var(--danger)">⬇ $${rb?f(rb):'…'}</span>
+          <span style="color:var(--safe)">$${rt?f(rt):'…'} ⬆</span>
         </div>
         <div style="display:flex;align-items:center;gap:8px;background:${triggered?'rgba(240,79,107,.1)':nearBottom?'rgba(245,200,66,.08)':'var(--s2)'};border-radius:9px;padding:10px 12px;border:1px solid ${triggered?'rgba(240,79,107,.3)':nearBottom?'rgba(245,200,66,.25)':'var(--border)'}">
           <span style="font-size:18px">${triggered?'🔔':nearBottom?'⚡':'🔕'}</span>
           <div>
-            <div style="font-size:10px;color:var(--soft);margin-bottom:2px">Auto alert — notifies when price hits range bottom</div>
-            <div style="font-size:13px;font-weight:700;font-family:var(--mono);color:${triggered?'var(--danger)':nearBottom?'var(--warn)':'var(--blue)'}">
-              Alert at $${rb?f(rb):'calculating…'}${triggered?' — 🔔 TRIGGERED!':nearBottom?' — ⚡ Very close!':''}
-            </div>
+            <div style="font-size:10px;color:var(--soft);margin-bottom:2px">Auto alert</div>
+            <div style="font-size:13px;font-weight:700;font-family:var(--mono);color:${triggered?'var(--danger)':nearBottom?'var(--warn)':'var(--blue)'}">Alert at $${rb?f(rb):'calculating…'}${triggered?' — 🔔 TRIGGERED!':nearBottom?' — ⚡ Very close!':''}</div>
           </div>
         </div>
-        ${triggered?`<div class="wl-triggered">🔔 ${sym} dropped to its range bottom! Check the market — this may be a buy opportunity.</div>`:''}
       </div>
-
-      <!-- ⚡ TRAP ANALYSIS PANEL -->
       <div class="trap-panel" id="trap-${sym}">
         <div class="trap-panel-hdr">
           <div class="trap-panel-title">⚡ Trap Analysis</div>
           <button class="trap-run-btn" id="trapbtn-${sym}" onclick="runTrapAnalysis('${sym}')">Run Analysis</button>
         </div>
-        <div id="trap-result-${sym}" style="font-size:11px;color:var(--soft);">
-          Tap "Run Analysis" to check for parabolic traps, MA overextension, volume disconnect, trailing stop levels and scale-out targets.
-        </div>
+        <div id="trap-result-${sym}" style="font-size:11px;color:var(--soft);">Tap "Run Analysis" to check for trap signals, trailing stops and scale-out targets.</div>
       </div>
     </div>`;
   }).join('');
 }
 
 // ══════════════════════════════════════════════════════════
-// ⚡ TRAP ANALYSIS ENGINE (new — runs per coin on demand)
+// TRAP ANALYSIS (watchlist — original)
 // ══════════════════════════════════════════════════════════
-async function runTrapAnalysis(sym) {
-  const btn = document.getElementById(`trapbtn-${sym}`);
-  const res = document.getElementById(`trap-result-${sym}`);
-  btn.disabled = true;
-  btn.innerHTML = '<span class="spin"></span>';
-  res.innerHTML = '<span style="color:var(--soft);font-size:11px;">Fetching live data…</span>';
-
-  try {
-    const pair = sym + 'USDT';
-    const [k4h, k1h, ticker, depth] = await Promise.all([
+async function runTrapAnalysis(sym){
+  const btn=document.getElementById(`trapbtn-${sym}`);
+  const res=document.getElementById(`trap-result-${sym}`);
+  btn.disabled=true; btn.innerHTML='<span class="spin"></span>';
+  res.innerHTML='<span style="color:var(--soft);font-size:11px;">Fetching live data…</span>';
+  try{
+    const pair=sym+'USDT';
+    const [k4h,k1h,ticker,depth]=await Promise.all([
       fetch(`${API}/klines?symbol=${pair}&interval=4h&limit=26`).then(r=>r.json()),
       fetch(`${API}/klines?symbol=${pair}&interval=1h&limit=16`).then(r=>r.json()),
       fetch(`${API}/ticker/24hr?symbol=${pair}`).then(r=>r.json()),
       fetch(`${API}/depth?symbol=${pair}&limit=20`).then(r=>r.json())
     ]);
-
-    const price     = parseFloat(ticker.lastPrice);
-    const change24h = parseFloat(ticker.priceChangePercent);
-    const closes4h  = k4h.map(c=>parseFloat(c[4]));
-    const closes1h  = k1h.map(c=>parseFloat(c[4]));
-    const volumes   = k4h.map(c=>parseFloat(c[5]));
-
-    // Moving averages
-    const ma7  = avgArr(closes4h.slice(-7));
-    const ma25 = avgArr(closes4h.slice(-25));
-    const ema20_4h = ema(closes4h, 20);
-    const ema50_4h = ema(closes4h, 50);
-    const extFromMa7  = ((price - ma7)  / ma7)  * 100;
-    const extFromMa25 = ((price - ma25) / ma25) * 100;
-    const trendUp = ema20_4h > ema50_4h;
-
-    // Parabolic momentum (20 candles back)
-    const price20Ago = closes4h[closes4h.length-21] || closes4h[0];
-    const momentum4h = ((closes4h[closes4h.length-1] - price20Ago) / price20Ago) * 100;
-
-    // Volume disconnect
-    const avgVol10   = avgArr(volumes.slice(-11,-1));
-    const lastVol    = volumes[volumes.length-1];
-    const volRatio   = avgVol10 > 0 ? lastVol / avgVol10 : 1;
-    const lastCandle = k4h[k4h.length-1];
-    const lastBody   = Math.abs(parseFloat(lastCandle[4]) - parseFloat(lastCandle[1])) / parseFloat(lastCandle[1]) * 100;
-    const volDisconnect = volRatio > 2.5 && lastBody < 1.5;
-
-    // Order book
-    let obRatio = 0.5;
-    if (depth?.bids && depth?.asks) {
-      const bv = depth.bids.slice(0,15).reduce((s,b)=>s+parseFloat(b[1]),0);
-      const av = depth.asks.slice(0,15).reduce((s,a)=>s+parseFloat(a[1]),0);
-      obRatio = bv / (bv + av);
-    }
-
-    // RSI (1h)
-    const rsiVal = (() => {
-      const closes = closes1h;
-      const p = 14;
-      if (closes.length < p+1) return 50;
-      let g=0,l=0;
-      for (let i=closes.length-p;i<closes.length;i++){const d=closes[i]-closes[i-1];if(d>0)g+=d;else l-=d;}
-      const ag=g/p,al=l/p; return al===0?100:100-100/(1+ag/al);
-    })();
-
-    // Risk score
-    let riskScore = 0;
-    if      (extFromMa7 > 30) riskScore += 30;
-    else if (extFromMa7 > 15) riskScore += 18;
-    else if (extFromMa7 > 8)  riskScore += 8;
-    if      (momentum4h > 60) riskScore += 25;
-    else if (momentum4h > 35) riskScore += 15;
-    else if (momentum4h > 20) riskScore += 8;
-    if      (volDisconnect)   riskScore += 20;
-    else if (volRatio > 2)    riskScore += 8;
-    if      (rsiVal > 80) riskScore += 15;
-    else if (rsiVal > 70) riskScore += 8;
-    if (obRatio < 0.40) riskScore += 10;
-    riskScore = Math.min(100, riskScore);
-
-    // Risk tier
-    const risk      = riskScore >= 65 ? 'high' : riskScore >= 35 ? 'med' : 'low';
-    const riskColor = risk==='high'?'var(--danger)':risk==='med'?'var(--warn)':'var(--safe)';
-    const riskLbl   = risk==='high'?'🚨 HIGH RISK':risk==='med'?'⚠️ CAUTION':'✅ LOW RISK';
-
-    // Verdict
-    let vType='safe', vIco='✅', vHead='', vBody='';
-    if (riskScore >= 65) {
-      vType='danger'; vIco='🚨'; vHead='HIGH RISK — Possible Parabolic Trap';
-      const r=[];
-      if(extFromMa7>15)    r.push(`${extFromMa7.toFixed(1)}% above MA7 — extreme overextension`);
-      if(momentum4h>35)    r.push(`+${momentum4h.toFixed(0)}% momentum on 4h — hockey-stick curve`);
-      if(volDisconnect)    r.push('volume spike but tiny candle — whale distribution likely');
-      if(rsiVal>70)        r.push(`RSI ${rsiVal.toFixed(0)} — overbought`);
-      if(obRatio<0.45)     r.push('order book ask-heavy — sellers dominate');
-      vBody = `Warning: ${r.join('; ')}. Set a trailing stop immediately. Scale out into strength — do NOT add to your position.`;
-    } else if (riskScore >= 35) {
-      vType='warn'; vIco='⚠️'; vHead='CAUTION — Elevated Risk Zone';
-      vBody = `Some trap signals active. Price momentum is elevated${extFromMa7>8?` (${extFromMa7.toFixed(1)}% above MA7)`:''}, RSI at ${rsiVal.toFixed(0)}. Not extreme yet — but set a trailing stop.`;
-    } else if (riskScore >= 15) {
-      vType='info'; vIco='🟡'; vHead='MODERATE — Watch Closely';
-      vBody = `No immediate trap signals. Keep your trailing stop active and revisit scale-out targets.`;
-    } else {
-      vType='safe'; vIco='✅'; vHead='LOW RISK — Range Looks Healthy';
-      vBody = `Price is within a normal range of its MAs. No parabolic or distribution signals detected.`;
-    }
-
-    // Trailing stops
-    const tsT = price * 0.95, tsS = price * 0.92, tsW = price * 0.88;
-
-    // Scale targets (from range bottom as base if no buy price)
-    const entry = watchlist.get(sym);
-    const base  = entry?.rangeBottom || price;
-    const scaleTgts = [
-      { gain:50,  price:base*1.50, label:'Sell 25%' },
-      { gain:100, price:base*2.00, label:'Sell 25%' },
-      { gain:200, price:base*3.00, label:'Sell 25%' }
-    ];
-
-    // Volume bars
-    const vols10    = volumes.slice(-10);
-    const maxV      = Math.max(...vols10);
-    const dirs10    = k4h.slice(-10).map(c=>parseFloat(c[4])>=parseFloat(c[1])?'green':'red');
-    const volBarsHtml = vols10.map((v,i)=>{
-      const h=Math.max(8,(v/maxV)*100);
-      return `<div class="trap-vol-bar ${dirs10[i]}" style="height:${h}%"></div>`;
-    }).join('');
-
-    // Signal rows
-    const sigs = [];
-    if      (extFromMa7>30) sigs.push({cls:'fire',ico:'🚨',lbl:'Extreme MA7 Overextension',desc:`${extFromMa7.toFixed(1)}% above MA7 — mathematically unsustainable. Mean-reversion crash risk is very high.`});
-    else if (extFromMa7>15) sigs.push({cls:'warn',ico:'⚠️',lbl:'MA7 Overextension',desc:`${extFromMa7.toFixed(1)}% above MA7 — overextended. Watch for pullback.`});
-    else                     sigs.push({cls:'ok', ico:'✅',lbl:'MA Extension Normal',desc:`${extFromMa7.toFixed(1)}% from MA7 — price is within a healthy range of its average.`});
-
-    if      (momentum4h>60) sigs.push({cls:'fire',ico:'🏒',lbl:'Parabolic Acceleration — Hockey Stick',desc:`+${momentum4h.toFixed(0)}% in 20 × 4h candles. Price going almost straight up — FOMO/hype driven. Retail exhaustion risk is extreme.`});
-    else if (momentum4h>35) sigs.push({cls:'warn',ico:'📈',lbl:'High Momentum',desc:`+${momentum4h.toFixed(0)}% in 20 × 4h candles — elevated but not parabolic yet. Monitor closely.`});
-    else                     sigs.push({cls:'ok', ico:'📈',lbl:'Momentum Normal',desc:`+${momentum4h.toFixed(0)}% — price moving at a sustainable pace.`});
-
-    if (volDisconnect) sigs.push({cls:'fire',ico:'📦',lbl:'Volume Disconnect — Distribution Warning',desc:`Volume is ${volRatio.toFixed(1)}× average but candle body was only ${lastBody.toFixed(2)}%. Classic sign of whales selling into retail buying.`});
-    else if (volRatio>2) sigs.push({cls:'warn',ico:'📊',lbl:'Elevated Volume',desc:`${volRatio.toFixed(1)}× average — watch for distribution signals.`});
-    else                  sigs.push({cls:'ok', ico:'📊',lbl:'Volume Normal',desc:`${volRatio.toFixed(1)}× average — no distribution signals detected.`});
-
-    if      (rsiVal>80) sigs.push({cls:'fire',ico:'🌡️',lbl:'RSI Extremely Overbought',desc:`RSI ${rsiVal.toFixed(0)} — deep overbought. Reversals are common here.`});
-    else if (rsiVal>70) sigs.push({cls:'warn',ico:'🌡️',lbl:'RSI Overbought',desc:`RSI ${rsiVal.toFixed(0)} — buying momentum may be exhausting.`});
-    else if (rsiVal<35) sigs.push({cls:'ok', ico:'🌡️',lbl:'RSI Oversold — Potential Bounce',desc:`RSI ${rsiVal.toFixed(0)} — oversold. Mean-reversion bounce is possible.`});
-    else                 sigs.push({cls:'ok', ico:'🌡️',lbl:'RSI Healthy',desc:`RSI ${rsiVal.toFixed(0)} — momentum is balanced.`});
-
-    if      (obRatio<0.40) sigs.push({cls:'fire',ico:'📉',lbl:'Order Book Ask-Heavy',desc:`Only ${(obRatio*100).toFixed(0)}% bid support — sellers dominate the order book.`});
-    else if (obRatio>0.60) sigs.push({cls:'ok', ico:'📈',lbl:'Order Book Bid-Heavy',desc:`${(obRatio*100).toFixed(0)}% bid support — buyers are in control.`});
-    else                    sigs.push({cls:'neu',ico:'⚖️',lbl:'Order Book Balanced',desc:`${(obRatio*100).toFixed(0)}% bid support — roughly equal buyers and sellers.`});
-
-    const sigHtml = sigs.map(s=>`<div class="trap-sig-row ${s.cls}"><div class="trap-sig-ico">${s.ico}</div><div><div class="trap-sig-lbl">${s.lbl}</div><div class="trap-sig-desc">${s.desc}</div></div></div>`).join('');
-
-    // Scale rows
-    const scaleHtml = scaleTgts.map(t=>{
-      const reached = price >= t.price;
-      const prog    = Math.min(100,(price/t.price)*100);
-      const fc      = reached ? 'var(--safe)' : 'var(--blue)';
-      return `<div class="trap-scale-row">
-        <div class="trap-scale-pct">+${t.gain}%</div>
-        <div class="trap-scale-track"><div class="trap-scale-fill" style="width:${prog}%;background:${fc}"></div></div>
-        <div class="trap-scale-price" style="color:${fc}">$${f(t.price)}</div>
-        <div class="trap-scale-label" style="color:${reached?'var(--safe)':'var(--soft)'}">${reached?'✅ ':''}${t.label}</div>
-      </div>`;
-    }).join('');
-
-    const ts = new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
-
-    res.innerHTML = `
-      <!-- Risk score -->
+    const price=parseFloat(ticker.lastPrice);
+    const change24h=parseFloat(ticker.priceChangePercent);
+    const closes4h=k4h.map(c=>parseFloat(c[4]));
+    const closes1h=k1h.map(c=>parseFloat(c[4]));
+    const volumes=k4h.map(c=>parseFloat(c[5]));
+    const ma7=avgArr(closes4h.slice(-7));
+    const ema20_4h=ema(closes4h,20),ema50_4h=ema(closes4h,50);
+    const extFromMa7=((price-ma7)/ma7)*100;
+    const price20Ago=closes4h[closes4h.length-21]||closes4h[0];
+    const momentum4h=((closes4h[closes4h.length-1]-price20Ago)/price20Ago)*100;
+    const avgVol10=avgArr(volumes.slice(-11,-1));
+    const lastVol=volumes[volumes.length-1];
+    const volRatio=avgVol10>0?lastVol/avgVol10:1;
+    const lastCandle=k4h[k4h.length-1];
+    const lastBody=Math.abs(parseFloat(lastCandle[4])-parseFloat(lastCandle[1]))/parseFloat(lastCandle[1])*100;
+    const volDisconnect=volRatio>2.5&&lastBody<1.5;
+    let obRatio=0.5;
+    if(depth?.bids&&depth?.asks){const bv=depth.bids.slice(0,15).reduce((s,b)=>s+parseFloat(b[1]),0);const av=depth.asks.slice(0,15).reduce((s,a)=>s+parseFloat(a[1]),0);obRatio=bv/(bv+av);}
+    const rsiVal=(()=>{const closes=closes1h,p=14;if(closes.length<p+1)return 50;let g=0,l=0;for(let i=closes.length-p;i<closes.length;i++){const d=closes[i]-closes[i-1];if(d>0)g+=d;else l-=d;}const ag=g/p,al=l/p;return al===0?100:100-100/(1+ag/al);})();
+    let riskScore=0;
+    if(extFromMa7>30)riskScore+=30;else if(extFromMa7>15)riskScore+=18;else if(extFromMa7>8)riskScore+=8;
+    if(momentum4h>60)riskScore+=25;else if(momentum4h>35)riskScore+=15;else if(momentum4h>20)riskScore+=8;
+    if(volDisconnect)riskScore+=20;else if(volRatio>2)riskScore+=8;
+    if(rsiVal>80)riskScore+=15;else if(rsiVal>70)riskScore+=8;
+    if(obRatio<0.40)riskScore+=10;
+    riskScore=Math.min(100,riskScore);
+    const risk=riskScore>=65?'high':riskScore>=35?'med':'low';
+    const riskColor=risk==='high'?'var(--danger)':risk==='med'?'var(--warn)':'var(--safe)';
+    const riskLbl=risk==='high'?'🚨 HIGH RISK':risk==='med'?'⚠️ CAUTION':'✅ LOW RISK';
+    const trendUp=ema20_4h>ema50_4h;
+    const tsT=price*0.95,tsS=price*0.92,tsW=price*0.88;
+    const entry=watchlist.get(sym);
+    const base=entry?.rangeBottom||price;
+    const scaleTgts=[{gain:50,price:base*1.50,label:'Sell 25%'},{gain:100,price:base*2.00,label:'Sell 25%'},{gain:200,price:base*3.00,label:'Sell 25%'}];
+    const vols10=volumes.slice(-10);
+    const maxV=Math.max(...vols10);
+    const dirs10=k4h.slice(-10).map(c=>parseFloat(c[4])>=parseFloat(c[1])?'green':'red');
+    const volBarsHtml=vols10.map((v,i)=>{const h=Math.max(8,(v/maxV)*100);return`<div class="trap-vol-bar ${dirs10[i]}" style="height:${h}%"></div>`;}).join('');
+    const scaleHtml=scaleTgts.map(t=>{const reached=price>=t.price;const prog=Math.min(100,(price/t.price)*100);const fc=reached?'var(--safe)':'var(--blue)';return`<div class="trap-scale-row"><div class="trap-scale-pct">+${t.gain}%</div><div class="trap-scale-track"><div class="trap-scale-fill" style="width:${prog}%;background:${fc}"></div></div><div class="trap-scale-price" style="color:${fc}">$${f(t.price)}</div><div class="trap-scale-label" style="color:${reached?'var(--safe)':'var(--soft)'}">${reached?'✅ ':''} ${t.label}</div></div>`;}).join('');
+    const ts2=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+    res.innerHTML=`
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
         <span class="trap-risk-badge ${risk}">${riskLbl}</span>
         <span style="font-size:13px;font-weight:800;font-family:var(--mono);color:${riskColor};">${riskScore}<span style="font-size:10px;color:var(--soft);">/100</span></span>
       </div>
       <div class="trap-score-bar-bg"><div class="trap-score-bar-fill" style="width:${riskScore}%;background:${riskColor}"></div></div>
-
-      <!-- Trend + 24h -->
       <div style="display:flex;gap:6px;margin-bottom:10px;">
-        <div style="flex:1;background:var(--s3);border-radius:8px;padding:7px 9px;border:1px solid ${trendUp?'rgba(26,219,138,.2)':'rgba(240,79,107,.2)'};">
+        <div style="flex:1;background:var(--s3);border-radius:8px;padding:7px 9px;">
           <div style="font-size:10px;color:var(--soft);margin-bottom:2px;">Trend</div>
-          <div style="font-size:12px;font-weight:700;color:${trendUp?'var(--safe)':'var(--danger)'};">${trendUp?'⬆️ Going UP':'⬇️ Going DOWN'}</div>
-          <div style="font-size:10px;color:var(--soft);margin-top:2px;">EMA20 ${trendUp?'above':'below'} EMA50</div>
+          <div style="font-size:12px;font-weight:700;color:${trendUp?'var(--safe)':'var(--danger)'};">${trendUp?'⬆️ Up':'⬇️ Down'}</div>
         </div>
         <div style="flex:1;background:var(--s3);border-radius:8px;padding:7px 9px;">
-          <div style="font-size:10px;color:var(--soft);margin-bottom:2px;">24h Change</div>
+          <div style="font-size:10px;color:var(--soft);margin-bottom:2px;">24h</div>
           <div style="font-size:12px;font-weight:700;color:${change24h>=0?'var(--safe)':'var(--danger)'};">${change24h>=0?'+':''}${change24h.toFixed(2)}%</div>
-          <div style="font-size:10px;color:var(--soft);margin-top:2px;">Current: $${f(price)}</div>
         </div>
         <div style="flex:1;background:var(--s3);border-radius:8px;padding:7px 9px;">
           <div style="font-size:10px;color:var(--soft);margin-bottom:2px;">RSI 1h</div>
           <div style="font-size:12px;font-weight:700;color:${rsiVal>70?'var(--danger)':rsiVal<35?'var(--safe)':'var(--text)'};">${rsiVal.toFixed(0)}</div>
-          <div style="font-size:10px;color:var(--soft);margin-top:2px;">${rsiVal>70?'Overbought':rsiVal<35?'Oversold':'Neutral'}</div>
         </div>
       </div>
-
-      <!-- Verdict -->
-      <div class="trap-verdict ${vType}">
-        <div class="trap-verdict-ico">${vIco}</div>
-        <div class="trap-verdict-head">${vHead}</div>
-        <div class="trap-verdict-body">${vBody}</div>
-      </div>
-
-      <!-- Signal breakdown -->
-      <div class="trap-sub-lbl">Signal Breakdown</div>
-      ${sigHtml}
-
-      <!-- Trailing stops -->
-      <div class="trap-sub-lbl">🔁 Trailing Stop Levels (from $${f(price)})</div>
+      <div class="trap-sub-lbl">🔁 Trailing Stops</div>
       <div class="trap-ts-grid">
-        <div class="trap-ts-cell"><div class="trap-ts-lbl">Tight −5%</div><div class="trap-ts-val" style="color:var(--danger)">$${f(tsT)}</div><div class="trap-ts-sub">High volatility</div></div>
-        <div class="trap-ts-cell"><div class="trap-ts-lbl">Standard −8% ✅</div><div class="trap-ts-val" style="color:var(--warn)">$${f(tsS)}</div><div class="trap-ts-sub">Recommended</div></div>
-        <div class="trap-ts-cell" style="grid-column:span 2;"><div class="trap-ts-lbl">Wide −12%</div><div class="trap-ts-val" style="color:var(--soft)">$${f(tsW)}</div><div class="trap-ts-sub">Slow trend — give it room</div></div>
+        <div class="trap-ts-cell"><div class="trap-ts-lbl">Tight −5%</div><div class="trap-ts-val" style="color:var(--danger)">$${f(tsT)}</div></div>
+        <div class="trap-ts-cell"><div class="trap-ts-lbl">Standard −8% ✅</div><div class="trap-ts-val" style="color:var(--warn)">$${f(tsS)}</div></div>
+        <div class="trap-ts-cell" style="grid-column:span 2;"><div class="trap-ts-lbl">Wide −12%</div><div class="trap-ts-val" style="color:var(--soft)">$${f(tsW)}</div></div>
       </div>
-
-      <!-- Scale-out targets -->
-      <div class="trap-sub-lbl">📤 Scale-Out Targets (from range bottom $${f(base)})</div>
+      <div class="trap-sub-lbl">📤 Scale-Out Targets</div>
       ${scaleHtml}
-      <div style="font-size:10px;color:var(--soft);margin-top:5px;line-height:1.5;">💡 Never sell all at once. Let 25% ride as "house money" — you profit regardless of the top.</div>
-
-      <!-- Volume -->
-      <div class="trap-sub-lbl">📊 Volume — Last 10 × 4h Candles</div>
+      <div class="trap-sub-lbl">📊 Volume — Last 10 × 4h</div>
       <div class="trap-vol-bars">${volBarsHtml}</div>
       <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--soft);">
-        <span>Last: ${volFmt(lastVol)}</span>
-        <span>Avg: ${volFmt(avgArr(vols10))}</span>
+        <span>Last: ${volFmt(lastVol)}</span><span>Avg: ${volFmt(avgArr(vols10))}</span>
         <span style="color:${volRatio>2.5?'var(--danger)':volRatio>1.5?'var(--warn)':'var(--soft)'}">Ratio: ${volRatio.toFixed(1)}×</span>
       </div>
-      ${volDisconnect?`<div style="font-size:11px;color:var(--danger);background:rgba(240,79,107,.08);border:1px solid rgba(240,79,107,.2);border-radius:7px;padding:7px 9px;margin-top:7px;line-height:1.4;">⚠️ Volume disconnect — high volume with minimal price movement. Classic whale distribution pattern.</div>`:''}
-
-      <div style="font-size:10px;color:var(--dim);margin-top:8px;">Analysis run at ${ts}</div>
-    `;
-
-  } catch(e) {
-    res.innerHTML = `<div style="font-size:11px;color:var(--danger);">❌ Could not fetch data for ${sym}. Check your connection and try again.</div>`;
-  }
-
-  btn.disabled = false;
-  btn.innerHTML = '🔄 Re-run';
+      <div style="font-size:10px;color:var(--dim);margin-top:8px;">Run at ${ts2}</div>`;
+  }catch(e){res.innerHTML=`<div style="font-size:11px;color:var(--danger);">❌ Could not fetch data for ${sym}.</div>`;}
+  btn.disabled=false; btn.innerHTML='🔄 Re-run';
 }
 
 // ══════════════════════════════════════════════════════════
 // MONITOR (original)
 // ══════════════════════════════════════════════════════════
-function toggleMonitor() {
-  monitorOn = !monitorOn;
-  settings.monitorOn = monitorOn; saveCfg();
-  const tog=document.getElementById('monitorToggle'), lbl=document.getElementById('monitorLabel'), st=document.getElementById('monitorStatus');
-  if (monitorOn) {
-    tog.classList.add('on'); lbl.textContent='On';
-    st.textContent='Monitoring — auto-checking every 60 seconds';
-    runPriceMonitor();
-    monitorTimer=setInterval(runPriceMonitor,60000);
-    showToast('🔔 Auto price monitor is ON');
-    askNotifications();
-  } else {
-    tog.classList.remove('on'); lbl.textContent='Off';
-    st.textContent='Off — tap to start automatic monitoring';
-    clearInterval(monitorTimer);
-    showToast('Price monitor is OFF');
-  }
+function toggleMonitor(){
+  monitorOn=!monitorOn; settings.monitorOn=monitorOn; saveCfg();
+  const tog=document.getElementById('monitorToggle'),lbl=document.getElementById('monitorLabel'),st=document.getElementById('monitorStatus');
+  if(monitorOn){tog.classList.add('on');lbl.textContent='On';st.textContent='Monitoring — auto-checking every 60s';runPriceMonitor();monitorTimer=setInterval(runPriceMonitor,60000);showToast('🔔 Monitor ON');askNotifications();}
+  else{tog.classList.remove('on');lbl.textContent='Off';st.textContent='Off — tap to start';clearInterval(monitorTimer);showToast('Monitor OFF');}
 }
-
-async function runPriceMonitor() {
-  if (watchlist.size===0) return;
-  const st=document.getElementById('monitorStatus');
-  if(st) st.textContent=`Checking ${watchlist.size} coin${watchlist.size>1?'s':''} now…`;
-  for (const [sym, entry] of watchlist.entries()) {
-    try {
+async function runPriceMonitor(){
+  if(watchlist.size===0)return;
+  for(const [sym,entry] of watchlist.entries()){
+    try{
       const [ticker,klines]=await Promise.all([
         fetch(`${API}/ticker/price?symbol=${sym}USDT`).then(r=>r.json()),
         fetch(`${API}/klines?symbol=${sym}USDT&interval=4h&limit=50`).then(r=>r.json())
@@ -1376,31 +2002,124 @@ async function runPriceMonitor() {
       const cur=parseFloat(ticker.price);
       const lows=klines.map(k=>+k[3]),highs=klines.map(k=>+k[2]),closes=klines.map(k=>+k[4]);
       const half=Math.floor(klines.length/2);
-      const newBottom=Math.min(...lows.slice(half)), newTop=Math.max(...highs.slice(half));
+      const newBottom=Math.min(...lows.slice(half)),newTop=Math.max(...highs.slice(half));
       const oldBottom=entry.rangeBottom;
-      entry.rangeBottom=newBottom; entry.rangeTop=newTop;
-      entry.lastPrice=cur; entry.lastChecked=Date.now();
+      entry.rangeBottom=newBottom;entry.rangeTop=newTop;entry.lastPrice=cur;entry.lastChecked=Date.now();
       const e20=ema(closes,20),e50=ema(closes,50);
       entry.trend=e20>e50?'up':'down';
-      if (cur<=newBottom && !entry.triggered) {
-        entry.triggered=true; entry.triggerCount=(entry.triggerCount||0)+1;
-        notify(`🔔 ${sym} hit range bottom!`,`${sym}/USDT is at $${f(cur)} — the bottom of its price range ($${f(newBottom)}). This may be a good time to buy!`);
-        showToast(`🔔 ${sym} dropped to range bottom $${f(newBottom)}!`);
-        document.getElementById('wlDot')?.classList.add('on');
-      }
-      if (oldBottom && newBottom<oldBottom*0.975 && !entry.rangeShiftAlerted) {
-        entry.rangeShiftAlerted=true;
-        notify(`⚠️ ${sym} price zone shifted DOWN`,`${sym}'s range has moved lower. New bottom: $${f(newBottom)}. If you hold ${sym}, be careful.`);
-      } else if (oldBottom && newBottom>=oldBottom) { entry.rangeShiftAlerted=false; }
-      if (cur>newBottom*1.02 && entry.triggered) { entry.triggered=false; }
+      if(cur<=newBottom&&!entry.triggered){entry.triggered=true;entry.triggerCount=(entry.triggerCount||0)+1;notify(`🔔 ${sym} hit range bottom!`,`${sym}/USDT at $${f(cur)}`);showToast(`🔔 ${sym} dropped to $${f(newBottom)}!`);document.getElementById('wlDot')?.classList.add('on');}
+      if(oldBottom&&newBottom<oldBottom*0.975&&!entry.rangeShiftAlerted){entry.rangeShiftAlerted=true;notify(`⚠️ ${sym} zone shifted DOWN`,`New bottom: $${f(newBottom)}`);}
+      else if(oldBottom&&newBottom>=oldBottom){entry.rangeShiftAlerted=false;}
+      if(cur>newBottom*1.02&&entry.triggered)entry.triggered=false;
       watchlist.set(sym,entry);
-    } catch(e){}
+    }catch(e){}
     await new Promise(r=>setTimeout(r,400));
   }
   saveWL();
-  if(currentPage==='watchlist') renderWatchlist();
-  const now=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
-  if(st) st.textContent=`Last checked at ${now} — auto-checking every 60s`;
+  if(currentPage==='watchlist')renderWatchlist();
+}
+
+// ══════════════════════════════════════════════════════════
+// PROTECTION PAGE (original)
+// ══════════════════════════════════════════════════════════
+async function checkIfTrapped(){
+  const coin=(document.getElementById('trapCoin').value||'').toUpperCase().trim().replace('USDT','');
+  const buyPrice=parseFloat(document.getElementById('trapPrice').value);
+  if(!coin||!buyPrice||buyPrice<=0){showToast('⚠️ Please enter both a coin name and your buy price');return;}
+  const btn=document.getElementById('trapBtn');
+  btn.disabled=true;btn.innerHTML='<span class="spin"></span> Checking…';
+  const res=document.getElementById('trapResult');
+  res.className='check-result';res.style.display='none';
+  try{
+    const sym=coin+'USDT';
+    const [ticker,klines,depth]=await Promise.all([
+      fetch(`${API}/ticker/24hr?symbol=${sym}`).then(r=>r.json()),
+      fetch(`${API}/klines?symbol=${sym}&interval=4h&limit=50`).then(r=>r.json()),
+      fetch(`${API}/depth?symbol=${sym}&limit=20`).then(r=>r.json())
+    ]);
+    const cur=parseFloat(ticker.lastPrice);
+    const closes=klines.map(k=>+k[4]),highs=klines.map(k=>+k[2]),lows=klines.map(k=>+k[3]),vols=klines.map(k=>+k[5]);
+    const half=Math.floor(klines.length/2);
+    const newH=Math.max(...highs.slice(half)),newL=Math.min(...lows.slice(half));
+    const r2=rsi(closes),e20=ema(closes,20),e50=ema(closes,50);
+    const va=volAccel(vols);
+    let ob=0.5;
+    if(depth?.bids&&depth?.asks){const bv=depth.bids.slice(0,15).reduce((s,b)=>s+parseFloat(b[1]),0);const av=depth.asks.slice(0,15).reduce((s,a)=>s+parseFloat(a[1]),0);ob=bv/(bv+av);}
+    const pnl=((cur-buyPrice)/buyPrice)*100;
+    const aboveRange=buyPrice>newH,inRange=buyPrice>=newL&&buyPrice<=newH;
+    const trendDown=e20<e50,trendUp=e20>e50;
+    let recovScore=0;
+    if(ob>0.55)recovScore+=25;if(r2!==null&&r2<40)recovScore+=25;if(trendUp)recovScore+=20;if(va>10)recovScore+=20;if(cur>newL&&cur<newH)recovScore+=10;
+    let cls2,ico2,headline,body2;
+    if(pnl>=0){cls2='check-result good';ico2='🎉';headline=`You are in profit on ${coin}`;body2=`You bought at $${f(buyPrice)}, current price is $${f(cur)} — up ${pct(pnl)}.`;}
+    else if(aboveRange){cls2='check-result bad';ico2='🪤';headline=`You are stuck above ${coin}'s current zone`;body2=`Zone moved down: $${f(newL)} to $${f(newH)}. Recovery likelihood: ${recovScore}%.`;}
+    else if(inRange){cls2='check-result meh';ico2='😐';headline=`Inside zone but underwater`;body2=`Down ${pct(Math.abs(pnl))} but still inside the current zone — recovery possible.`;}
+    else{cls2='check-result good';ico2='✅';headline=`Your buy price has a cushion`;body2=`Down ${pct(Math.abs(pnl))} but entry is below range top. Watch closely.`;}
+    res.className=cls2;res.style.display='block';
+    res.innerHTML=`<div class="cr-status">${ico2}</div><div class="cr-headline">${headline}</div><div class="cr-body">${body2}</div>
+      <div class="cr-stats">
+        <div class="cr-stat"><div class="cr-stat-lbl">Your buy price</div><div class="cr-stat-val">$${f(buyPrice)}</div></div>
+        <div class="cr-stat"><div class="cr-stat-lbl">Current price</div><div class="cr-stat-val">$${f(cur)}</div></div>
+        <div class="cr-stat"><div class="cr-stat-lbl">P&amp;L</div><div class="cr-stat-val ${pnl>=0?'up':'dn'}">${pct(pnl)}</div></div>
+        <div class="cr-stat"><div class="cr-stat-lbl">Current zone</div><div class="cr-stat-val ac">$${f(newL)} – $${f(newH)}</div></div>
+      </div>`;
+  }catch(e){res.className='check-result bad';res.style.display='block';res.innerHTML=`<div class="cr-status">❌</div><div class="cr-headline">Could not find that coin</div><div class="cr-body">Check the name. Examples: BTC, ETH, SOL</div>`;}
+  btn.disabled=false;btn.innerHTML='Check My Position';
+}
+
+async function checkSafeToBuy(){
+  const coin=(document.getElementById('safeCoin').value||'').toUpperCase().trim().replace('USDT','');
+  const amount=parseFloat(document.getElementById('safeAmount').value);
+  if(!coin){showToast('⚠️ Please enter a coin name');return;}
+  const btn=document.getElementById('safeBtn');
+  btn.disabled=true;btn.innerHTML='<span class="spin"></span> Checking…';
+  const res=document.getElementById('safeResult');
+  res.className='safe-result';res.style.display='none';
+  try{
+    const sym=coin+'USDT';
+    const [ticker,klines,depth]=await Promise.all([
+      fetch(`${API}/ticker/24hr?symbol=${sym}`).then(r=>r.json()),
+      fetch(`${API}/klines?symbol=${sym}&interval=4h&limit=50`).then(r=>r.json()),
+      fetch(`${API}/depth?symbol=${sym}&limit=20`).then(r=>r.json())
+    ]);
+    const cur=parseFloat(ticker.lastPrice);
+    const closes=klines.map(k=>+k[4]),highs=klines.map(k=>+k[2]),lows=klines.map(k=>+k[3]),vols=klines.map(k=>+k[5]);
+    const half=Math.floor(klines.length/2);
+    const oldH=Math.max(...highs.slice(0,half)),oldL=Math.min(...lows.slice(0,half));
+    const newH=Math.max(...highs.slice(half)),newL=Math.min(...lows.slice(half));
+    const r3=rsi(closes),e20=ema(closes,20),e50=ema(closes,50);
+    const va=volAccel(vols);
+    let ob=0.5;
+    if(depth?.bids&&depth?.asks){const bv=depth.bids.slice(0,15).reduce((s,b)=>s+parseFloat(b[1]),0);const av=depth.asks.slice(0,15).reduce((s,a)=>s+parseFloat(a[1]),0);ob=bv/(bv+av);}
+    const trendUp=e20>e50;
+    const nearBottom=((cur-newL)/(newH-newL||1))<0.25,nearTop=((cur-newL)/(newH-newL||1))>0.75;
+    let safeScore=0;
+    if(trendUp)safeScore+=25;if(ob>0.55)safeScore+=20;if(r3!==null&&r3<50)safeScore+=20;if(nearBottom)safeScore+=20;if(va>5)safeScore+=10;
+    const coinsYouGet=amount?`If you spend $${amount}, you get ~${(amount/cur).toFixed(4)} ${coin}.`:'';
+    const worstCase=`If it drops to zone bottom ($${f(newL)}), that's ${(((newL-cur)/cur)*100).toFixed(2)}%.`;
+    let cls3,ico3,headline2,body3;
+    if(safeScore>=65&&trendUp&&!nearTop){cls3='safe-result good';ico3='✅';headline2=`Reasonable time to buy ${coin}`;body3=`Price at $${f(cur)}, in lower part of zone. Trend up. ${coinsYouGet} ${worstCase}`;}
+    else if(nearTop||(!trendUp&&safeScore<50)){cls3='safe-result bad';ico3='⛔';headline2=`Not the best time to buy ${coin}`;body3=`${nearTop?`Price near TOP of zone — sellers tend to push it back.`:`Trend pointing down.`} ${coinsYouGet} ${worstCase}`;}
+    else{cls3='safe-result meh';ico3='⚠️';headline2=`Mixed signals on ${coin}`;body3=`No clear signal. ${coinsYouGet} Consider buying a small portion only. ${worstCase}`;}
+    res.className=cls3;res.style.display='block';
+    res.innerHTML=`<div class="cr-status">${ico3}</div><div class="cr-headline">${headline2}</div><div class="cr-body">${body3}</div>
+      <div class="cr-stats">
+        <div class="cr-stat"><div class="cr-stat-lbl">Current price</div><div class="cr-stat-val">$${f(cur)}</div></div>
+        <div class="cr-stat"><div class="cr-stat-lbl">Zone</div><div class="cr-stat-val ac">$${f(newL)} – $${f(newH)}</div></div>
+        <div class="cr-stat"><div class="cr-stat-lbl">Trend</div><div class="cr-stat-val ${trendUp?'up':'dn'}">${trendUp?'⬆️ Up':'⬇️ Down'}</div></div>
+        <div class="cr-stat"><div class="cr-stat-lbl">Safety score</div><div class="cr-stat-val" style="color:${safeScore>=65?'var(--safe)':safeScore>=45?'var(--warn)':'var(--danger)'}">${safeScore}/100</div></div>
+      </div>`;
+  }catch(e){res.className='safe-result bad';res.style.display='block';res.innerHTML=`<div class="cr-status">❌</div><div class="cr-headline">Could not find that coin</div><div class="cr-body">Examples: BTC, ETH, SOL, BNB</div>`;}
+  btn.disabled=false;btn.innerHTML='Check Before I Buy';
+}
+
+function renderProtectAlerts(){
+  const el=document.getElementById('wlAlerts');
+  if(watchlist.size===0||signals.length===0){el.innerHTML='';return;}
+  const alerts=signals.filter(s=>watchlist.has(s.sym));
+  if(alerts.length===0){el.innerHTML='';return;}
+  el.innerHTML=`<div style="font-size:13px;font-weight:700;margin-bottom:8px;">⭐ Alerts for your watchlist</div>`+
+    alerts.map(s=>{const v=getVerdict(s);return`<div class="wl-alert-card"><div class="wla-top"><span class="wla-sym">${s.sym}/USDT</span><span class="wla-badge ${typeBadge[s.type]}">${typeLabel[s.type]}</span></div><div class="wla-body">${v.head}</div><div class="wla-time">Signal strength: ${s.score}/100</div></div>`;}).join('');
 }
 
 // ══════════════════════════════════════════════════════════
@@ -1413,115 +2132,11 @@ function renderHistory(){
 }
 
 // ══════════════════════════════════════════════════════════
-// PROTECTION PAGE (original — unchanged)
-// ══════════════════════════════════════════════════════════
-async function checkIfTrapped(){
-  const coin=(document.getElementById('trapCoin').value||'').toUpperCase().trim().replace('USDT','');
-  const buyPrice=parseFloat(document.getElementById('trapPrice').value);
-  if(!coin||!buyPrice||buyPrice<=0){showToast('⚠️ Please enter both a coin name and your buy price');return;}
-  const btn=document.getElementById('trapBtn');
-  btn.disabled=true; btn.innerHTML='<span class="spin"></span> Checking…';
-  const res=document.getElementById('trapResult');
-  res.className='check-result'; res.style.display='none';
-  try {
-    const sym=coin+'USDT';
-    const [ticker,klines,depth]=await Promise.all([
-      fetch(`${API}/ticker/24hr?symbol=${sym}`).then(r=>r.json()),
-      fetch(`${API}/klines?symbol=${sym}&interval=4h&limit=50`).then(r=>r.json()),
-      fetch(`${API}/depth?symbol=${sym}&limit=20`).then(r=>r.json())
-    ]);
-    const cur=parseFloat(ticker.lastPrice);
-    const closes=klines.map(k=>+k[4]),highs=klines.map(k=>+k[2]),lows=klines.map(k=>+k[3]),vols=klines.map(k=>+k[5]);
-    const half=Math.floor(klines.length/2);
-    const newH=Math.max(...highs.slice(half)),newL=Math.min(...lows.slice(half));
-    const r=rsi(closes),e20=ema(closes,20),e50=ema(closes,50);
-    const va=volAccel(vols);
-    let ob=0.5;
-    if(depth?.bids&&depth?.asks){const bv=depth.bids.slice(0,15).reduce((s,b)=>s+parseFloat(b[1]),0);const av=depth.asks.slice(0,15).reduce((s,a)=>s+parseFloat(a[1]),0);ob=bv/(bv+av);}
-    const pnl=((cur-buyPrice)/buyPrice)*100;
-    const aboveRange=buyPrice>newH,inRange=buyPrice>=newL&&buyPrice<=newH;
-    const trendDown=e20<e50,trendUp=e20>e50;
-    let recovScore=0;
-    if(ob>0.55)recovScore+=25;if(r!==null&&r<40)recovScore+=25;if(trendUp)recovScore+=20;if(va>10)recovScore+=20;if(cur>newL&&cur<newH)recovScore+=10;
-    let cls,ico,headline,body;
-    if(pnl>=0){cls='check-result good';ico='🎉';headline=`You are in profit on ${coin}`;body=`You bought at $${f(buyPrice)} and the current price is $${f(cur)} — you are up ${pct(pnl)}. ${trendUp?'The trend is still going up, which is a good sign.':'The short-term trend has softened — consider whether you want to take some profit now.'} Your coin is ${inRange?'still inside its normal price zone':'above its current zone — a pullback is possible'}.`;}
-    else if(aboveRange){cls='check-result bad';ico='🪤';headline=`You are stuck above ${coin}'s current price zone`;body=`You bought at $${f(buyPrice)} but the coin's price zone has moved down. The current zone runs from $${f(newL)} to $${f(newH)}, and your buy price is above that zone. ${trendDown?'The trend is currently pointing downward, which makes recovery slower.':'There are some early signs of recovery, but it is not guaranteed.'} Recovery likelihood: ${recovScore}%.`;}
-    else if(inRange){cls='check-result meh';ico='😐';headline=`You are inside ${coin}'s current zone — slightly underwater`;body=`You bought at $${f(buyPrice)} and the current price is $${f(cur)} — you are down ${pct(Math.abs(pnl))}. The good news is your entry price is still within the current trading zone ($${f(newL)}–$${f(newH)}), so the coin just needs to move back up within its zone for you to recover. ${recovScore>=50?'Signs are mixed but recovery is possible.':'Volume and trend are weak right now — recovery may take time.'}`;}
-    else{cls='check-result good';ico='✅';headline=`Your buy price has a cushion`;body=`You bought at $${f(buyPrice)} and the price has dropped to $${f(cur)}. You are down ${pct(Math.abs(pnl))}. However, your entry is below the top of the zone, so you have a reasonable chance of recovery if the zone holds. ${trendUp?'The short-term trend is pointing up — a good sign.':'Watch for further downside before making a decision.'}`;}
-    res.className=cls; res.style.display='block';
-    res.innerHTML=`<div class="cr-status">${ico}</div><div class="cr-headline">${headline}</div><div class="cr-body">${body}</div>
-      <div class="cr-stats">
-        <div class="cr-stat"><div class="cr-stat-lbl">Your buy price</div><div class="cr-stat-val">$${f(buyPrice)}</div></div>
-        <div class="cr-stat"><div class="cr-stat-lbl">Current price</div><div class="cr-stat-val">$${f(cur)}</div></div>
-        <div class="cr-stat"><div class="cr-stat-lbl">Your profit/loss</div><div class="cr-stat-val ${pnl>=0?'up':'dn'}">${pct(pnl)}</div></div>
-        <div class="cr-stat"><div class="cr-stat-lbl">Current zone</div><div class="cr-stat-val ac">$${f(newL)} – $${f(newH)}</div></div>
-      </div>
-      ${aboveRange?`<div class="recovery-bar-wrap"><div class="recovery-bar-lbl"><span>Recovery likelihood</span><span style="color:${recovScore>=60?'var(--safe)':recovScore>=40?'var(--warn)':'var(--danger)'}">${recovScore}%</span></div><div class="recovery-bar-bg"><div class="recovery-bar-fill" style="width:${recovScore}%;background:${recovScore>=60?'var(--safe)':recovScore>=40?'var(--warn)':'var(--danger)'}"></div></div></div>`:''}`;
-  } catch(e){res.className='check-result bad';res.style.display='block';res.innerHTML=`<div class="cr-status">❌</div><div class="cr-headline">Could not find that coin</div><div class="cr-body">Make sure you typed the coin name correctly. Examples: BTC, ETH, SOL, BNB, ADA.</div>`;}
-  btn.disabled=false; btn.innerHTML='Check My Position';
-}
-
-async function checkSafeToBuy(){
-  const coin=(document.getElementById('safeCoin').value||'').toUpperCase().trim().replace('USDT','');
-  const amount=parseFloat(document.getElementById('safeAmount').value);
-  if(!coin){showToast('⚠️ Please enter a coin name');return;}
-  const btn=document.getElementById('safeBtn');
-  btn.disabled=true; btn.innerHTML='<span class="spin"></span> Checking…';
-  const res=document.getElementById('safeResult');
-  res.className='safe-result'; res.style.display='none';
-  try {
-    const sym=coin+'USDT';
-    const [ticker,klines,depth]=await Promise.all([
-      fetch(`${API}/ticker/24hr?symbol=${sym}`).then(r=>r.json()),
-      fetch(`${API}/klines?symbol=${sym}&interval=4h&limit=50`).then(r=>r.json()),
-      fetch(`${API}/depth?symbol=${sym}&limit=20`).then(r=>r.json())
-    ]);
-    const cur=parseFloat(ticker.lastPrice);
-    const closes=klines.map(k=>+k[4]),highs=klines.map(k=>+k[2]),lows=klines.map(k=>+k[3]),vols=klines.map(k=>+k[5]);
-    const half=Math.floor(klines.length/2);
-    const oldH=Math.max(...highs.slice(0,half)),oldL=Math.min(...lows.slice(0,half));
-    const newH=Math.max(...highs.slice(half)),newL=Math.min(...lows.slice(half));
-    const r=rsi(closes),e20=ema(closes,20),e50=ema(closes,50);
-    const va=volAccel(vols),at=atr(klines),atrPct=(at/cur)*100;
-    let ob=0.5;
-    if(depth?.bids&&depth?.asks){const bv=depth.bids.slice(0,15).reduce((s,b)=>s+parseFloat(b[1]),0);const av=depth.asks.slice(0,15).reduce((s,a)=>s+parseFloat(a[1]),0);ob=bv/(bv+av);}
-    const midShift=((((newH+newL)/2)-((oldH+oldL)/2))/((oldH+oldL)/2))*100;
-    const trendUp=e20>e50,rangeStable=Math.abs(midShift)<1.5;
-    const nearBottom=((cur-newL)/(newH-newL||1))<0.25,nearTop=((cur-newL)/(newH-newL||1))>0.75;
-    let safeScore=0;
-    if(trendUp)safeScore+=25;if(ob>0.55)safeScore+=20;if(r!==null&&r<50)safeScore+=20;if(nearBottom)safeScore+=20;if(va>5)safeScore+=10;if(rangeStable)safeScore+=5;
-    const coinsYouGet=amount?`If you spend $${amount}, you would get approximately ${(amount/cur).toFixed(4)} ${coin}.`:'';
-    const worstCase=`If it drops to the bottom of its current zone ($${f(newL)}), that would be a drop of ${(((newL-cur)/cur)*100).toFixed(2)}%.`;
-    let cls,ico,headline,body;
-    if(safeScore>=65&&trendUp&&!nearTop){cls='safe-result good';ico='✅';headline=`Looks like a reasonable time to buy ${coin}`;body=`The price is currently at $${f(cur)}, which is in the lower part of its current zone. The trend is going up and more people are buying than selling. ${coinsYouGet} ${worstCase}`;}
-    else if(nearTop||(!trendUp&&safeScore<50)){cls='safe-result bad';ico='⛔';headline=`Not the best time to buy ${coin} right now`;body=`${nearTop?`The price ($${f(cur)}) is near the TOP of its current zone — this is where sellers tend to push it back down.`:`The short-term trend is pointing downward.`} ${coinsYouGet} Waiting for the price to come back down to the lower part of the zone would give you a better entry. ${worstCase}`;}
-    else{cls='safe-result meh';ico='⚠️';headline=`Mixed signals on ${coin} — proceed with caution`;body=`There is no clear strong signal either way right now. The price is at $${f(cur)} — in the middle of its zone. ${coinsYouGet} If you do buy, consider buying only a small portion of what you planned. ${worstCase}`;}
-    res.className=cls; res.style.display='block';
-    res.innerHTML=`<div class="cr-status">${ico}</div><div class="cr-headline">${headline}</div><div class="cr-body">${body}</div>
-      <div class="cr-stats">
-        <div class="cr-stat"><div class="cr-stat-lbl">Current price</div><div class="cr-stat-val">$${f(cur)}</div></div>
-        <div class="cr-stat"><div class="cr-stat-lbl">Current zone</div><div class="cr-stat-val ac">$${f(newL)} – $${f(newH)}</div></div>
-        <div class="cr-stat"><div class="cr-stat-lbl">Trend direction</div><div class="cr-stat-val ${trendUp?'up':'dn'}">${trendUp?'⬆️ Going up':'⬇️ Going down'}</div></div>
-        <div class="cr-stat"><div class="cr-stat-lbl">Buy safety score</div><div class="cr-stat-val" style="color:${safeScore>=65?'var(--safe)':safeScore>=45?'var(--warn)':'var(--danger)'}">${safeScore}/100</div></div>
-      </div>`;
-  } catch(e){res.className='safe-result bad';res.style.display='block';res.innerHTML=`<div class="cr-status">❌</div><div class="cr-headline">Could not find that coin</div><div class="cr-body">Check the coin name is correct. Examples: BTC, ETH, SOL, BNB, ADA.</div>`;}
-  btn.disabled=false; btn.innerHTML='Check Before I Buy';
-}
-
-function renderProtectAlerts(){
-  const el=document.getElementById('wlAlerts');
-  if(watchlist.size===0||signals.length===0){el.innerHTML='';return;}
-  const alerts=signals.filter(s=>watchlist.has(s.sym));
-  if(alerts.length===0){el.innerHTML='';return;}
-  el.innerHTML=`<div style="font-size:13px;font-weight:700;margin-bottom:8px;">⭐ Alerts for your watchlist</div>`+
-  alerts.map(s=>{const v=getVerdict(s);return`<div class="wl-alert-card"><div class="wla-top"><span class="wla-sym">${s.sym}/USDT</span><span class="wla-badge ${typeBadge[s.type]}">${typeLabel[s.type]}</span></div><div class="wla-body">${v.head}</div><div class="wla-time">Signal strength: ${s.score}/100</div></div>`;}).join('');
-}
-
-// ══════════════════════════════════════════════════════════
 // INIT
 // ══════════════════════════════════════════════════════════
 load();
-document.getElementById('wlCoinInput')?.addEventListener('keydown', e=>{ if(e.key==='Enter') addToWatchlist(); });
+document.getElementById('wlCoinInput')?.addEventListener('keydown',e=>{if(e.key==='Enter')addToWatchlist();});
+document.getElementById('smcPairInput')?.addEventListener('keydown',e=>{if(e.key==='Enter')runSMCAnalysis();});
 </script>
 </body>
 </html>
